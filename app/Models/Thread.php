@@ -15,7 +15,7 @@ class Thread extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id','channel_id','title','body','summary','source','main_subject','image_path','image_path_pixel_color','image_description','image_saved','cno','age_restriction','anonymous','formatted_address','location','is_published','famous','slide_body','slide_image_pos','slide_color_bg','slide_color_0','slide_color_1','slide_color_2'
+        'user_id','channel_id','slug', 'title','body','summary','source','main_subject','image_path','image_path_pixel_color','image_description','image_saved','cno','age_restriction','anonymous','formatted_address','location','is_published','famous','slide_body','slide_image_pos','slide_color_bg','slide_color_0','slide_color_1','slide_color_2'
 
     ];
 
@@ -53,14 +53,18 @@ class Thread extends Model
     {
         parent::boot();
 
-        static::deleting(function ($thread) {
-            $thread->replies->each->delete();
-            $thread->subscriptions->each->delete();
-        });
+        // static::deleting(function ($thread) {
+        //     $thread->replies->each->delete();
+        //     $thread->subscriptions->each->delete();
+        // });
 
         static::created(function ($thread) {
             $thread->update(['slug' => str_slug(strip_tags( $thread->title))]);
         });
+
+        // static::updated(function($thread){
+        //     $thread->update(['slug' => str_slug(strip_tags( $thread->title))]);
+        // });
 
         // static::addGlobalScope(new IsPublished);
 
@@ -69,6 +73,20 @@ class Thread extends Model
     public function setTitleAttribute($value){
         $this->attributes['title']  = title_case($value);
     }
+
+     /**
+     * Set the proper slug attribute.
+     *
+     * @param string $value
+     */
+    // public function setSlugAttribute($value)
+    // {
+    //     if (static::whereSlug($slug =  str_slug(strip_tags( $value)))->exists()) {
+    //         $slug = "{$slug}-{$this->id}";
+    //     }
+
+    //     $this->attributes['slug'] = $slug;
+    // }
 
 
     /**
@@ -231,19 +249,7 @@ class Thread extends Model
         return title_case(html_entity_decode($title));
     }
 
-    /**
-     * Set the proper slug attribute.
-     *
-     * @param string $value
-     */
-    public function setSlugAttribute($value)
-    {
-        if (static::whereSlug($slug = str_slug($value))->exists()) {
-            $slug = "{$slug}-{$this->id}";
-        }
 
-        $this->attributes['slug'] = $slug;
-    }
 
     /**
      * Access the source attribute.

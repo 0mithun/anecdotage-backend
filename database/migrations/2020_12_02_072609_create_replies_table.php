@@ -21,7 +21,6 @@ class CreateRepliesTable extends Migration
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->integer('replies_count')->default(0);
             $table->timestamps();
-            $table->timestamps();
         });
     }
 

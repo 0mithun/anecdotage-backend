@@ -50,7 +50,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     //     'photo_url'
     // ];
 
-    protected $appends = ['profileAvatarPath', 'followType'];
+    protected $appends = ['followType'];
 
     public function getPhotoUrlAttribute()
     {

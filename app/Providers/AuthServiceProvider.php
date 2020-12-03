@@ -40,6 +40,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Gate::define('edit-thread', function($user, $thread){
+            return $user->id ===1 || $thread->user_id === $user->id;
+        });
     }
 }

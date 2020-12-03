@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Thread;
 use Illuminate\Database\Eloquent\Model;
 
 class Channel extends Model
@@ -22,8 +23,8 @@ class Channel extends Model
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
 
-    // public function threads()
-    // {
-    //     return $this->hasMany(Thread::class);
-    // }
+    public function threads()
+    {
+        return $this->hasMany(Thread::class);
+    }
 }

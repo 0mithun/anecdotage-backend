@@ -11,6 +11,8 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
+use Grimzy\LaravelMysqlSpatial\Types\Point;
+
 class RegisterController extends Controller
 {
 
@@ -62,12 +64,15 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $arr_ip = geoip()->getLocation( $_SERVER['REMOTE_ADDR'] );
 
+        $location = new Point($arr_ip['lat'], $arr_ip['lon']);
         return $this->users->create([
             'username' => $data['username'],
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'location' => $location,
         ]);
     }
 }

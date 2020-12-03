@@ -4,7 +4,7 @@ namespace App\Repositories\Contracts;
 
 use Illuminate\Http\Request;
 
-interface IUser
+interface IThread
 {
-    public function findByEmail($email);
+
 }
