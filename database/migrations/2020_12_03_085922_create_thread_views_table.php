@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddImageUrlToThreadsTable extends Migration
+class CreateThreadViewsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,10 @@ class AddImageUrlToThreadsTable extends Migration
      */
     public function up()
     {
-        Schema::table('threads', function (Blueprint $table) {
-            $table->string('image_url')->nullable();
+        Schema::create('thread_views', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('thread_id');
+            $table->timestamps();
         });
     }
 
@@ -25,8 +27,6 @@ class AddImageUrlToThreadsTable extends Migration
      */
     public function down()
     {
-        Schema::table('threads', function (Blueprint $table) {
-            $table->dropColumn('image_url');
-        });
+        Schema::dropIfExists('thread_views');
     }
 }

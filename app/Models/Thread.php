@@ -2,13 +2,29 @@
 
 namespace App\Models;
 
+
+use App\Models\Tag;
 use App\Models\User;
+use App\Models\Emoji;
 use App\Models\Reply;
 use App\Models\Channel;
+use App\Models\ThreadView;
+use App\Models\ThreadSubscription;
 use Illuminate\Database\Eloquent\Model;
 
 class Thread extends Model
 {
+      /**
+     * Get the route key name.
+     *
+     * @return string
+     */
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
+
     /**
      * Don't auto-apply mass assignment protection.
      *
@@ -53,18 +69,15 @@ class Thread extends Model
     {
         parent::boot();
 
-        // static::deleting(function ($thread) {
-        //     $thread->replies->each->delete();
-        //     $thread->subscriptions->each->delete();
-        // });
+        static::deleting(function ($thread) {
+            $thread->replies->each->delete();
+            $thread->subscriptions->each->delete();
+        });
 
         static::created(function ($thread) {
             $thread->update(['slug' => str_slug(strip_tags( $thread->title))]);
         });
 
-        // static::updated(function($thread){
-        //     $thread->update(['slug' => str_slug(strip_tags( $thread->title))]);
-        // });
 
         // static::addGlobalScope(new IsPublished);
 
@@ -79,14 +92,14 @@ class Thread extends Model
      *
      * @param string $value
      */
-    // public function setSlugAttribute($value)
-    // {
-    //     if (static::whereSlug($slug =  str_slug(strip_tags( $value)))->exists()) {
-    //         $slug = "{$slug}-{$this->id}";
-    //     }
+    public function setSlugAttribute($value)
+    {
+        if (static::whereSlug($slug =  str_slug(strip_tags( $value)))->exists()) {
+            $slug = "{$slug}-{$this->id}";
+        }
 
-    //     $this->attributes['slug'] = $slug;
-    // }
+        $this->attributes['slug'] = $slug;
+    }
 
 
     /**
@@ -166,66 +179,67 @@ class Thread extends Model
     // }
 
 
-    // /**
-    //  * Subscribe a user to the current thread.
-    //  *
-    //  * @param  int|null $userId
-    //  * @return $this
-    //  */
-    // public function subscribe($userId = null)
-    // {
-    //     $this->subscriptions()->create([
-    //         'user_id' => $userId ?: auth()->id(),
-    //     ]);
+    /**
+     * Subscribe a user to the current thread.
+     *
+     * @param  int|null $userId
+     * @return $this
+     */
+    public function subscribe($userId = null)
+    {
+        $this->subscriptions()->create([
+            'user_id' => $userId ?: auth()->id(),
+        ]);
 
-    //     return $this;
-    // }
-
-    // /**
-    //  * Unsubscribe a user from the current thread.
-    //  *
-    //  * @param int|null $userId
-    //  */
-    // public function unsubscribe($userId = null)
-    // {
-    //     $this->subscriptions()
-    //         ->where('user_id', $userId ?: auth()->id())
-    //         ->delete();
-    // }
-
-    // /**
-    //  * A thread can have many subscriptions.
-    //  *
-    //  * @return \Illuminate\Database\Eloquent\Relations\HasMany
-    //  */
-    // public function subscriptions()
-    // {
-    //     return $this->hasMany(ThreadSubscription::class);
-    // }
-
-
-
-    // /**
-    //  * Determine if the current user is subscribed to the thread.
-    //  *
-    //  * @return boolean
-    //  */
-    // public function getIsSubscribedToAttribute()
-    // {
-    //     return $this->subscriptions()
-    //         ->where('user_id', auth()->id())
-    //         ->exists();
-    // }
+        return $this;
+    }
 
     /**
-     * Get the route key name.
+     * Unsubscribe a user from the current thread.
      *
-     * @return string
+     * @param int|null $userId
      */
-    public function getRouteKeyName()
+    public function unsubscribe($userId = null)
     {
-        return 'slug';
+        $this->subscriptions()
+            ->where('user_id', $userId ?: auth()->id())
+            ->delete();
     }
+
+    /**
+     * A thread can have many subscriptions.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function subscriptions()
+    {
+        return $this->hasMany(ThreadSubscription::class);
+    }
+
+    /**
+     * Determine if the current user is subscribed to the thread.
+     *
+     * @return boolean
+     */
+    public function IsSubscribed()
+    {
+        return $this->subscriptions()
+            ->where('user_id', auth()->id())
+            ->exists();
+    }
+
+
+    /**
+     * Determine if the current user is subscribed to the thread.
+     *
+     * @return boolean
+     */
+    public function getIsSubscribedToAttribute()
+    {
+        return $this->IsSubscribed();
+    }
+
+
 
     /**
      * Access the body attribute.
@@ -269,16 +283,16 @@ class Thread extends Model
      */
 
 
-    // public function tags()
-    // {
-    //     return $this->belongsToMany(Tags::class, 'thread_tag', 'thread_id', 'tag_id');
-    // }
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'thread_tag', 'thread_id', 'tag_id');
+    }
 
 
-    // public function emojis()
-    // {
-    //     return $this->belongsToMany(Emoji::class, 'thread_emoji', 'thread_id', 'emoji_id');
-    // }
+    public function emojis()
+    {
+        return $this->belongsToMany(Emoji::class, 'thread_emoji', 'thread_id', 'emoji_id');
+    }
 
     public function getExcerptAttribute()
     {
@@ -323,14 +337,17 @@ class Thread extends Model
     // }
 
 
-    // public function getTopRatedAttribute()
-    // {
-    //     // return ($this->like_count - ($this->dislike_count + 1));
-    //     return ($this->like_count - $this->dislike_count);
-    // }
+    public function getTopRatedAttribute()
+    {
+        return ($this->like_count - $this->dislike_count);
+    }
 
 
-    // public function views(){
-    //     return $this->hasMany(ThreadView::class);
-    // }
+    public function views(){
+        return $this->hasMany(ThreadView::class);
+    }
+
+    public function getViewsCountAttribute(){
+        return $this->views()->count();
+    }
 }

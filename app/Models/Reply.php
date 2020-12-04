@@ -16,16 +16,34 @@ class Reply extends Model
      * @var array
      */
     protected $fillable = [
-        'thread_id','user_id','body','parent_id','replies_count'
+        'thread_id','user_id','body','parent_id',
     ];
 
 
-    /**
-     * The relations to eager load on every query.
-     *
-     * @var array
-     */
-    protected $with = ['owner',];
+    public static function boot(){
+        parent::boot();
+
+        static::created(function($reply){
+            if(!$reply->thread->IsSubscribed()){
+                $reply->thread->subscribe();
+            }
+        });
+    }
+
+
+    public function childs(){
+        return $this->hasMany(Reply::class,'parent_id','id');
+    }
+
+
+    public function parent(){
+        return $this->belongsTo(Reply::class, 'parent_id');
+    }
+
+
+    public function getRepliesCountAttribute(){
+        return $this->childs->count();
+    }
 
 
     /**
@@ -126,21 +144,5 @@ class Reply extends Model
     //         return false;
     //     }
 
-    // }
-
-    // public function getReplyCountAttribute(){
-    //     return $this->replyCount();
-    // }
-
-    // public function replyCount(){
-    //     $reply = DB::table('replies')
-    //         ->where('parent_id', $this->id)
-    //         ->count()
-    //     ;
-    //     return $reply;
-    // }
-
-    // public function getOwnerProfileUrlAttribute(){
-    //     return url('profiles/'.$this->owner->username);
     // }
 }

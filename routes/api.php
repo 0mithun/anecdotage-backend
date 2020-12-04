@@ -19,6 +19,13 @@ Route::group(['middleware' => ['auth:api']], function(){
 
     Route::resource('threads', 'Thread\ThreadController')->except(['create','edit']);
 
+    Route::resource('threads.replies', 'Reply\ReplyController')->except(['create','edit']);
+    Route::get('threads/{thread}/replies/{reply}/childs','Reply\ReplyController@childs')->name('replies.childs');
+
+    Route::resource('emojis', 'Emoji\EmojiController')->only(['index','show']);
+    Route::resource('threads.emojis', 'Thread\EmojiController')->only(['store','destroy']);
+
+
 });
 
 // Routes for guests only

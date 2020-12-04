@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Thread;
 
+use App\Models\Tag;
 use App\Models\Thread;
 use App\Models\Channel;
 use Illuminate\Http\Request;
@@ -10,10 +11,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Resources\ThreadResource;
 use App\Repositories\Contracts\IThread;
-use App\Http\Requests\ThreadUpdateRequest;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\Thread\ThreadCreateRequest;
+use App\Http\Requests\Thread\ThreadUpdateRequest;
 
 
 class ThreadController extends Controller
@@ -53,9 +54,9 @@ class ThreadController extends Controller
         }
         $thread = $this->threads->create($data + ['user_id'=>auth()->id()]);
 
+        $this->attachTags($request, $thread);
         return response(new ThreadResource($thread), Response::HTTP_CREATED);
 
-        // $this->attachTags($request, $thread);
     }
 
     /**
@@ -66,6 +67,8 @@ class ThreadController extends Controller
      */
     public function show(Thread $thread)
     {
+        $thread->views()->create([]);
+
         return new ThreadResource($thread);
     }
 
@@ -83,6 +86,7 @@ class ThreadController extends Controller
             $data['slug'] = str_slug(strip_tags( $request->title));
         }
         $thread = $this->threads->update($thread->id, $data);
+        $this->attachTags($request, $thread);
         return response(new ThreadResource($thread), Response::HTTP_ACCEPTED);
     }
 
@@ -120,15 +124,12 @@ class ThreadController extends Controller
     public function attachTags($request, $thread)
     {
         $tags = [];
-        $tag_names = '';
         if ($request->has('tags') && $request->tags != null) {
             $tags = explode(',', $request->tags);
-            $tag_names = $request->tags;
         }
 
         if ($request->has('channel') && $request->channel != null) {
             $channel = json_decode($request->channel);
-
             $type = gettype($channel);
             if($type == 'string'){
                 $findChannel = Channel::where('name', $channel)->first();
@@ -142,36 +143,29 @@ class ThreadController extends Controller
                     $tags[] = \strtolower($channel->name);
                 }
             }
-
-
         }
 
-        $main_subject = $request->main_subject;
         if ($request->has('main_subject') && $request->main_subject != null) {
             if (!in_array(\strtolower($request->main_subject), $tags)) {
                 $tags[] = \strtolower($request->main_subject);
             }
         }
 
+
         $tag_ids = [];
         foreach ($tags as $tag) {
-            $searchTag = Tags::where('name', strtolower($tag))->first();
+            $searchTag = Tag::where('name', strtolower($tag))->first();
 
             if ($searchTag) {
                 $tag_ids[] = $searchTag->id;
             } else {
                 if ($tag != 'null') {
-                    $newTag = Tags::create(['name' => strtolower($tag)]);
+                    $newTag = Tag::create(['name' => $tag]);
                     $tag_ids[] = $newTag->id;
                 }
             }
-            // $thread->tags()->delete();
         }
 
         $thread->tags()->sync($tag_ids);
-        if($tag_names != ''){
-            $thread->tag_names = $tag_names;
-            $thread->save();
-        }
     }
 }

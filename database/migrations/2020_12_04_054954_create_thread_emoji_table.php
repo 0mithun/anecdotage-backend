@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRepliesTable extends Migration
+class CreateThreadEmojiTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,10 @@ class CreateRepliesTable extends Migration
      */
     public function up()
     {
-        Schema::create('replies', function (Blueprint $table) {
-            $table->bigIncrements('id');
+        Schema::create('thread_emoji', function (Blueprint $table) {
             $table->unsignedBigInteger('thread_id');
+            $table->unsignedBigInteger('emoji_id');
             $table->unsignedBigInteger('user_id');
-            $table->text('body');
-            $table->unsignedBigInteger('parent_id')->nullable();
-            $table->timestamps();
         });
     }
 
@@ -30,6 +27,6 @@ class CreateRepliesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('replies');
+        Schema::dropIfExists('thread_emoji');
     }
 }
