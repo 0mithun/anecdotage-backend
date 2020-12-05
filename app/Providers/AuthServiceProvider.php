@@ -34,5 +34,13 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('view-own-friendship', function ($user, $model) {
             return $user->id === $model->id;
         });
+
+        Gate::define('view-profile', function($user, $model){
+            if($user->id === $model->id){
+                return true;
+            }else if($user->is_admin){
+                return true;
+            }
+        });
     }
 }

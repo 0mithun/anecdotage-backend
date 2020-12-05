@@ -33,11 +33,13 @@ class UserController extends Controller
         return UserResource::collection($designers);
     }
 
-    public function findByUsername($username)
+    public function findByUsername(User $user)
     {
         $user = $this->users->withCriteria([
             new EagerLoad(['threads','follows'])
-        ])->findWhereFirst('username', $username);
+        ])->findWhereFirst('username', $user->username);
+
+
         return (new UserResource($user))->additional([
             'data'  => [
                 'followers' => $user->followers,

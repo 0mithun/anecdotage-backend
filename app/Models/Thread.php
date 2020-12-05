@@ -35,25 +35,9 @@ class Thread extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id','channel_id','slug', 'title','body','summary','source','main_subject','image_path','image_path_pixel_color','image_description','image_saved','cno','age_restriction','anonymous','formatted_address','location','is_published','famous','slide_body','slide_image_pos','slide_color_bg','slide_color_0','slide_color_1','slide_color_2'
+        'user_id','channel_id','slug', 'title','body','summary','source','main_subject','image_path','image_path_pixel_color','image_description','image_saved','cno','age_restriction','anonymous','formatted_address','location','is_published','famous', 'visits','favorite_count','like_count','dislike_count', 'slide_body','slide_image_pos','slide_color_bg','slide_color_0','slide_color_1','slide_color_2'
 
     ];
-
-    /**
-     * The relationships to always eager-load.
-     *
-     * @var array
-     */
-    // protected $with = ['creator', 'channel', 'likes', 'tags'];
-    // protected $with = ['creator', 'channel', 'likes',];
-
-    /**
-     * The accessors to append to the model's array form.
-     *
-     * @var array
-     */
-    // protected $appends = ['isSubscribedTo','isReported','isFavorited','excerpt','threadImagePath','path'];
-    // protected $appends = ['excerpt',  'threadImagePath', 'imageColor', 'path', 'isLiked', 'isDesliked', 'splitCategory', 'topRated', 'tagNameList'];
 
     /**
      * The attributes that should be cast to native types.
@@ -344,7 +328,7 @@ class Thread extends Model
     // }
 
 
-    public function getTopRatedAttribute()
+    public function getPointsAttribute()
     {
         return ($this->like_count - $this->dislike_count);
     }

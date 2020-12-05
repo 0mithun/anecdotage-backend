@@ -68,6 +68,9 @@ class ThreadController extends Controller
     public function show(Thread $thread)
     {
         $thread->views()->create([]);
+        $thread->update(['visits' => $thread->visits  + 1]);
+
+
 
         $thread = $this->threads->withCriteria([
             new EagerLoad('tags')

@@ -37,6 +37,7 @@ trait Favoritable
         $attributes = ['user_id' => auth()->id()];
 
         if (! $this->favorites()->where($attributes)->exists()) {
+                $this->update(['favorite_count'=> $this->favorite_count + 1]);
             return $this->favorites()->create($attributes);
         }
     }
@@ -47,7 +48,7 @@ trait Favoritable
     public function unfavorite()
     {
         $attributes = ['user_id' => auth()->id()];
-
+        $this->update(['favorite_count'=> $this->favorite_count - 1]);
         $this->favorites()->where($attributes)->get()->each->delete();
     }
 
@@ -70,13 +71,13 @@ trait Favoritable
         return $this->isFavorited();
     }
 
-    /**
-     * Get the number of favorites for the reply.
-     *
-     * @return integer
-     */
-    public function getFavoritesCountAttribute()
-    {
-        return $this->favorites->count();
-    }
+    // /**
+    //  * Get the number of favorites for the reply.
+    //  *
+    //  * @return integer
+    //  */
+    // public function getFavoritesCountAttribute()
+    // {
+    //     return $this->favorites->count();
+    // }
 }

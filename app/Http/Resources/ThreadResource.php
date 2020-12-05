@@ -30,17 +30,22 @@ class ThreadResource extends JsonResource
             'age_restriction'           =>  $this->age_restriction,
             'anonymous'                 =>  $this->anonymous,
             'location'                  =>  $this->location,
-            'favorites_count'           =>  $this->favorites_count,
+            'favorites_count'           =>  $this->favorite_count,
+            'visits'                    =>  $this->visits,
             'is_favorited'              =>  $this->is_favorited,
             'is_published'              =>  $this->is_published,
             'is_voted'                  =>  $this->is_voted,
             'is_liked'                  =>  $this->is_liked,
             'is_disliked'               =>  $this->is_disliked,
-            'likes_count'               =>  $this->likes_count,
-            'dislikes_count'            =>  $this->dislikes_count,
-            'creator'                   =>  new UserResource($this->creator),
+            'likes_count'               =>  $this->like_count,
+            'dislikes_count'            =>  $this->dislike_count,
+            'points'                    =>  $this->points,
+            'creator'                     => $this->whenLoaded('creator', function(){
+                return $this->creator;
+            }),
+            // 'creator'                   =>  new UserResource($this->creator),
             'tags'                      =>  TagResource::collection($this->whenLoaded('tags')),
-            'emojis'                    =>  EmojiResource::collection($this->emojis)
+            'emojis'                    =>  EmojiResource::collection($this->whenLoaded('emojis'))
         ];
     }
 }

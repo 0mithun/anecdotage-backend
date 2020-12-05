@@ -33,11 +33,14 @@ trait Likeable
         // check if the current user has already liked the model
         if($this->isLikedByUser()){
             $this->unlike();
+            $this->update(['like_count'=>  $this->like_count - 1]);
         }else if($this->isDisLikedByUser()){
             $this->unlike();
             $this->likes()->create(['user_id' => auth()->id(),'vote_type'=>'UP']);
+            $this->update(['like_count'=> $this->like_count + 1, 'dislike_count'=>  $this->dislike_count -1]);
         }else{
             $this->likes()->create(['user_id' => auth()->id(),'vote_type'=>'UP']);
+            $this->update(['like_count'=> $this->like_count + 1]);
         }
 
     }
@@ -49,11 +52,14 @@ trait Likeable
         // check if the current user has already disliked the model
         if($this->isDisLikedByUser()){
             $this->unlike();
+            $this->update(['dislike_count'=>  $this->dislike_count - 1]);
         }else if($this->isLikedByUser()){
             $this->unlike();
             $this->likes()->create(['user_id' => auth()->id(),'vote_type'=>'DOWN']);
+            $this->update(['like_count'=> $this->like_count - 1, 'dislike_count'=>  $this->dislike_count + 1]);
         }else{
             $this->likes()->create(['user_id' => auth()->id(),'vote_type'=>'DOWN']);
+            $this->update(['dislike_count'=> $this->dislike_count + 1]);
         }
     }
 
@@ -92,13 +98,13 @@ trait Likeable
         return auth()->check() && $this->isDisLikedByUser();
     }
 
-    public function getLikesCountAttribute(){
-        return $this->likes()->where('vote_type','UP')->count();
-    }
+    // public function getLikesCountAttribute(){
+    //     return $this->likes()->where('vote_type','UP')->count();
+    // }
 
-    public function getDisLikesCountAttribute(){
-        return $this->likes()->where('vote_type','DOWN')->count();
-    }
+    // public function getDisLikesCountAttribute(){
+    //     return $this->likes()->where('vote_type','DOWN')->count();
+    // }
 
 
 

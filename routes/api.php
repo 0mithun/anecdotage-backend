@@ -6,8 +6,8 @@ use Illuminate\Support\Facades\Route;
 
 
 //users
-Route::get('users', 'User\UserController@index');
-Route::get('user/{username}', 'User\UserController@findByUsername');
+// Route::get('users', 'User\UserController@index');
+// Route::get('user/{user}', 'User\UserController@findByUsername');
 
 
 // Route group for authenticated users only
@@ -17,6 +17,18 @@ Route::group(['middleware' => ['auth:api']], function(){
     Route::put('settings/profile', 'User\SettingsController@updateProfile');
     Route::put('settings/password', 'User\SettingsController@updatePassword');
     Route::put('settings/avatar', 'User\SettingsController@updateAvatar');
+
+
+    //Profiles
+
+    Route::get('profile/{user}','User\ProfileController@user');
+    Route::get('profile/{user}/subscriptions','User\ProfileController@subscriptions');
+    Route::get('profile/{user}/favorites','User\ProfileController@favorites');
+    Route::get('profile/{user}/likes','User\ProfileController@likes');
+    Route::get('profile/{user}/threads','User\ProfileController@threads');
+
+    // Route::get('/profiles/{user}/comments', 'ProfilesController@myCommentsShow')->name('profile.likes');
+    // Route::get('/profiles/{user}/threads', 'ProfilesController@myThreadsShow')->name('profile.threads');
 
 
     //Threads

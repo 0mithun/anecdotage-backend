@@ -33,7 +33,18 @@ abstract class BaseRepository implements IBase, ICriteria
     {
         return $this->model->where($column, $value)->get();
     }
-    
+
+
+    public function findWhereIn($column, array $data)
+    {
+        return $this->model->whereIn($column, $data)->get();
+    }
+
+    public function findWhereInPaginate($column, array $data, $perPage = 10)
+    {
+        return $this->model->whereIn($column, $data)->paginate($perPage);
+    }
+
 
     public function findWhereFirst($column, $value)
     {
@@ -89,8 +100,8 @@ abstract class BaseRepository implements IBase, ICriteria
 
     }
 
-    
 
 
-    
+
+
 }

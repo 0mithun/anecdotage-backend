@@ -5,9 +5,10 @@ namespace App\Models;
 use Carbon\Carbon;
 use App\Models\Thread;
 use App\Models\Traits\Followable;
-use App\Models\Traits\FriendShipTrait;
+use App\Models\ThreadSubscription;
 use App\Notifications\VerifyEmail;
 use App\Notifications\ResetPassword;
+use App\Models\Traits\FriendShipTrait;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -127,6 +128,10 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     public function threads() {
         return $this->hasMany( Thread::class )->latest();
     }
+
+
+
+
 
       /**
      * Determine if the user is an administrator.
