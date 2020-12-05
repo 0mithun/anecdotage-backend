@@ -8,7 +8,7 @@ use App\Http\Resources\UserResource;
 
 class MeController extends Controller
 {
-    
+
 
     public function getMe()
     {

@@ -11,9 +11,9 @@ use App\Repositories\Eloquent\Criteria\EagerLoad;
 
 class UserController extends Controller
 {
-    
+
     protected $users;
-    
+
     public function __construct(IUser $users)
     {
         $this->users = $users;
@@ -22,9 +22,8 @@ class UserController extends Controller
     public function index()
     {
         $users = $this->users->withCriteria([
-            new EagerLoad(['designs'])
         ])->all();
-        
+
         return UserResource::collection($users);
     }
 
@@ -36,7 +35,14 @@ class UserController extends Controller
 
     public function findByUsername($username)
     {
-        $user = $this->users->findWhereFirst('username', $username);
-        return new UserResource($user);
+        $user = $this->users->withCriteria([
+            new EagerLoad(['threads','follows'])
+        ])->findWhereFirst('username', $username);
+        return (new UserResource($user))->additional([
+            'data'  => [
+                'followers' => $user->followers,
+                'is_follow'         =>  $user->is_follow,
+            ]
+        ]);
     }
 }

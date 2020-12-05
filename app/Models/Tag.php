@@ -3,19 +3,30 @@
 namespace App\Models;
 
 use App\Models\Thread;
+use App\Models\Traits\Followable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Tag extends Model
 {
 
+    use Followable;
+
     protected $fillable = [
         'name',
+        'slug',
         'photo',
         'description',
     ];
-    protected $appends = ['profileAvatarPath', 'followType'];
 
-    public $timestamps = false;
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
+    // protected $appends = ['profileAvatarPath', 'followType'];
+
+    // public $timestamps = false;
 
     protected static function boot()
     {
@@ -24,6 +35,11 @@ class Tag extends Model
         // static::created(function ($tag) {
         //     TagImageProcessing::dispatch($tag);
         // });
+
+        static::deleting(function($tag){
+            $tag->threads()->sync([]);
+            Storage::disk('public')->delete($tag->photo);
+        });
     }
 
     public function threads()

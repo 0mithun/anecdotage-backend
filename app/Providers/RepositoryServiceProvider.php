@@ -6,12 +6,14 @@ use Illuminate\Support\ServiceProvider;
 use App\Repositories\Contracts\{
     IEmoji,
     IReply,
+    ITag,
     IUser,
     IThread
 };
 use App\Repositories\Eloquent\{
     EmojiRepository,
     ReplyRepository,
+    TagRepository,
     UserRepository,
     ThreadRepository
 };
@@ -39,5 +41,6 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IThread::class, ThreadRepository::class);
         $this->app->bind(IReply::class, ReplyRepository::class);
         $this->app->bind(IEmoji::class, EmojiRepository::class);
+        $this->app->bind(ITag::class, TagRepository::class);
     }
 }

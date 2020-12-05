@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use App\Models\Thread;
+use App\Models\Traits\Followable;
+use App\Models\Traits\FriendShipTrait;
 use App\Notifications\VerifyEmail;
 use App\Notifications\ResetPassword;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -13,7 +16,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
-    use Notifiable, SpatialTrait;
+    use Notifiable, SpatialTrait, Followable, FriendShipTrait;
+
+
 
     /**
      * The attributes that are mass assignable.
@@ -46,11 +51,10 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         'password', 'remember_token',
     ];
 
-    // protected $appends=[
-    //     'photo_url'
-    // ];
+    public function getRouteKeyName(){
+        return 'username';
+    }
 
-    protected $appends = ['followType'];
 
     public function getPhotoUrlAttribute()
     {
@@ -119,9 +123,10 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    // public function threads() {
-    //     return $this->hasMany( Thread::class )->latest();
-    // }
+
+    public function threads() {
+        return $this->hasMany( Thread::class )->latest();
+    }
 
       /**
      * Determine if the user is an administrator.
@@ -178,9 +183,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     //     return $this->isBanned();
     // }
 
-    // public function follows() {
-    //     return $this->morphMany( 'App\Follows', 'followable' );
-    // }
+
 
     public function getFollowTypeAttribute( $type ) {
         return 'user';
@@ -211,4 +214,6 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     {
         return [];
     }
+
+
 }

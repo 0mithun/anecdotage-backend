@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTagsTable extends Migration
+class CreateFollowsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,14 @@ class CreateTagsTable extends Migration
      */
     public function up()
     {
-        Schema::create('tags', function (Blueprint $table) {
+        Schema::create('follows', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
-            $table->string('slug')->nullable()->unique();
-            $table->string('photo')->nullable();
-            $table->text('description')->nullable();
+
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('followable_id');
+            $table->string('followable_type');
+            $table->unique(['user_id','followable_id','followable_type']);
+
             $table->timestamps();
         });
     }
@@ -30,6 +32,6 @@ class CreateTagsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tags');
+        Schema::dropIfExists('follows');
     }
 }

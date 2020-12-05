@@ -24,6 +24,43 @@ Route::group(['middleware' => ['auth:api']], function(){
 
     Route::resource('emojis', 'Emoji\EmojiController')->only(['index','show']);
     Route::resource('threads.emojis', 'Thread\EmojiController')->only(['store','destroy']);
+    Route::get('threads/{thread}/emojis/user','Thread\EmojiController@userVoteType');
+
+
+    //Favorites
+    Route::post('threads/{thread}/favorites', 'Thread\FavoriteController@store');
+    Route::delete('threads/{thread}/favorites', 'Thread\FavoriteController@destroy');
+
+     //Likes
+     Route::post('threads/{thread}/likes', 'Thread\LikeController@store');
+     Route::delete('threads/{thread}/likes', 'Thread\LikeController@destroy');
+
+
+     //Follows user
+     Route::post('users/{user}/follow', 'User\FollowController@store');
+     Route::delete('users/{user}/follow', 'User\FollowController@destroy');
+
+    Route::resource('tags', 'Tag\TagController')->only(['show','update','destroy']);
+    //Follows tag
+    Route::post('tags/{tag}/follow', 'Tag\FollowController@store');
+    Route::delete('tags/{tag}/follow', 'Tag\FollowController@destroy');
+
+
+    //Friends
+    Route::post('/user/{user}/friends/sent','Friend\FriendShipController@sentFriendRequestToUser');
+    Route::post('/user/{user}/friends/accept','Friend\FriendShipController@acceptFriendRequest');
+    Route::post('/user/{user}/friends/denied','Friend\FriendShipController@deniedFriendRequest');
+    Route::post('/user/{user}/friends/unfriend','Friend\FriendShipController@unfriendUser');
+    Route::post('/user/{user}/friends/block','Friend\FriendShipController@blockFriend');
+    Route::post('/user/{user}/friends/unblock','Friend\FriendShipController@unblockUesr');
+    Route::post('/user/{user}/friends/is-friend','Friend\FriendShipController@checkIsUserFriendWith');
+    Route::post('/user/{user}/friends/check-request-from','Friend\FriendShipController@checkHasSentFriendRequestFrom');
+    Route::post('/user/{user}/friends/check-request-to','Friend\FriendShipController@checkHasSentFriendRequestTo');
+    Route::post('/user/{user}/friends/check-block','Friend\FriendShipController@checkIsBlock');
+
+    Route::post('/user/{user}/friends/friend-list','Friend\FriendShipController@getAllFriendLists');
+    Route::post('/user/{user}/friends/block-list','Friend\FriendShipController@getAllBlokcFriends');
+    Route::post('/user/{user}/friends/friend-request-list','Friend\FriendShipController@getAllPendingFriendRequests');
 
 
 });

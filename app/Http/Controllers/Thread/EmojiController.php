@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Thread;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\EmojiResource;
 use App\Models\Emoji;
 use App\Models\Thread;
 use App\Repositories\Contracts\IEmoji;
@@ -18,15 +19,6 @@ class EmojiController extends Controller
     public function __construct(IEmoji $emojis)
     {
         $this->emojis = $emojis;
-    }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
     }
 
     /**
@@ -53,29 +45,6 @@ class EmojiController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Emoji  $emoji
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Emoji $emoji)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Emoji  $emoji
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Emoji $emoji)
-    {
-        //
-    }
-
-    /**
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Emoji  $emoji
@@ -85,5 +54,19 @@ class EmojiController extends Controller
     {
         $this->emojis->removeVote($thread);
         return \response(['success'=> true], Response::HTTP_NO_CONTENT);
+    }
+
+
+    /**
+     * Get user vote type
+     * @param \App\Models\Thread $thread
+     * @return \Illuminate\Http\Resources
+     */
+
+    public function userVoteType(Thread $thread){
+        if($emoji = $thread->emojis()->where('user_id', auth()->id())->first()){
+            return response(new EmojiResource($emoji));
+        }
+        return response(null, Response::HTTP_NOT_FOUND);
     }
 }

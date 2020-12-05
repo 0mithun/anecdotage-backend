@@ -9,11 +9,15 @@ use App\Models\Emoji;
 use App\Models\Reply;
 use App\Models\Channel;
 use App\Models\ThreadView;
+use App\Models\Traits\Likeable;
 use App\Models\ThreadSubscription;
+use App\Models\Traits\Favoritable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Thread extends Model
 {
+    use Favoritable, Likeable;
       /**
      * Get the route key name.
      *
@@ -72,6 +76,9 @@ class Thread extends Model
         static::deleting(function ($thread) {
             $thread->replies->each->delete();
             $thread->subscriptions->each->delete();
+
+
+            Storage::disk('public')->delete($thread->image_path);
         });
 
         static::created(function ($thread) {
@@ -349,5 +356,9 @@ class Thread extends Model
 
     public function getViewsCountAttribute(){
         return $this->views()->count();
+    }
+
+    public function getIsVotedAttribute(){
+        return auth()->check() && (bool) $this->emojis()->where('user_id', auth()->id())->count();
     }
 }

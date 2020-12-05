@@ -4,12 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Like extends Model
+class Follow extends Model
 {
-
     protected $guarded =[];
 
-    public function likeable()
+    public function followable()
     {
         return $this->morphTo();
     }

@@ -17,10 +17,12 @@ class TagResource extends JsonResource
         return [
             'id'                =>  $this->id,
             'name'              =>  $this->name,
+            'slug'              =>  $this->slug,
             'photo'             =>  $this->photo,
             'description'       =>  $this->description,
             'profileAvatarPath' =>  $this->profileAvatarPath,
             'followType'        =>  $this->followType,
+            'threads'           =>  ThreadResource::collection($this->whenLoaded('threads'))
         ];
     }
 }

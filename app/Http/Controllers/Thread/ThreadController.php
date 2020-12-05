@@ -15,7 +15,7 @@ use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\Thread\ThreadCreateRequest;
 use App\Http\Requests\Thread\ThreadUpdateRequest;
-
+use App\Repositories\Eloquent\Criteria\EagerLoad;
 
 class ThreadController extends Controller
 {
@@ -69,6 +69,9 @@ class ThreadController extends Controller
     {
         $thread->views()->create([]);
 
+        $thread = $this->threads->withCriteria([
+            new EagerLoad('tags')
+        ])->find($thread->id);
         return new ThreadResource($thread);
     }
 
@@ -134,33 +137,33 @@ class ThreadController extends Controller
             if($type == 'string'){
                 $findChannel = Channel::where('name', $channel)->first();
                 if($findChannel){
-                    if (!in_array(\strtolower($findChannel->name), $tags)) {
-                        $tags[] = \strtolower($findChannel->name);
+                    if (!in_array(str_slug($findChannel->name), $tags)) {
+                        $tags[] = str_slug($findChannel->name);
                     }
                 }
             }else{
-                if (!in_array(\strtolower($channel->name), $tags)) {
-                    $tags[] = \strtolower($channel->name);
+                if (!in_array(str_slug($channel->name), $tags)) {
+                    $tags[] = str_slug($channel->name);
                 }
             }
         }
 
         if ($request->has('main_subject') && $request->main_subject != null) {
-            if (!in_array(\strtolower($request->main_subject), $tags)) {
-                $tags[] = \strtolower($request->main_subject);
+            if (!in_array(str_slug($request->main_subject), $tags)) {
+                $tags[] = str_slug($request->main_subject);
             }
         }
 
 
         $tag_ids = [];
         foreach ($tags as $tag) {
-            $searchTag = Tag::where('name', strtolower($tag))->first();
+            $searchTag = Tag::where('slug', str_slug($tag))->first();
 
             if ($searchTag) {
                 $tag_ids[] = $searchTag->id;
             } else {
                 if ($tag != 'null') {
-                    $newTag = Tag::create(['name' => $tag]);
+                    $newTag = Tag::create(['name' => $tag,'slug'=>str_slug($tag)]);
                     $tag_ids[] = $newTag->id;
                 }
             }
