@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use App\Http\Resources\TagResource;
 use App\Http\Controllers\Controller;
+use App\Models\Traits\Encoded;
 use App\Models\Traits\UploadAble;
 use App\Repositories\Contracts\ITag;
 use App\Repositories\Eloquent\Criteria\EagerLoad;
@@ -14,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class TagController extends Controller
 {
-    use UploadAble;
+    use UploadAble, Encoded;
 
     protected $tags;
 
@@ -95,5 +96,18 @@ class TagController extends Controller
 
             $thread->save();
         }
+    }
+
+
+    public function search(){
+        if(request()->has('q')){
+            $query = request()->q;
+            $tags = Tag::where('name','LIKE',"$query%")->orderBy('name', 'ASC')->limit(5)->get()->pluck('name');
+        }else{
+            $tags = Tag::orderBy('name', 'ASC')->limit(5)->get()->pluck('name');
+        }
+
+        $tags = $this->convert_from_latin1_to_utf8_recursively($tags->all());
+        return $tags;
     }
 }

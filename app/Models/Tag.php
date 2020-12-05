@@ -52,10 +52,10 @@ class Tag extends Model
     //     return $this->morphMany('App\Follows', 'followable');
     // }
 
-    public function getNameAttribute($name)
-    {
-        return ucfirst($name);
-    }
+    // public function getNameAttribute($name)
+    // {
+    //     return ucfirst($name);
+    // }
 
     public function setNameAttribute($value){
         $this->attributes['name'] = strtolower($value);

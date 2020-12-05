@@ -16,12 +16,16 @@ Route::group(['middleware' => ['auth:api']], function(){
     Route::post('logout', 'Auth\LoginController@logout');
     Route::put('settings/profile', 'User\SettingsController@updateProfile');
     Route::put('settings/password', 'User\SettingsController@updatePassword');
+    Route::put('settings/avatar', 'User\SettingsController@updateAvatar');
 
+
+    //Threads
     Route::resource('threads', 'Thread\ThreadController')->except(['create','edit']);
-
     Route::resource('threads.replies', 'Reply\ReplyController')->except(['create','edit']);
     Route::get('threads/{thread}/replies/{reply}/childs','Reply\ReplyController@childs')->name('replies.childs');
 
+
+    //Emojis
     Route::resource('emojis', 'Emoji\EmojiController')->only(['index','show']);
     Route::resource('threads.emojis', 'Thread\EmojiController')->only(['store','destroy']);
     Route::get('threads/{thread}/emojis/user','Thread\EmojiController@userVoteType');
@@ -40,13 +44,22 @@ Route::group(['middleware' => ['auth:api']], function(){
      Route::post('users/{user}/follow', 'User\FollowController@store');
      Route::delete('users/{user}/follow', 'User\FollowController@destroy');
 
+
+    //Tags
     Route::resource('tags', 'Tag\TagController')->only(['show','update','destroy']);
+    Route::post('tags/search' ,'Tag\TagController@search');
+
+
     //Follows tag
     Route::post('tags/{tag}/follow', 'Tag\FollowController@store');
     Route::delete('tags/{tag}/follow', 'Tag\FollowController@destroy');
 
 
-    //Friends
+    //Channel
+    Route::post('/channels/search','Channel\ChannelController@search');
+
+
+    //Friendship
     Route::post('/user/{user}/friends/sent','Friend\FriendShipController@sentFriendRequestToUser');
     Route::post('/user/{user}/friends/accept','Friend\FriendShipController@acceptFriendRequest');
     Route::post('/user/{user}/friends/denied','Friend\FriendShipController@deniedFriendRequest');
@@ -61,6 +74,8 @@ Route::group(['middleware' => ['auth:api']], function(){
     Route::post('/user/{user}/friends/friend-list','Friend\FriendShipController@getAllFriendLists');
     Route::post('/user/{user}/friends/block-list','Friend\FriendShipController@getAllBlokcFriends');
     Route::post('/user/{user}/friends/friend-request-list','Friend\FriendShipController@getAllPendingFriendRequests');
+
+
 
 
 });
