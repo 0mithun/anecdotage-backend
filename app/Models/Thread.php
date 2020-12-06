@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-
 use App\Models\Tag;
 use App\Models\User;
 use App\Models\Emoji;
 use App\Models\Reply;
 use App\Models\Channel;
 use App\Models\ThreadView;
+use App\Filters\ThreadFilter;
 use App\Models\Traits\Likeable;
 use App\Models\ThreadSubscription;
 use App\Models\Traits\Favoritable;
@@ -74,7 +74,7 @@ class Thread extends Model
         });
 
 
-        // static::addGlobalScope(new IsPublished);
+        static::addGlobalScope(new ThreadFilter);
 
     }
 
