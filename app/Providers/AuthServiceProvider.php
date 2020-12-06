@@ -40,11 +40,81 @@ class AuthServiceProvider extends ServiceProvider
                 return true;
             }else if($user->is_admin){
                 return true;
+            }else if($user->hasBlocked($model) || $user->isBlockedBy($model)){
+                return false;
+            }else if($model->userprivacy->see_my_profiles==3){
+                return true;
+            }else if($model->userprivacy->see_my_profiles==2 && $user->isFriendWith($model)){
+                return true;
             }
         });
 
+
         Gate::define('edit-profile', function($user, $model){
             return $user->id === $model->id;
+        });
+
+
+        Gate::define('own-profile', function($user, $model){
+            return $user->id === $model->id;
+        });
+
+
+
+        Gate::define('view-threads', function($user, $model){
+            if($user->id === $model->id){
+                return true;
+            }else if($user->is_admin){
+                return true;
+            }else if($user->hasBlocked($model) || $user->isBlockedBy($model)){
+                return false;
+            }else if($model->userprivacy->see_my_threads==3){
+                return true;
+            }else if($model->userprivacy->see_my_threads==2 && $user->isFriendWith($model)){
+                return true;
+            }
+        });
+
+        Gate::define('view-favorites', function($user, $model){
+            if($user->id === $model->id){
+                return true;
+            }else if($user->is_admin){
+                return true;
+            }else if($user->hasBlocked($model) || $user->isBlockedBy($model)){
+                return false;
+            }else if($model->userprivacy->see_my_favorites==3){
+                return true;
+            }else if($model->userprivacy->see_my_favorites==2 && $user->isFriendWith($model)){
+                return true;
+            }
+        });
+
+        Gate::define('view-friends', function($user, $model){
+            if($user->id === $model->id){
+                return true;
+            }else if($user->is_admin){
+                return true;
+            }else if($user->hasBlocked($model) || $user->isBlockedBy($model)){
+                return false;
+            }else if($model->userprivacy->see_my_friends==3){
+                return true;
+            }else if($model->userprivacy->see_my_friends==2 && $user->isFriendWith($model)){
+                return true;
+            }
+        });
+
+        Gate::define('send-message', function($user, $model){
+            if($user->id === $model->id){
+                return true;
+            }else if($user->is_admin){
+                return true;
+            }else if($user->hasBlocked($model) || $user->isBlockedBy($model)){
+                return false;
+            }else if($model->userprivacy->send_me_message==2){
+                return true;
+            }else if($model->userprivacy->send_me_message==1 && $user->isFriendWith($model)){
+                return true;
+            }
         });
     }
 }

@@ -55,6 +55,7 @@ class ProfileController extends Controller
      * @return mixed
      */
     public function subscriptions(User $user){
+        Gate::authorize('own-profile', $user);
         $subscriptionsId = DB::table( 'thread_subscriptions' )
             ->where( 'user_id', $user->id )
             ->get()
@@ -77,6 +78,8 @@ class ProfileController extends Controller
      * @return mixed
      */
     public function favorites(User $user){
+        Gate::authorize('view-favorites', $user->load('userprivacy'));
+
         $favoritesId = DB::table( 'favorites' )
         ->where( 'user_id', $user->id )
         ->where('favorited_type', 'App\Models\Thread')
@@ -101,6 +104,7 @@ class ProfileController extends Controller
      * @return mixed
      */
     public function likes(User $user){
+        Gate::authorize('own-profile', $user);
         $likesId = DB::table( 'likes' )
         ->where( 'user_id', $user->id )
         ->where('likeable_type', 'App\Models\Thread')
@@ -125,6 +129,7 @@ class ProfileController extends Controller
      * @return mixed
      */
     public function threads(User $user){
+        Gate::authorize('view-threads', $user->load('userprivacy'));
         $threadsId = $user->threads()->pluck('id')->toArray();
 
         $threads = $this->threads->withCriteria([

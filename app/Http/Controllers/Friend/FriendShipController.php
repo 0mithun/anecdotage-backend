@@ -33,6 +33,7 @@ class FriendShipController extends Controller
         }
 
         $authenticatedUser->befriend($user);
+
         return \response(['success'=> true, 'message'=> 'Friend Request Sent Successfully'], Response::HTTP_CREATED);
     }
 
@@ -56,8 +57,8 @@ class FriendShipController extends Controller
         else if(!$authenticatedUser->hasFriendRequestFrom($user)){
             return response(['errors' => ['message'=> 'User dose not sent friend request to you']],  Response::HTTP_NOT_FOUND);
         }
-
         $authenticatedUser->acceptFriendRequest($user);
+
         return \response(['success'=> true, 'message'=> 'Friend Request Accept Successfully'], Response::HTTP_CREATED);
     }
 
@@ -81,8 +82,8 @@ class FriendShipController extends Controller
         else if(!$authenticatedUser->hasFriendRequestFrom($user)){
             return response(['errors' => ['message'=> 'User dose not sent friend request to you']],  Response::HTTP_NOT_FOUND);
         }
-
         $authenticatedUser->denyFriendRequest($user);
+
         return \response(['success'=> true, 'message'=> 'Friend Request Denied Successfully'], Response::HTTP_ACCEPTED);
     }
 
@@ -101,11 +102,9 @@ class FriendShipController extends Controller
         else if(!$authenticatedUser->isFriendWith($user)){
             return response(['errors' => ['message'=> 'You are not friend with user']],  Response::HTTP_NOT_ACCEPTABLE);
         }
-
         $authenticatedUser->unfriend($user);
 
         return \response(['success'=> true, 'message'=> 'Friend Unfriend Successfully'], Response::HTTP_NO_CONTENT);
-
     }
 
 
@@ -123,9 +122,6 @@ class FriendShipController extends Controller
         }else if($authenticatedUser->isBlockedBy($user)){
             return response(['errors' => ['message'=> 'User already blocked you']],  Response::HTTP_UNAUTHORIZED);
         }
-
-
-
         $authenticatedUser->blockFriend($user);
 
         return \response(['success'=> true, 'message'=> 'Friend Block Successfully'], Response::HTTP_ACCEPTED);
@@ -147,7 +143,6 @@ class FriendShipController extends Controller
         }else if($authenticatedUser->isBlockedBy($user)){
             return response(['errors' => ['message'=> 'User already blocked you']],  Response::HTTP_UNAUTHORIZED);
         }
-
         $authenticatedUser->unblockFriend($user);
 
         return \response(['success'=> true, 'message'=> 'Friend Unblock Successfully'], Response::HTTP_ACCEPTED);
@@ -217,8 +212,11 @@ class FriendShipController extends Controller
      */
 
     public function getAllFriendLists(User $user){
-        Gate::authorize('view-own-friendship', $user);
+        // Gate::authorize('view-own-friendship', $user);
+        Gate::authorize('view-friends', $user->load('userprivacy'));
+
         $friends =  $user->getFriends();
+
         return UserResource::collection($friends);
     }
 
@@ -238,7 +236,6 @@ class FriendShipController extends Controller
                $blocckUserId[] = $friend->recipient_id;
            }
        }
-
        $blockFriends = User::whereIn('id', $blocckUserId)->get();
 
         return UserResource::collection($blockFriends);
