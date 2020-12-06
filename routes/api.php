@@ -18,6 +18,9 @@ Route::group(['middleware' => ['auth:api']], function(){
     Route::put('settings/password', 'User\SettingsController@updatePassword');
     Route::put('settings/avatar', 'User\SettingsController@updateAvatar');
 
+    Route::put('user/{user}/privacy','User\PrivacyController@update');
+    Route::put('user/{user}/notification','User\NotificationController@update');
+
 
     //Profiles
 

@@ -61,6 +61,10 @@ class Thread extends Model
             $thread->replies->each->delete();
             $thread->subscriptions->each->delete();
 
+            $thread->tags->each->delete();
+            $thread->emojis->each->delete();
+            $thread->views->each->delete();
+
 
             Storage::disk('public')->delete($thread->image_path);
         });
@@ -267,19 +271,23 @@ class Thread extends Model
         return html_entity_decode($source);
     }
 
+
     /**
+     * A thread can have many tags
      *
-     * Set the word_count attribute
-     * @param string $value
+     * @return mixed
      */
-
-
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'thread_tag', 'thread_id', 'tag_id');
     }
 
 
+    /**
+     * A thread can have many emojis
+     *
+     * @return mixed
+     */
     public function emojis()
     {
         return $this->belongsToMany(Emoji::class, 'thread_emoji', 'thread_id', 'emoji_id');

@@ -42,5 +42,9 @@ class AuthServiceProvider extends ServiceProvider
                 return true;
             }
         });
+
+        Gate::define('edit-profile', function($user, $model){
+            return $user->id === $model->id;
+        });
     }
 }

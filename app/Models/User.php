@@ -75,34 +75,39 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 
     protected static function boot() {
         parent::boot();
-        // static::created( function ( $user ) {
-        //     $user->usersetting()->create( [
-        //         'mention_notify_anecdotage'                     => 1,
-        //         'mention_notify_email'                          => 0,
-        //         'mention_notify_facebook'                       => 0,
-        //         'new_thread_posted_notify_anecdotage'           => 1,
-        //         'new_thread_posted_notify_email'                => 0,
-        //         'new_thread_posted_notify_facebook'             => 0,
-        //         'receive_daily_random_thread_notify_anecdotage' => 1,
-        //         'receive_daily_random_thread_notify_email'      => 0,
-        //         'receive_daily_random_thread_notify_email'      => 0,
-        //     ] );
+        static::created( function ( $user ) {
+            $user->usernotification()->create( [
+                'mention_notify_anecdotage'                     => 1,
+                'mention_notify_email'                          => 0,
+                'mention_notify_facebook'                       => 0,
+                'new_thread_posted_notify_anecdotage'           => 1,
+                'new_thread_posted_notify_email'                => 0,
+                'new_thread_posted_notify_facebook'             => 0,
+                'receive_daily_random_thread_notify_anecdotage' => 1,
+                'receive_daily_random_thread_notify_email'      => 0,
+                'receive_daily_random_thread_notify_email'      => 0,
+            ] );
 
-        //     $user->userprivacy()->create( [
-        //         'see_my_threads'                  => 3,
-        //         'see_my_favorites'                => 3,
-        //         'see_my_friends'                  => 3,
+            $user->userprivacy()->create( [
+                'see_my_threads'                  => 3,
+                'see_my_favorites'                => 3,
+                'see_my_friends'                  => 3,
 
-        //         'send_me_message'                 => 2,
+                'send_me_message'                 => 2,
 
-        //         'thread_create_share_facebook'    => 0,
-        //         'thread_create_share_twitter'     => 0,
+                'thread_create_share_facebook'    => 0,
+                'thread_create_share_twitter'     => 0,
 
-        //         'anyone_share_my_thread_facebook' => 1,
-        //         'anyone_share_my_thread_twitter'  => 1,
-        //     ] );
+                'anyone_share_my_thread_facebook' => 1,
+                'anyone_share_my_thread_twitter'  => 1,
+            ] );
 
-        // } );
+        } );
+
+        static::deleting(function($user){
+            $user->usernotification->delete();
+            $user->userprivacy->delete();
+        });
     }
 
 
@@ -147,13 +152,16 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     }
 
 
-    // public function usersetting() {
-    //     return $this->hasOne( Usersetting::class );
-    // }
+    public function userprivacy() {
+        return $this->hasOne( UserPrivacy::class );
+    }
 
-    // public function userprivacy() {
-    //     return $this->hasOne( Userprivacy::class );
-    // }
+
+    public function usernotification(){
+        return $this->hasOne(UserNotification::class);
+    }
+
+
 
     // public function chat() {
     //     return $this->hasMany( Chat::class, 'from' );

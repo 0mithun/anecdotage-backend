@@ -33,6 +33,12 @@ class UserResource extends JsonResource
                 'is_admin'          => $this->is_admin,
             ]),
             'follow_type'       =>  $this->follow_type,
+            'privacy'           => $this->whenLoaded('userprivacy', function(){
+                return new UserPrivacyResource($this->userprivacy);
+            }),
+            'notification'           => $this->whenLoaded('usernotification', function(){
+                return new UserNotificationResource($this->usernotification);
+            }),
             'threads'           =>  ThreadResource::collection($this->whenLoaded('threads')),
             // 'followers'         =>  UserResource::collection($this->whenLoaded('follows', $this->followers))
         ];
