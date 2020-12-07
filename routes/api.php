@@ -31,7 +31,6 @@ Route::group(['middleware' => ['auth:api']], function(){
     Route::get('profile/{user}/threads','User\ProfileController@threads');
 
     // Route::get('/profiles/{user}/comments', 'ProfilesController@myCommentsShow')->name('profile.likes');
-    // Route::get('/profiles/{user}/threads', 'ProfilesController@myThreadsShow')->name('profile.threads');
 
 
     //Threads
@@ -95,6 +94,14 @@ Route::group(['middleware' => ['auth:api']], function(){
 
 
 
+    /**
+     * Admin Midleware group
+     */
+
+    //User ban
+    Route::group(['prefix' => 'admin', 'middleware'=>['admin'],'namespace'=>'Admin'], function () {
+        Route::post('user/{user}/ban','BanController@store');
+    });
 
 });
 

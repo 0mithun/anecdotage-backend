@@ -29,8 +29,11 @@ class UserResource extends JsonResource
             'formatted_address' => $this->formatted_address,
             'about'             => $this->about,
             'location'          =>  $this->location,
-            $this->mergeWhen(auth()->check() && auth()->id() == $this->id, [
+            $this->mergeWhen(auth()->check() && auth()->user()->is_admin, [
                 'is_admin'          => $this->is_admin,
+            ]),
+            $this->mergeWhen(auth()->check() && auth()->user()->is_banned, [
+                'is_banned'     => $this->is_banned,
             ]),
             'follow_type'       =>  $this->follow_type,
             'privacy'           => $this->whenLoaded('userprivacy', function(){

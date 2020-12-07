@@ -57,6 +57,8 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     }
 
 
+    protected $with = ['userban'];
+
     public function getPhotoUrlAttribute()
     {
         return $this->avatar_path != null ? $this->avatar_path :  'https://www.gravatar.com/avatar/'.md5(strtolower($this->email)).'.jpg?s=200&d=mm';
@@ -70,8 +72,9 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'available_to_hire' => 'boolean'
+        'available_to_hire' => 'boolean',
     ];
+
 
     protected static function boot() {
         parent::boot();
@@ -107,6 +110,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         static::deleting(function($user){
             $user->usernotification->delete();
             $user->userprivacy->delete();
+            $user->userban->delete();
         });
     }
 
@@ -167,34 +171,30 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     //     return $this->hasMany( Chat::class, 'from' );
     // }
 
-    // public function userban() {
-    //     return $this->hasOne( Userban::class );
-    // }
+    public function userban() {
+        return $this->hasOne(Userban::class);
+    }
 
-    // public function isBanned() {
-    //     $userBan = $this->userban;
-    //     if ( $userBan ) {
-    //         if ( $userBan->ban_type == 1 ) {
-    //             return true;
-    //         }
+    public function isBanned() {
+        if ( $userBan = $this->userban ) {
+            if ( $userBan->ban_type == 1 ) {
+                return true;
+            }
 
-    //         $ban_expire_on = $userBan->ban_expire_on;
-    //         $now = Carbon::now();
-    //         if ( $ban_expire_on->lte( $now ) ) {
-    //             // $this->userban->delete();
-    //             return false;
-    //         } else {
-    //             return true;
-    //         }
+            if ( $userBan->ban_expire_on->lte( Carbon::now() ) ) {
+                $this->userban->delete();
+                return false;
+            } else {
+                return true;
+            }
+        }
 
-    //     }
+        return false;
+    }
 
-    //     return false;
-    // }
-
-    // public function getIsBannedAttribute() {
-    //     return $this->isBanned();
-    // }
+    public function getIsBannedAttribute() {
+        return $this->isBanned();
+    }
 
 
 
