@@ -100,7 +100,10 @@ Route::group(['middleware' => ['auth:api']], function(){
 
     //User ban
     Route::group(['prefix' => 'admin', 'middleware'=>['admin'],'namespace'=>'Admin'], function () {
-        Route::post('user/{user}/ban','BanController@store');
+        Route::post('banned/{user}','BanController@store');
+        Route::get('banned','BanController@index');
+        Route::put('banned/{user}','BanController@update');
+        Route::delete('banned/{user}','BanController@destroy');
     });
 
 });

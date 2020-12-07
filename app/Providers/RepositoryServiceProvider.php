@@ -8,14 +8,16 @@ use App\Repositories\Contracts\{
     IReply,
     ITag,
     IUser,
-    IThread
+    IThread,
+    IUserBan
 };
 use App\Repositories\Eloquent\{
     EmojiRepository,
     ReplyRepository,
     TagRepository,
     UserRepository,
-    ThreadRepository
+    ThreadRepository,
+    UserBanRepository
 };
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -42,5 +44,6 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IReply::class, ReplyRepository::class);
         $this->app->bind(IEmoji::class, EmojiRepository::class);
         $this->app->bind(ITag::class, TagRepository::class);
+        $this->app->bind(IUserBan::class, UserBanRepository::class);
     }
 }

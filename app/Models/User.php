@@ -148,7 +148,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      * @return bool
      */
     public function isAdmin() {
-        return auth()->id() == 1;
+        return auth()->check() &&  auth()->id() == 1;
     }
 
     public function getIsAdminAttribute() {
