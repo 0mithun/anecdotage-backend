@@ -33,7 +33,10 @@ class ThreadController extends Controller
      */
     public function index()
     {
-        $threads = Thread::paginate();
+        // $threads = Thread::paginate();
+        $threads = $this->threads->withCriteria([
+            new EagerLoad(['creator','emojis']),
+        ])->paginate();
         return  ThreadResource::collection($threads);
     }
 

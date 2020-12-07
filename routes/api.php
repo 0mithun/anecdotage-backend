@@ -38,6 +38,9 @@ Route::group(['middleware' => ['auth:api']], function(){
     Route::resource('threads', 'Thread\ThreadController')->except(['create','edit']);
     Route::resource('threads.replies', 'Reply\ReplyController')->except(['create','edit']);
     Route::get('threads/{thread}/replies/{reply}/childs','Reply\ReplyController@childs')->name('replies.childs');
+    //Thread report
+    Route::post('threads/{thread}/report','Thread\ReportController@report');
+
 
 
     //Emojis

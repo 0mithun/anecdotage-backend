@@ -41,7 +41,7 @@ class NotificationController extends Controller
     public function update(Request $request, User $user)
     {
         Gate::authorize('edit-profile', $user);
-        $user->update($request->only([
+        $user->usernotification()->update($request->only([
             'mention_notify_anecdotage',
             'mention_notify_email',
             'mention_notify_facebook',

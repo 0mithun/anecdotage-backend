@@ -12,12 +12,13 @@ use App\Filters\ThreadFilter;
 use App\Models\Traits\Likeable;
 use App\Models\ThreadSubscription;
 use App\Models\Traits\Favoritable;
+use App\Models\Traits\Reportable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 class Thread extends Model
 {
-    use Favoritable, Likeable;
+    use Favoritable, Likeable, Reportable;
       /**
      * Get the route key name.
      *
@@ -353,4 +354,5 @@ class Thread extends Model
     public function getIsVotedAttribute(){
         return auth()->check() && (bool) $this->emojis()->where('user_id', auth()->id())->count();
     }
+
 }

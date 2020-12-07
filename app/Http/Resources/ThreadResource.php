@@ -45,7 +45,8 @@ class ThreadResource extends JsonResource
             }),
             // 'creator'                   =>  new UserResource($this->creator),
             'tags'                      =>  TagResource::collection($this->whenLoaded('tags')),
-            'emojis'                    =>  EmojiResource::collection($this->whenLoaded('emojis'))
+            'emojis'                    =>  EmojiResource::collection($this->whenLoaded('emojis')),
+
         ];
     }
 }

@@ -20,4 +20,16 @@ class UserNotification extends Model
         'receive_daily_random_thread_notify_email',
         'receive_daily_random_thread_notify_facebook',
     ];
+
+    protected $casts = [
+        'mention_notify_anecdotage' => 'boolean',
+        'mention_notify_email'  => 'boolean',
+        'mention_notify_facebook'   => 'boolean',
+        'new_thread_posted_notify_anecdotage'   => 'boolean',
+        'new_thread_posted_notify_email'    => 'boolean',
+        'new_thread_posted_notify_facebook' => 'boolean',
+        'receive_daily_random_thread_notify_anecdotage' => 'boolean',
+        'receive_daily_random_thread_notify_email'  => 'boolean',
+        'receive_daily_random_thread_notify_facebook'   => 'boolean',
+    ];
 }

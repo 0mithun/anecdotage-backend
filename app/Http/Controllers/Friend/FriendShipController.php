@@ -185,9 +185,9 @@ class FriendShipController extends Controller
 
     public function checkHasSentFriendRequestTo(User $user){
         $authenticatedUser = auth()->user();
-        $set_friend_request_to = (bool) $authenticatedUser->hasSentFriendRequestTo($user);
+        $sent_friend_request_to = (bool) $authenticatedUser->hasSentFriendRequestTo($user);
 
-         return \response(['sent_friend_request_to' => $set_friend_request_to]);
+         return \response(['sent_friend_request_to' => $sent_friend_request_to]);
     }
 
 
