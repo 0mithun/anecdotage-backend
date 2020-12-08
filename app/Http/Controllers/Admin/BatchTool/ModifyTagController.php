@@ -28,8 +28,10 @@ class ModifyTagController extends Controller
             'delete_tag_name.required'  =>  'The tag name field is required.'
         ]);
         $tag = Tag::where('name', strtolower($request->delete_tag_name))->firstOrFail();
-        $tag->threads->each(function($thread) use($tag){
-            $thread->tags()->detach($tag->id);
+        $tag->threads()->chunk(100, function($threads) use($tag){
+            foreach($threads as $thread){
+                $thread->tags()->detach($tag->id);
+            }
         });
         $tag->delete();
 

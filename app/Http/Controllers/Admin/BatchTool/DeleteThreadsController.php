@@ -16,11 +16,11 @@ class DeleteThreadsController extends Controller
         ],[
             'delete_thread_title.required'  => 'Delete thread title field is required.'
         ]);
-        $threads = Thread::where('title', 'LIKE', "%{$request->delete_thread_title}%")->get();
-        $threads->each(function($thread){
-            $thread->delete();
+        Thread::where('title', 'LIKE', "%{$request->delete_thread_title}%")->chunk(100, function($threads){
+            foreach($threads as $thread){
+                $thread->delete();
+            }
         });
-
 
         return \response(['success'=> true, ['message'=>'Thread Delete Successfully']], Response::HTTP_NO_CONTENT);
     }
@@ -31,10 +31,12 @@ class DeleteThreadsController extends Controller
         ],[
             'delete_thread_body.required'  => 'Delete thread body field is required.'
         ]);
-        $threads = Thread::where('body', 'LIKE', "%{$request->delete_thread_body}%")->get();
-        $threads->each(function($thread){
-            $thread->delete();
+        Thread::where('body', 'LIKE', "%{$request->delete_thread_body}%")->chunk(100, function($threads){
+            foreach($threads as $thread){
+                $thread->delete();
+            }
         });
+
         return \response(['success'=> true, ['message'=>'Thread Delete Successfully']], Response::HTTP_NO_CONTENT);
     }
 
@@ -46,9 +48,12 @@ class DeleteThreadsController extends Controller
         ]);
         $tag = Tag::findOrFail($request->delete_thread_tag);
 
-        $tag->threads->each(function($thread){
-            $thread->delete();
+        $tag->threads()->chunk(100, function($threads){
+            foreach($threads as $thread){
+                $thread->delete();
+            }
         });
+
 
         return \response(['success'=> true, ['message'=>'Thread Delete Successfully']], Response::HTTP_NO_CONTENT);
     }

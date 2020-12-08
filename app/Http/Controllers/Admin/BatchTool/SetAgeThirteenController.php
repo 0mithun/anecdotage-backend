@@ -17,7 +17,12 @@ class SetAgeThirteenController extends Controller
         ],[
             'title_13.required'  => 'The title field is required.'
         ]);
-        Thread::where('title', 'LIKE', "%{$request->title_13}%")->update(['age_restriction'=>13]);
+        Thread::where('title', 'LIKE', "%{$request->title_13}%")->chunk(100, function($threads){
+            foreach($threads as $thread){
+                $thread->update(['age_restriction'=>13]);
+            }
+        });
+
 
         return \response(['success'=> true, ['message'=>'Thread Age Restriction 13 Set Successfully']], Response::HTTP_NO_CONTENT);
     }
@@ -29,9 +34,13 @@ class SetAgeThirteenController extends Controller
         ],[
             'body_13.required'  => 'The body field is required.'
         ]);
-         Thread::where('body', 'LIKE', "%{$request->body_13}%")->update(['age_restriction'=>13]);
+         Thread::where('body', 'LIKE', "%{$request->body_13}%")->chunk(100, function($threads){
+            foreach($threads as $thread){
+                $thread->update(['age_restriction'=>13]);
+            }
+        });
 
-         return \response(['success'=> true, ['message'=>'Thread Age Restriction 13 Set Successfully']], Response::HTTP_NO_CONTENT);
+        return \response(['success'=> true, ['message'=>'Thread Age Restriction 13 Set Successfully']], Response::HTTP_NO_CONTENT);
     }
 
 

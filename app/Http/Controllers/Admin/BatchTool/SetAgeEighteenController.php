@@ -16,9 +16,13 @@ class SetAgeEighteenController extends Controller
         ],[
             'title_18.reqired' => 'The title field is required.'
         ]);
-        Thread::where('title', 'LIKE', "%{$request->title_18}%")->update(['age_restriction'=>18]);
+        Thread::where('title', 'LIKE', "%{$request->title_18}%")->chunk(100, function($threads){
+            foreach($threads as $thread){
+                $thread->update(['age_restriction'=>18]);
+            }
+        });
 
-        return \response(['success'=> true, ['message'=>'Thread Age Restriction 18 Set Successfully']], Response::HTTP_NO_CONTENT);
+        return \response(['success'=> true, ['message'=>'Thread Age Restriction 18 Set Successfully']], Response::HTTP_ACCEPTED);
     }
 
 
@@ -28,9 +32,13 @@ class SetAgeEighteenController extends Controller
         ],[
             'body_18.reqired' => 'The body field is required.'
         ]);
-        Thread::where('body', 'LIKE', "%{$request->body_18}%")->update(['age_restriction'=>18]);
+        Thread::where('body', 'LIKE', "%{$request->body_18}%")->chunk(100, function($threads){
+            foreach($threads as $thread){
+                $thread->update(['age_restriction'=>18]);
+            }
+        });
 
-        return \response(['success'=> true, ['message'=>'Thread Age Restriction 18 Set Successfully']], Response::HTTP_NO_CONTENT);
+        return \response(['success'=> true, ['message'=>'Thread Age Restriction 18 Set Successfully']], Response::HTTP_ACCEPTED);
     }
 
     public function tag(Request $request){
@@ -40,11 +48,11 @@ class SetAgeEighteenController extends Controller
             'tag_18.reqired' => 'The tag field is required.'
         ]);
 
-        $tag = Tag::where('name', strtolower($request->tag_18))->first();
+        $tag = Tag::findOrFail($request->tag_18);
 
         $threadsId = $tag->threads()->pluck('id')->toArray();
         Thread::whereIn('id', $threadsId)->update(['age_restriction'=>18]);
 
-        return \response(['success'=> true, ['message'=>'Thread Age Restriction 18 Set Successfully']], Response::HTTP_NO_CONTENT);
+        return \response(['success'=> true, ['message'=>'Thread Age Restriction 18 Set Successfully']], Response::HTTP_ACCEPTED);
     }
 }

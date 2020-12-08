@@ -23,7 +23,6 @@ Route::group(['middleware' => ['auth:api']], function(){
 
 
     //Profiles
-
     Route::get('profile/{user}','User\ProfileController@user');
     Route::get('profile/{user}/subscriptions','User\ProfileController@subscriptions');
     Route::get('profile/{user}/favorites','User\ProfileController@favorites');
@@ -110,7 +109,6 @@ Route::group(['middleware' => ['auth:api']], function(){
         //Admin Settings
         Route::resource('settings', 'SettingController')->only(['index','show','update']);
 
-
         //Batch Tools
         Route::group(['prefix' => 'batch-tool','namespace'=>'BatchTool'], function () {
             //Delete Threads
@@ -127,7 +125,6 @@ Route::group(['middleware' => ['auth:api']], function(){
             Route::post('threads/set-age-eighteen-threads-title','SetAgeThirteenController@title');
             Route::post('threads/set-age-eighteen-threads-body','SetAgeThirteenController@body');
             Route::post('threads/set-age-eighteen-threads-tag','SetAgeThirteenController@tag');
-
 
             //thread search & replace
             Route::post('threads/threads-replace-title','ThreadSearchReplaceController@title');
@@ -146,6 +143,19 @@ Route::group(['middleware' => ['auth:api']], function(){
              //Add Emoji
              Route::post('threads/add-emoji','AddEmojiController@add');
 
+             //Set thread to famous
+             Route::post('threads/set-famous-threads-title','SetFamousController@title');
+             Route::post('threads/set-famous-threads-body','SetFamousController@body');
+             Route::post('threads/set-famous-threads-tag','SetFamousController@tag');
+
+             //Replace Source
+             Route::post('threads/replace-source','ReplaceSourceController@replace');
+
+             //Assign to users
+             Route::post('threads/assign-to-user-threads-title','AssignToUserController@title');
+             Route::post('threads/assign-to-user-threads-body','AssignToUserController@body');
+             Route::post('threads/assign-to-user-threads-tag','AssignToUserController@tag');
+
         });
 
     });
@@ -160,6 +170,5 @@ Route::group(['middleware' => ['guest:api']], function(){
     Route::post('login', 'Auth\LoginController@login');
     Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail');
     Route::post('password/reset', 'Auth\ResetPasswordController@reset');
-
 });
 
