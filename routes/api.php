@@ -100,10 +100,42 @@ Route::group(['middleware' => ['auth:api']], function(){
 
     //User ban
     Route::group(['prefix' => 'admin', 'middleware'=>['admin'],'namespace'=>'Admin'], function () {
+
+        //Ban user
         Route::post('banned/{user}','BanController@store');
         Route::get('banned','BanController@index');
         Route::put('banned/{user}','BanController@update');
         Route::delete('banned/{user}','BanController@destroy');
+
+        //Admin Settings
+        Route::resource('settings', 'SettingController')->only(['index','show','update']);
+
+
+        //Batch Tools
+        Route::group(['prefix' => 'batch-tool','namespace'=>'BatchTool'], function () {
+            //Delete Threads
+            Route::post('threads/delete-threads-title','DeleteThreadsController@title');
+            Route::post('threads/delete-threads-body','DeleteThreadsController@body');
+            Route::post('threads/delete-threads-tag','DeleteThreadsController@tag');
+
+            //Set age restriction 13
+            Route::post('threads/set-age-thirteen-threads-title','SetAgeThirteenController@title');
+            Route::post('threads/set-age-thirteen-threads-body','SetAgeThirteenController@body');
+            Route::post('threads/set-age-thirteen-threads-tag','SetAgeThirteenController@tag');
+
+            //Set age restriction 18
+            Route::post('threads/set-age-eighteen-threads-title','SetAgeThirteenController@title');
+            Route::post('threads/set-age-eighteen-threads-body','SetAgeThirteenController@body');
+            Route::post('threads/set-age-eighteen-threads-tag','SetAgeThirteenController@tag');
+
+
+            //thread search & replace
+            Route::post('threads/threads-replace-title','ThreadSearchReplaceController@title');
+            Route::post('threads/threads-replace-body','ThreadSearchReplaceController@body');
+
+
+        });
+
     });
 
 });

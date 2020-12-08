@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Setting extends Model
 {
+    protected $guarded = [];
+
+    public function getRouteKeyName()
+    {
+        return 'key';
+    }
         /**
      * @param $key
      */
@@ -15,7 +21,7 @@ class Setting extends Model
         $setting = new self();
         $entry = $setting->where('key', $key)->first();
         if (!$entry) {
-            return;
+            return false;
         }
         return $entry->value;
     }

@@ -62,7 +62,7 @@ class Thread extends Model
             $thread->replies->each->delete();
             $thread->subscriptions->each->delete();
 
-            $thread->tags->each->delete();
+            $thread->tags()->sync([]);
             $thread->emojis->each->delete();
             $thread->views->each->delete();
 
