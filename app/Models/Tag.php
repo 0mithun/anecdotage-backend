@@ -47,15 +47,6 @@ class Tag extends Model
         return $this->belongsToMany(Thread::class, 'thread_tag', 'tag_id', 'thread_id');
     }
 
-    // public function follows()
-    // {
-    //     return $this->morphMany('App\Follows', 'followable');
-    // }
-
-    // public function getNameAttribute($name)
-    // {
-    //     return ucfirst($name);
-    // }
 
     public function setNameAttribute($value){
         $this->attributes['name'] = strtolower($value);

@@ -134,6 +134,18 @@ Route::group(['middleware' => ['auth:api']], function(){
             Route::post('threads/threads-replace-body','ThreadSearchReplaceController@body');
 
 
+             //thread add tag
+             Route::post('threads/threads-add-tag-title','ThreadAddTagController@title');
+             Route::post('threads/threads-add-tag-body','ThreadAddTagController@body');
+             Route::post('threads/threads-add-tag-with-tag','ThreadAddTagController@tag');
+
+             //Modify Tag
+             Route::post('tag/rename-tag','ModifyTagController@rename');
+             Route::post('tag/delete-tag','ModifyTagController@delete');
+
+             //Add Emoji
+             Route::post('threads/add-emoji','AddEmojiController@add');
+
         });
 
     });

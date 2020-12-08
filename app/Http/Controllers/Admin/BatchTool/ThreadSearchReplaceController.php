@@ -6,6 +6,7 @@ use App\Models\Thread;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Symfony\Component\HttpFoundation\Response;
 
 class ThreadSearchReplaceController extends Controller
 {
@@ -17,8 +18,8 @@ class ThreadSearchReplaceController extends Controller
             'replace_title_old.reqired' => 'The old title field is required.',
             'replace_title_new.reqired' => 'The new title field is required.',
         ]);
-        $old = title_case($request->replace_title_old);
-        $new =title_case($request->replace_title_new);
+        $old = $request->replace_title_old;
+        $new =$request->replace_title_new;
 
 
     //   $threads =   DB::statement("UPDATE threads SET title= REPLACE(threads.title, '$old', '$new')");
@@ -31,7 +32,7 @@ class ThreadSearchReplaceController extends Controller
             }
         });
 
-        return response(['success'=> 'true', 'message'=> 'Thread update successfully']);
+        return response(['success'=> 'true', 'message'=> 'Thread update successfully'], Response::HTTP_ACCEPTED);
     }
 
 
@@ -43,8 +44,8 @@ class ThreadSearchReplaceController extends Controller
             'replace_body_old.reqired' => 'The old body field is required.',
             'replace_body_new.reqired' => 'The new body field is required.'
         ]);
-        $old = title_case($request->replace_body_old);
-        $new =title_case($request->replace_body_new);
+        $old = $request->replace_body_old;
+        $new =$request->replace_body_new;
 
         Thread::where('body', 'LIKE', "%{$request->replace_body_old}%")->chunk(100, function($threads) use($old, $new) {
             foreach($threads as $thread){
@@ -54,6 +55,6 @@ class ThreadSearchReplaceController extends Controller
             }
         });
 
-        return response(['success'=> 'true', 'message'=> 'Thread update successfully']);
+        return response(['success'=> 'true', 'message'=> 'Thread update successfully'], Response::HTTP_ACCEPTED);
     }
 }
