@@ -15,7 +15,7 @@ class Emoji extends Model
     }
 
     public function getPhotoUrlAttribute(){
-        return asset('storage/images/emojis/'.$this->name.'.jpg');
+        return asset('images/emojis/'.$this->name.'.png');
     }
 
 

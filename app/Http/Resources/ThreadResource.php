@@ -21,8 +21,10 @@ class ThreadResource extends JsonResource
             'title'                     =>  $this->title,
             'slug'                      =>  $this->slug,
             'body'                      =>  $this->body,
+            'excerpt'                   =>  $this->excerpt,
             'source'                    =>  $this->source,
             'main_subject'              =>  $this->main_subject,
+            'thread_image_path'         =>  $this->thread_image_path,
             'image_path'                =>  $this->image_path,
             'image_path_pixel_color'    =>  $this->image_path_pixel_color,
             'image_description'         =>  $this->image_description,
@@ -40,7 +42,9 @@ class ThreadResource extends JsonResource
             'likes_count'               =>  $this->like_count,
             'dislikes_count'            =>  $this->dislike_count,
             'points'                    =>  $this->points,
-            'creator'                     => $this->whenLoaded('creator', function(){
+            'replies_count'             =>  $this->replies->count(),
+            'channel'                   =>   $this->whenLoaded('channel',  new ChannelResource($this->channel)),
+            'creator'                   => $this->whenLoaded('creator', function(){
                 return $this->creator;
             }),
             // 'creator'                   =>  new UserResource($this->creator),

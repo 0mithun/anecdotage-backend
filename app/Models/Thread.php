@@ -66,14 +66,12 @@ class Thread extends Model
             $thread->emojis->each->delete();
             $thread->views->each->delete();
 
-
             Storage::disk('public')->delete($thread->image_path);
         });
 
         static::created(function ($thread) {
             $thread->update(['slug' => str_slug(strip_tags( $thread->title))]);
         });
-
 
         static::addGlobalScope(new ThreadFilter);
 
@@ -96,6 +94,69 @@ class Thread extends Model
 
         $this->attributes['slug'] = $slug;
     }
+
+    /**
+     * Access the body attribute.
+     *
+     * @param  string $body
+     * @return string
+     */
+    public function getBodyAttribute($body)
+    {
+        return html_entity_decode($body);
+    }
+
+     /**
+     * Access the title attribute.
+     *
+     * @param  string $title
+     * @return string
+     */
+    public function getTitleAttribute($title)
+    {
+        return title_case(html_entity_decode($title));
+    }
+
+    /**
+     * Access the source attribute.
+     *
+     * @param  string $source
+     * @return string
+     */
+    public function getSourceAttribute($source)
+    {
+        return html_entity_decode($source);
+    }
+
+
+
+    public function getExcerptAttribute()
+    {
+        $body = strip_tags($this->body);
+        $body = preg_replace('/\s+/', ' ', $this->body);
+
+        $body = substr(strip_tags($body), 0, 250);
+        if (strlen($body) <= 250) {
+            $body = $body . '<strong>...</strong>';
+        }
+
+        return $body;
+    }
+
+    public function threadImagePath()
+    {
+        if ($this->image_path != '') {
+            return asset('storage/'.$this->image_path);
+        } else {
+            return 'https://www.maxpixel.net/static/photo/1x/Geometric-Rectangles-Background-Shapes-Pattern-4973341.jpg';
+        }
+    }
+
+    public function getThreadImagePathAttribute()
+    {
+        return $this->threadImagePath();
+    }
+
 
 
     /**
@@ -237,41 +298,6 @@ class Thread extends Model
 
 
 
-    /**
-     * Access the body attribute.
-     *
-     * @param  string $body
-     * @return string
-     */
-    public function getBodyAttribute($body)
-    {
-        return html_entity_decode($body);
-    }
-
-     /**
-     * Access the title attribute.
-     *
-     * @param  string $title
-     * @return string
-     */
-    public function getTitleAttribute($title)
-    {
-        return title_case(html_entity_decode($title));
-    }
-
-
-
-    /**
-     * Access the source attribute.
-     *
-     * @param  string $source
-     * @return string
-     */
-    public function getSourceAttribute($source)
-    {
-        return html_entity_decode($source);
-    }
-
 
     /**
      * A thread can have many tags
@@ -294,32 +320,6 @@ class Thread extends Model
         return $this->belongsToMany(Emoji::class, 'thread_emoji', 'thread_id', 'emoji_id');
     }
 
-    public function getExcerptAttribute()
-    {
-        $body = strip_tags($this->body);
-        $body = preg_replace('/\s+/', ' ', $this->body);
-
-        $body = substr(strip_tags($body), 0, 250);
-        if (strlen($body) <= 250) {
-            $body = $body . '<strong>...</strong>';
-        }
-
-        return $body;
-    }
-
-    public function threadImagePath()
-    {
-        if ($this->image_path != '') {
-            return asset($this->image_path);
-        } else {
-            return 'https://www.maxpixel.net/static/photo/1x/Geometric-Rectangles-Background-Shapes-Pattern-4973341.jpg';
-        }
-    }
-
-    public function getThreadImagePathAttribute()
-    {
-        return $this->threadImagePath();
-    }
 
     // public function splitCategory()
     // {
