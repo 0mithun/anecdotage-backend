@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use App\Models\Chat;
 use App\Models\Thread;
 use App\Models\Traits\Followable;
 use App\Models\ThreadSubscription;
@@ -61,7 +62,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 
     public function getPhotoUrlAttribute()
     {
-        return $this->avatar_path != null ? $this->avatar_path :  'https://www.gravatar.com/avatar/'.md5(strtolower($this->email)).'.jpg?s=200&d=mm';
+        return $this->avatar_path != null ? asset('storage/'.$this->avatar_path) :  'https://www.gravatar.com/avatar/'.md5(strtolower($this->email)).'.jpg?s=200&d=mm';
     }
 
 
@@ -167,9 +168,9 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 
 
 
-    // public function chat() {
-    //     return $this->hasMany( Chat::class, 'from' );
-    // }
+    public function chat() {
+        return $this->hasMany( Chat::class, 'from' );
+    }
 
     public function userban() {
         return $this->hasOne(Userban::class);

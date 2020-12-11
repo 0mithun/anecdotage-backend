@@ -10,6 +10,15 @@ use Illuminate\Support\Facades\Route;
 // Route::get('user/{user}', 'User\UserController@findByUsername');
 
 
+
+
+//Common Route
+ //Channel
+ Route::get('channels','Channel\ChannelController@index');
+
+//Emojis
+Route::resource('emojis', 'Emoji\EmojiController')->only(['index','show']);
+
 // Route group for authenticated users only
 Route::group(['middleware' => ['auth:api']], function(){
     Route::get('me', 'User\MeController@getMe');
@@ -41,8 +50,7 @@ Route::group(['middleware' => ['auth:api']], function(){
 
 
 
-    //Emojis
-    Route::resource('emojis', 'Emoji\EmojiController')->only(['index','show']);
+    //Emoji
     Route::resource('threads.emojis', 'Thread\EmojiController')->only(['store','destroy']);
     Route::get('threads/{thread}/emojis/user','Thread\EmojiController@userVoteType');
 
@@ -90,6 +98,11 @@ Route::group(['middleware' => ['auth:api']], function(){
     Route::post('/user/{user}/friends/friend-list','Friend\FriendShipController@getAllFriendLists');
     Route::post('/user/{user}/friends/block-list','Friend\FriendShipController@getAllBlokcFriends');
     Route::post('/user/{user}/friends/friend-request-list','Friend\FriendShipController@getAllPendingFriendRequests');
+
+
+    Route::group(['prefix' => 'chat', 'namespace'=> 'Chat'], function () {
+
+    });
 
 
 
