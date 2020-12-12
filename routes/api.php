@@ -25,6 +25,12 @@ use Illuminate\Support\Facades\Route;
 //Emojis
 Route::resource('emojis', 'Emoji\EmojiController')->only(['index','show']);
 
+
+
+
+  //Tags
+  Route::get('tags/{tag}', 'Tag\TagController@show');
+
 // Route group for authenticated users only
 Route::group(['middleware' => ['auth:api']], function(){
     Route::get('me', 'User\MeController@getMe');
@@ -78,7 +84,7 @@ Route::group(['middleware' => ['auth:api']], function(){
 
 
     //Tags
-    Route::resource('tags', 'Tag\TagController')->only(['show','update','destroy']);
+    Route::resource('tags', 'Tag\TagController')->only(['update','destroy']);
     Route::post('tags/search' ,'Tag\TagController@search');
 
 

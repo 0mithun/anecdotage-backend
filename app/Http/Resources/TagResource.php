@@ -22,7 +22,8 @@ class TagResource extends JsonResource
             'description'       =>  $this->description,
             'profileAvatarPath' =>  $this->profileAvatarPath,
             'followType'        =>  $this->followType,
-            'threads'           =>  ThreadResource::collection($this->whenLoaded('threads'))
+            // 'threads'           =>  ThreadResource::collection($this->whenLoaded('threads'))
+
         ];
     }
 }

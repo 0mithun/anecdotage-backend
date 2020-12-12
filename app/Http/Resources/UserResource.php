@@ -29,9 +29,11 @@ class UserResource extends JsonResource
             'formatted_address' => $this->formatted_address,
             'about'             => $this->about,
             'location'          =>  $this->location,
-            $this->mergeWhen(auth()->user()->is_admin && auth()->id() == $this->id, [
+
+            $this->mergeWhen(auth()->check() && auth()->user()->is_admin && auth()->id() == $this->id, [
                 'is_admin'          => $this->is_admin,
             ]),
+
             $this->mergeWhen(auth()->check() && auth()->user()->is_banned, [
                 'is_banned'     => $this->is_banned,
             ]),

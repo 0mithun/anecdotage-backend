@@ -36,7 +36,7 @@ class ThreadController extends Controller
     {
         // $threads = Thread::paginate();
         $threads = $this->threads->withCriteria([
-            new EagerLoad(['creator','emojis']),
+            new EagerLoad(['emojis','channel']),
         ])->paginate();
         return  ThreadResource::collection($threads);
     }
@@ -78,7 +78,7 @@ class ThreadController extends Controller
 
 
         $thread = $this->threads->withCriteria([
-            new EagerLoad('tags')
+            new EagerLoad(['tags','creator','emojis','channel'])
         ])->find($thread->id);
         return new ThreadResource($thread);
     }

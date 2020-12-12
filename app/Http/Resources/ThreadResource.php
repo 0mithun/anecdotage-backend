@@ -43,13 +43,19 @@ class ThreadResource extends JsonResource
             'dislikes_count'            =>  $this->dislike_count,
             'points'                    =>  $this->points,
             'replies_count'             =>  $this->replies->count(),
-            'channel'                   =>   $this->whenLoaded('channel',  new ChannelResource($this->channel)),
+            'channel'                   =>  $this->whenLoaded('channel', function(){
+                return new ChannelResource($this->channel);
+            }),
+
+            // $this->whenLoaded('channel',  new ChannelResource($this->channel)),
+
             'creator'                   => $this->whenLoaded('creator', function(){
-                return $this->creator;
+                return new UserResource($this->creator);
             }),
             // 'creator'                   =>  new UserResource($this->creator),
             'tags'                      =>  TagResource::collection($this->whenLoaded('tags')),
             'emojis'                    =>  EmojiResource::collection($this->whenLoaded('emojis')),
+            'is_owner'                  => $this->is_owner
 
         ];
     }

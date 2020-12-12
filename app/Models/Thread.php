@@ -358,5 +358,9 @@ class Thread extends Model
         return $this->emojis()->where('user_id', auth()->id())->first();
     }
 
+    public function getIsOwnerAttribute(){
+        return (bool) auth()->check() && auth()->id() === $this->user_id;
+    }
+
 
 }

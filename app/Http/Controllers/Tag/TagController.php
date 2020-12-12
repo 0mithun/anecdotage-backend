@@ -7,9 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use App\Http\Resources\TagResource;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ThreadResource;
 use App\Models\Traits\Encoded;
 use App\Models\Traits\UploadAble;
 use App\Repositories\Contracts\ITag;
+use App\Repositories\Contracts\IThread;
 use App\Repositories\Eloquent\Criteria\EagerLoad;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,10 +20,12 @@ class TagController extends Controller
     use UploadAble, Encoded;
 
     protected $tags;
+    protected $threads;
 
-    public function __construct(ITag $tags)
+    public function __construct(ITag $tags, IThread $threads)
     {
         $this->tags = $tags;
+        $this->threads = $threads;
     }
 
     /**
@@ -32,17 +36,22 @@ class TagController extends Controller
      */
     public function show(Tag $tag)
     {
-        $tag = $this->tags->withCriteria([
-            new EagerLoad(['follows','threads'])
-        ])->find($tag->id);
+        // $threads = $tag->setRelation('threads', $tag->threads()->paginate());
+        // $threads = $tag->threads()->paginate(10)->toArray();
 
-        return (new TagResource($tag))->additional([
+
+        $threadsId = $tag->threads()->pluck('id')->toArray();
+        $threads = $this->threads->withCriteria([
+            new EagerLoad(['channel','emojis']),
+       ])->findWhereInPaginate('id',$threadsId );
+
+
+       $tagResponse =  (new TagResource($tag))->additional([
             'data'  => [
-                'followers'         =>  $tag->followers,
                 'is_follow'         =>  $tag->is_follow,
             ]
-        ]);;
-
+        ]);
+        return response(['tag' => $tagResponse, 'threads'=> ThreadResource::collection($threads)->response()->getData(true)]);
     }
 
     /**
