@@ -36,7 +36,7 @@ class ThreadResource extends JsonResource
             'visits'                    =>  $this->visits,
             'is_favorited'              =>  $this->is_favorited,
             'is_published'              =>  $this->is_published,
-            'is_voted'                  =>  $this->is_voted,
+            'user_emoji_vote'           =>   new EmojiResource($this->user_emoji_vote),
             'is_liked'                  =>  $this->is_liked,
             'is_disliked'               =>  $this->is_disliked,
             'likes_count'               =>  $this->like_count,

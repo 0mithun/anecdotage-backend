@@ -16,6 +16,12 @@ use Illuminate\Support\Facades\Route;
  //Channel
  Route::get('channels','Channel\ChannelController@index');
 
+ //Thread
+ Route::get('threads', 'Thread\ThreadController@index');
+
+ Route::get('threads/{thread}', 'Thread\ThreadController@show');
+ Route::get('trending/threads', 'Thread\TrendingController@index');
+
 //Emojis
 Route::resource('emojis', 'Emoji\EmojiController')->only(['index','show']);
 
@@ -42,7 +48,7 @@ Route::group(['middleware' => ['auth:api']], function(){
 
 
     //Threads
-    Route::resource('threads', 'Thread\ThreadController')->except(['create','edit']);
+    Route::resource('threads', 'Thread\ThreadController')->except(['create','edit', 'index','show']);
     Route::resource('threads.replies', 'Reply\ReplyController')->except(['create','edit']);
     Route::get('threads/{thread}/replies/{reply}/childs','Reply\ReplyController@childs')->name('replies.childs');
     //Thread report
@@ -51,7 +57,9 @@ Route::group(['middleware' => ['auth:api']], function(){
 
 
     //Emoji
-    Route::resource('threads.emojis', 'Thread\EmojiController')->only(['store','destroy']);
+    Route::post('threads/{thread}/emojis', 'Thread\EmojiController@store');
+    Route::delete('threads/{thread}/emojis', 'Thread\EmojiController@destroy');
+
     Route::get('threads/{thread}/emojis/user','Thread\EmojiController@userVoteType');
 
 

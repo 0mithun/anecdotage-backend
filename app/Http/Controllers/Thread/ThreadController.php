@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Thread;
 
+use Carbon\Carbon;
 use App\Models\Tag;
 use App\Models\Thread;
 use App\Models\Channel;
@@ -39,6 +40,7 @@ class ThreadController extends Controller
         ])->paginate();
         return  ThreadResource::collection($threads);
     }
+
 
     /**
      * Store a newly created resource in storage.

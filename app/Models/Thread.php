@@ -351,8 +351,12 @@ class Thread extends Model
         return $this->views()->count();
     }
 
-    public function getIsVotedAttribute(){
-        return auth()->check() && (bool) $this->emojis()->where('user_id', auth()->id())->count();
+    public function getUserEmojiVoteAttribute(){
+        if(!auth()->check()){
+            return null;
+        }
+        return $this->emojis()->where('user_id', auth()->id())->first();
     }
+
 
 }
