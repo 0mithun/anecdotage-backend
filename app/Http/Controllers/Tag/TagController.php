@@ -49,9 +49,12 @@ class TagController extends Controller
        $tagResponse =  (new TagResource($tag))->additional([
             'data'  => [
                 'is_follow'         =>  $tag->is_follow,
+                'followers_count'    =>  $tag->followers_count
             ]
         ]);
-        return response(['tag' => $tagResponse, 'threads'=> ThreadResource::collection($threads)->response()->getData(true)]);
+
+
+        return response(['tag' => $tagResponse->response()->getData(true), 'threads'=> ThreadResource::collection($threads)->response()->getData(true)]);
     }
 
     /**

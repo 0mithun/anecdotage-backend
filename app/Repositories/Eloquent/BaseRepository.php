@@ -7,6 +7,7 @@ use Illuminate\Support\Arr;
 use App\Exceptions\ModelNotDefined;
 use App\Repositories\Contracts\IBase;
 use App\Repositories\Criteria\ICriteria;
+use Illuminate\Pagination\Paginator;
 
 abstract class BaseRepository implements IBase, ICriteria
 {
@@ -42,6 +43,7 @@ abstract class BaseRepository implements IBase, ICriteria
 
     public function findWhereInPaginate($column, array $data, $perPage = 10)
     {
+        $this->currentPage();
         return $this->model->whereIn($column, $data)->paginate($perPage);
     }
 
@@ -52,7 +54,7 @@ abstract class BaseRepository implements IBase, ICriteria
     }
 
     public function paginate($perPage = 10)
-    {
+    {   $this->currentPage();
         return $this->model->paginate($perPage);
     }
 
@@ -101,7 +103,15 @@ abstract class BaseRepository implements IBase, ICriteria
     }
 
 
-
+    protected function currentPage(){
+        Paginator::currentPageResolver(function(){
+            if(request()->has('page') && request()->page != null){
+                return request()->page;
+            }else{
+                return 1;
+            }
+        });
+    }
 
 
 }
