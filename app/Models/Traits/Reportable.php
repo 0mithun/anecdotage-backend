@@ -34,7 +34,7 @@ trait Reportable
      */
     public function report(array $data)
     {
-        $attributes = ['user_id' => auth()->id()];
+        $attributes = ['user_id' => auth()->check() ?  auth()->id() : 1 ];
 
         if (! $this->reports()->where($attributes)->exists()) {
             return $this->reports()->create($attributes + $data);

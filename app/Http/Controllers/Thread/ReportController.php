@@ -21,11 +21,12 @@ class ReportController extends Controller
     }
 
    public function report(Request $request, Thread $thread){
-        if($thread->is_reported){
-            return response(['success'=> false,'message'=>'You are already report this item'], Response::HTTP_NOT_ACCEPTABLE);
-        }
 
-        $thread->report($request->only(['reason','type']));
+        // if($thread->is_reported){
+        //     return response(['success'=> false,'message'=>'You are already report this item'], Response::HTTP_NOT_ACCEPTABLE);
+        // }
+
+        $thread->report($request->only(['reason','type','contact']));
         return response(['success'=> true,'message'=>'Thread Report Successfully'], Response::HTTP_CREATED);
    }
 }

@@ -18,10 +18,11 @@ class CreateReportsTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->string('reason')->nullable();
             $table->string('report_type')->nullable();
+            $table->text('contact')->nullable();
             $table->unsignedBigInteger('reported_id');
             $table->string('reported_type', 50);
             $table->timestamps();
-            $table->unique(['user_id', 'reported_id', 'reported_type']);
+            // $table->unique(['user_id', 'reported_id', 'reported_type']);
         });
     }
 
