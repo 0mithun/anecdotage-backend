@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Reply;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\ReplyResource;
 use App\Models\Reply;
 use App\Models\Thread;
-use App\Repositories\Contracts\IReply;
-use App\Repositories\Eloquent\Criteria\EagerLoad;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Gate;
+use App\Http\Resources\ReplyResource;
+use App\Repositories\Contracts\IReply;
 use Symfony\Component\HttpFoundation\Response;
+use App\Repositories\Eloquent\Criteria\EagerLoad;
 
 class ReplyController extends Controller
 {
@@ -28,9 +29,14 @@ class ReplyController extends Controller
      */
     public function index(Thread $thread)
     {
+        // $replies = $this->replies->withCriteria([
+        //     new EagerLoad(['owner'])
+        // ])->findWhere('thread_id', $thread->id);
+
+
         $replies = $this->replies->withCriteria([
-            new EagerLoad(['owner','parent'])
-        ])->findWhere('thread_id', $thread->id);
+            new EagerLoad(['owner'])
+        ])->findWhereArray(['thread_id'=> $thread->id, 'parent_id'=> null]);
 
         return response(ReplyResource::collection($replies));
     }
@@ -43,13 +49,14 @@ class ReplyController extends Controller
      */
     public function store(Request $request, Thread $thread)
     {
+
         $this->validate($request, [
             'body'  => ['required']
         ]);
 
         $reply = $this->replies->create($request->only(['body','parent_id']) + ['thread_id'=> $thread->id, 'user_id'=> auth()->id()]);
 
-        return response(new ReplyResource($reply), Response::HTTP_CREATED);
+        return response(new ReplyResource($reply->load('owner')), Response::HTTP_CREATED);
     }
 
     /**
@@ -72,6 +79,8 @@ class ReplyController extends Controller
      */
     public function update(Request $request, Thread $thread, Reply $reply)
     {
+        Gate::authorize('update-reply', $reply);
+
         $this->validate($request, [
             'body'      => ['required'],
         ]);
@@ -89,6 +98,7 @@ class ReplyController extends Controller
      */
     public function destroy(Thread $thread, Reply $reply)
     {
+        Gate::authorize('update-reply', $reply);
         $this->replies->delete($reply->id);
 
         return response(null, Response::HTTP_NO_CONTENT);
@@ -97,7 +107,9 @@ class ReplyController extends Controller
 
     public function childs(Thread $thread, Reply $reply){
 
-        $replies = $this->replies->findWhere('parent_id',$reply->id);
+        $replies = $this->replies->withCriteria([
+            new EagerLoad(['owner'])
+        ])->findWhere('parent_id',$reply->id);
 
         return response(ReplyResource::collection($replies));
     }

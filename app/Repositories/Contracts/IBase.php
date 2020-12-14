@@ -7,6 +7,7 @@ interface IBase
     public function all();
     public function find($id);
     public function findWhere($column, $value);
+    public function findWhereArray(array $criteria);
     public function findWhereIn($column, array $data);
     public function findWhereInPaginate($column, array $data, $perPage = 10);
     public function findWhereFirst($column, $value);

@@ -56,6 +56,8 @@ Route::group(['middleware' => ['auth:api']], function(){
 
     //Threads
     Route::resource('threads', 'Thread\ThreadController')->except(['create','edit', 'index','show']);
+
+    //Replies
     Route::resource('threads.replies', 'Reply\ReplyController')->except(['create','edit']);
     Route::get('threads/{thread}/replies/{reply}/childs','Reply\ReplyController@childs')->name('replies.childs');
 

@@ -104,7 +104,7 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('send-message', function($user, $model){
-            if($user->id === $model->id){
+            if($user->id === $model->user_id){
                 return true;
             }else if($user->is_admin){
                 return true;
@@ -115,6 +115,15 @@ class AuthServiceProvider extends ServiceProvider
             }else if($model->userprivacy->send_me_message==1 && $user->isFriendWith($model)){
                 return true;
             }
+        });
+
+        Gate::define('update-reply', function($user, $model){
+            if($user->id === $model->user_id){
+                return true;
+            }else if($user->is_admin){
+                return true;
+            }
+            return false;
         });
     }
 }

@@ -19,10 +19,13 @@ class ReplyResource extends JsonResource
             'body'      => $this->body,
             'thread_id' => $this->thread_id,
             'parent_id' => $this->parent_id,
-            'parent'    => new ReplyResource($this->parent),
             'replies_count' => $this->replies_count,
             // 'childs'    =>  ReplyResource::collection($this->childs)
-            'owner'     =>  new UserResource($this->owner),
+            // 'owner'     => $this->owner,
+            'owner'     =>  $this->whenLoaded( 'owner', function(){
+                return new UserResource($this->owner);
+            }),
+            'created_at'     => $this->created_at
         ];
     }
 }

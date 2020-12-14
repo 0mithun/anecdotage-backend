@@ -35,6 +35,9 @@ abstract class BaseRepository implements IBase, ICriteria
         return $this->model->where($column, $value)->get();
     }
 
+    public function findWhereArray(array $criteria){
+          return  $this->model->where($criteria)->get();
+    }
 
     public function findWhereIn($column, array $data)
     {
