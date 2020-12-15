@@ -29,8 +29,14 @@ Route::resource('emojis', 'Emoji\EmojiController')->only(['index','show']);
 Route::post('threads/{thread}/report','Thread\ReportController@report');
 
 
-  //Tags
-  Route::get('tags/{tag}', 'Tag\TagController@show');
+//Tags
+Route::get('tags/{tag}', 'Tag\TagController@show');
+
+//Channel
+Route::get ('channel/search','Channel\ChannelController@search');
+
+//Tags
+Route::get('tag/search' ,'Tag\TagController@search');
 
 // Route group for authenticated users only
 Route::group(['middleware' => ['auth:api']], function(){
@@ -88,7 +94,7 @@ Route::group(['middleware' => ['auth:api']], function(){
 
     //Tags
     Route::resource('tags', 'Tag\TagController')->only(['update','destroy']);
-    Route::post('tags/search' ,'Tag\TagController@search');
+
 
 
     //Follows tag
@@ -96,8 +102,7 @@ Route::group(['middleware' => ['auth:api']], function(){
     Route::delete('tags/{tag}/follow', 'Tag\FollowController@destroy');
 
 
-    //Channel
-    Route::post('/channels/search','Channel\ChannelController@search');
+
 
 
     //Friendship
