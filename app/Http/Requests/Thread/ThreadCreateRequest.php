@@ -26,7 +26,7 @@ class ThreadCreateRequest extends FormRequest
         return [
             'title'         => ['required','unique:threads,title'],
             'body'          => ['required'],
-            'image_path'    =>  ['mimes:png,jpg,jpeg,giff,svg','max:1024']
+            // 'image_path'    =>  ['mimes:png,jpg,jpeg,giff,svg','max:1024']
 
         ];
     }

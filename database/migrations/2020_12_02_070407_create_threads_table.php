@@ -25,9 +25,10 @@ class CreateThreadsTable extends Migration
             $table->string('source')->nullable();
             $table->string('main_subject')->nullable();
             $table->string('image_path')->nullable();
-            $table->string('image_url')->nullable();
             $table->string('image_path_pixel_color', 50)->nullable();
             $table->text('image_description')->nullable();
+            $table->string('temp_image_url')->nullable();
+            $table->string('temp_image_description')->nullable();
             $table->boolean('image_saved')->default(0);
 
             $table->string('cno')->nullable();

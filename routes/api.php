@@ -38,6 +38,11 @@ Route::get ('channel/search','Channel\ChannelController@search');
 //Tags
 Route::get('tag/search' ,'Tag\TagController@search');
 
+
+//Replies
+Route::get('threads/{thread}/replies/', 'Reply\ReplyController@index');
+Route::get('threads/{thread}/replies/{reply}/childs','Reply\ReplyController@childs')->name('replies.childs');
+
 // Route group for authenticated users only
 Route::group(['middleware' => ['auth:api']], function(){
     Route::get('me', 'User\MeController@getMe');
@@ -62,10 +67,15 @@ Route::group(['middleware' => ['auth:api']], function(){
 
     //Threads
     Route::resource('threads', 'Thread\ThreadController')->except(['create','edit', 'index','show']);
+    Route::post('threads/{thread}/thumbnail','Thread\ThreadController@uploadThreadImages');
+    Route::put('threads/{thread}/imageDescription','Thread\ThreadController@imageDescription');
+    Route::put('threads/{thread}/skipThumbnailEdit','Thread\ThreadController@skipThumbnailEdit');
 
     //Replies
-    Route::resource('threads.replies', 'Reply\ReplyController')->except(['create','edit']);
-    Route::get('threads/{thread}/replies/{reply}/childs','Reply\ReplyController@childs')->name('replies.childs');
+    Route::resource('threads.replies', 'Reply\ReplyController')->except(['create','edit','index']);
+
+
+
 
 
 

@@ -8,6 +8,8 @@ use App\Models\Thread;
 use App\Models\Channel;
 use Illuminate\Http\Request;
 use Spatie\Geocoder\Geocoder;
+use App\Models\Traits\UploadAble;
+use Illuminate\Http\UploadedFile;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Resources\ThreadResource;
@@ -17,9 +19,11 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\Thread\ThreadCreateRequest;
 use App\Http\Requests\Thread\ThreadUpdateRequest;
 use App\Repositories\Eloquent\Criteria\EagerLoad;
+use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class ThreadController extends Controller
 {
+    use UploadAble;
     protected $threads;
 
     public function __construct(IThread $threads)
@@ -50,13 +54,43 @@ class ThreadController extends Controller
      */
     public function store(ThreadCreateRequest $request)
     {
-        $data = $request->only(['title','body','source','main_subject','cno','age_restriction','anonymous','channel_id','famous',]);
+        $data = $request->only(['title','body','source','main_subject','age_restriction','anonymous','famous',]);
         if ($request->location != null) {
-            $location = $this->getGeocodeing($request->location);
-            if ($location['accuracy'] != 'result_not_found') {
-                $data['location'] = new Point($location['lat'], $location['lng']);
+            // $location = $this->getGeocodeing($request->location);
+            // if ($location['accuracy'] != 'result_not_found') {
+            //     $data['location'] = new Point($location['lat'], $location['lng']);
+            // }
+        }
+
+        if($request->has('cno') && $request->cno != null){
+            $cno = json_decode(json_encode(request('cno')));
+            if($cno->famous == false){
+                $data['cno'] = 'O';
+            }else if($cno->famous == true && $cno->celebrity == true){
+                $data['cno'] = 'C';
+            }else{
+                $data['cno'] = 'N';
             }
         }
+
+        $channel = '';
+        if ($request->has('channel') && $request->channel != null) {
+            $channel = json_decode(json_encode(request('channel')));
+
+            $type = gettype($channel);
+            if($type == 'string'){
+                $findChannel = Channel::where('name', $channel)->first();
+                if($findChannel){
+                    $data['channel_id'] = $findChannel->id;
+                }
+            }else{
+                $data['channel_id'] = $channel->id;
+            }
+        } else {
+            $data['channel_id'] = 2;
+        }
+
+
         $thread = $this->threads->create($data + ['user_id'=>auth()->id()]);
 
         $this->attachTags($request, $thread);
@@ -110,6 +144,7 @@ class ThreadController extends Controller
     public function destroy(Thread $thread)
     {
         Gate::authorize('edit-thread', $thread);
+
         $this->threads->delete($thread->id);
         return response(null, Response::HTTP_NO_CONTENT);
     }
@@ -136,11 +171,12 @@ class ThreadController extends Controller
     {
         $tags = [];
         if ($request->has('tags') && $request->tags != null) {
-            $tags = explode(',', $request->tags);
+            // $tags = explode(',', $request->tags);
+            $tags = $request->tags;
         }
 
         if ($request->has('channel') && $request->channel != null) {
-            $channel = json_decode($request->channel);
+            $channel = json_decode(json_encode(request('channel')));
             $type = gettype($channel);
             if($type == 'string'){
                 $findChannel = Channel::where('name', $channel)->first();
@@ -178,5 +214,74 @@ class ThreadController extends Controller
         }
 
         $thread->tags()->sync($tag_ids);
+    }
+
+
+      /**
+     * Uplod Thread Images
+     */
+
+    public function uploadThreadImages(Request $request, Thread $thread)
+    {
+        if ($request->has('image') && ($request->file('image') instanceof UploadedFile)) {
+            if ($thread->image_path != null) {
+                $this->deleteOne($thread->image_path);
+            }
+            $thread->image_path =  $this->uploadOne($request->file('image'), 'threads','public',$thread->id.uniqid());
+            $thread->is_published = true;
+            $thread->save();
+        }
+
+        return response('Thumbnail upload successfully');
+    }
+
+
+
+    /**
+     * Get Image color attribute from image
+     *
+     * @param string $image_path
+     * @return void
+     */
+    public function getImageColorAttribute($image_path)
+    {
+        if ($image_path != '') {
+            $splitName = explode('.', $image_path);
+            $extension = strtolower(array_pop($splitName));
+
+            if ($extension == 'jpg') {
+                $im = imagecreatefromjpeg($image_path);
+            }
+            if ($extension == 'jpeg') {
+                $im = imagecreatefromjpeg($image_path);
+            } else if ($extension == 'png') {
+                $im = imagecreatefrompng($image_path);
+            } else if ($extension == 'gif') {
+                $im = imagecreatefromgif($image_path);
+            }
+
+            if (isset($im)) {
+                $rgb = imagecolorat($im, 0, 0);
+                $colors = imagecolorsforindex($im, $rgb);
+                array_pop($colors);
+                array_push($colors, 1);
+                $rgbaString = join(', ', $colors);
+
+                return $rgbaString;
+            }
+        }
+        return '';
+    }
+
+    public function imageDescription(Request $request, Thread $thread){
+        $thread->update($request->only(['temp_image_url','temp_image_description'])  + ['is_published' => true]);
+
+        return response('Description Update successfully');
+    }
+
+    public function skipThumbnailEdit(Request $request, Thread $thread){
+        $thread->update(['is_published' => true]);
+
+        return response('Thread Update successfully');
     }
 }
