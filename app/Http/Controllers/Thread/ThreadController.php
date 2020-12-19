@@ -126,10 +126,47 @@ class ThreadController extends Controller
      */
     public function update(ThreadUpdateRequest $request, Thread $thread)
     {
-        $data = $request->only(['title','body','source','main_subject','cno','age_restriction','anonymous','channel_id','famous',]);
+        $data = $request->only(['title','body','source','main_subject','age_restriction','anonymous','famous',]);
         if($request->has('title') && auth()->user()->is_admin){
             $data['slug'] = str_slug(strip_tags( $request->title));
         }
+
+        if ($request->location != null) {
+            // $location = $this->getGeocodeing($request->location);
+            // if ($location['accuracy'] != 'result_not_found') {
+            //     $data['location'] = new Point($location['lat'], $location['lng']);
+            // }
+        }
+
+        if($request->has('cno') && $request->cno != null){
+            $cno = json_decode(json_encode(request('cno')));
+            if($cno->famous == false){
+                $data['cno'] = 'O';
+            }else if($cno->famous == true && $cno->celebrity == true){
+                $data['cno'] = 'C';
+            }else{
+                $data['cno'] = 'N';
+            }
+        }
+
+        $channel = '';
+        if ($request->has('channel') && $request->channel != null) {
+            $channel = json_decode(json_encode(request('channel')));
+
+            $type = gettype($channel);
+            if($type == 'string'){
+                $findChannel = Channel::where('name', $channel)->first();
+                if($findChannel){
+                    $data['channel_id'] = $findChannel->id;
+                }
+            }else{
+                $data['channel_id'] = $channel->id;
+            }
+        } else {
+            $data['channel_id'] = 2;
+        }
+
+
         $thread = $this->threads->update($thread->id, $data);
         $this->attachTags($request, $thread);
         return response(new ThreadResource($thread), Response::HTTP_ACCEPTED);

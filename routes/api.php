@@ -19,6 +19,13 @@ use Illuminate\Support\Facades\Route;
  //Thread
  Route::get('threads', 'Thread\ThreadController@index');
 
+ Route::get('threads/filter/rated', 'Thread\FilterController@rated');
+ Route::get('threads/filter/trending', 'Thread\FilterController@trending');
+ Route::get('threads/filter/viewed', 'Thread\FilterController@viewed');
+ Route::get('threads/filter/recent', 'Thread\FilterController@recent');
+ Route::get('threads/filter/closest', 'Thread\FilterController@closest');
+ Route::get('threads/filter/video', 'Thread\FilterController@video');
+
  Route::get('threads/{thread}', 'Thread\ThreadController@show');
  Route::get('trending/threads', 'Thread\TrendingController@index');
 

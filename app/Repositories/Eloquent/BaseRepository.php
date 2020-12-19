@@ -116,5 +116,13 @@ abstract class BaseRepository implements IBase, ICriteria
         });
     }
 
+    public function orderBy($column , $sort = 'ASC'){
+        $this->model->orderBy($column, $sort);
+        return $this;
+    }
+
+    public function toSql(){
+        return $this->model->toSql();
+    }
 
 }

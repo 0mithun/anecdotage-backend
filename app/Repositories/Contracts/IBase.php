@@ -16,4 +16,8 @@ interface IBase
     public function update($id, array $data);
     public function delete($id);
 
+    public function orderBy($column , $sort = 'ASC');
+
+    public function toSql();
+
 }

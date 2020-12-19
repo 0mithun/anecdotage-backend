@@ -34,7 +34,7 @@ class TrendingController extends Controller
          ->groupBy('thread_id')
         ->pluck('thread_id')->toArray()
         ;
-        $threads = Thread::whereIn('id', $treandingsId)->orderBy('visits','DESC')->get();
+        $threads = Thread::whereIn('id', $treandingsId)->orderBy('visits','DESC')->limit(20)->get();
         return  ThreadResource::collection($threads);
     }
 

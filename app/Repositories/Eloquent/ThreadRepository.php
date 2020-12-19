@@ -12,5 +12,16 @@ class ThreadRepository extends BaseRepository implements IThread
         return Thread::class;
     }
 
+    public function orderByRaw(string $statement){
+        $this->model->getQuery()->orders = [];
+        $this->model->orderByRaw($statement);
 
+        return $this;
+    }
+
+    public function whereLike(string $solumn, string $value){
+        $this->model->where('body', 'LIKE', "%{$value}%");
+
+        return $this;
+    }
 }
