@@ -37,6 +37,7 @@ class UserResource extends JsonResource
             $this->mergeWhen(auth()->check() && auth()->user()->is_banned, [
                 'is_banned'     => $this->is_banned,
             ]),
+            // 'is_friend'         =>  $this->is_friend,
             'follow_type'       =>  $this->follow_type,
             'privacy'           => $this->whenLoaded('userprivacy', function(){
                 return new UserPrivacyResource($this->userprivacy);

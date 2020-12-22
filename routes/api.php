@@ -50,6 +50,17 @@ Route::get('tag/search' ,'Tag\TagController@search');
 Route::get('threads/{thread}/replies/', 'Reply\ReplyController@index');
 Route::get('threads/{thread}/replies/{reply}/childs','Reply\ReplyController@childs')->name('replies.childs');
 
+
+
+  //Profiles
+  Route::get('profile/{user}','User\ProfileController@user');
+  Route::get('profile/{user}/subscriptions','User\ProfileController@subscriptions');
+  Route::get('profile/{user}/favorites','User\ProfileController@favorites');
+  Route::get('profile/{user}/likes','User\ProfileController@likes');
+  Route::get('profile/{user}/threads','User\ProfileController@threads');
+
+
+
 // Route group for authenticated users only
 Route::group(['middleware' => ['auth:api']], function(){
     Route::get('me', 'User\MeController@getMe');
@@ -62,12 +73,7 @@ Route::group(['middleware' => ['auth:api']], function(){
     Route::put('user/{user}/notification','User\NotificationController@update');
 
 
-    //Profiles
-    Route::get('profile/{user}','User\ProfileController@user');
-    Route::get('profile/{user}/subscriptions','User\ProfileController@subscriptions');
-    Route::get('profile/{user}/favorites','User\ProfileController@favorites');
-    Route::get('profile/{user}/likes','User\ProfileController@likes');
-    Route::get('profile/{user}/threads','User\ProfileController@threads');
+
 
     // Route::get('/profiles/{user}/comments', 'ProfilesController@myCommentsShow')->name('profile.likes');
 

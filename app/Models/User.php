@@ -197,6 +197,24 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->isBanned();
     }
 
+    public function getIsFriendAttribute(){
+        if(auth()->check()){
+            $authenticatedUser = auth()->user();
+            return (bool) $authenticatedUser->isFriendWith($this);
+        }
+
+        return false;
+    }
+
+    public function getIsBlockedAttribute(){
+        if(auth()->check()){
+            $authenticatedUser = auth()->user();
+            return (bool) $authenticatedUser->hasBlocked($this) || $authenticatedUser->isBlockedBy($this);
+        }
+        return false;
+    }
+
+
 
 
     public function getFollowTypeAttribute( $type ) {

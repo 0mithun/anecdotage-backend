@@ -35,18 +35,24 @@ class AuthServiceProvider extends ServiceProvider
             return $user->id === $model->id;
         });
 
-        Gate::define('view-profile', function($user, $model){
-            if($user->id === $model->id){
-                return true;
-            }else if($user->is_admin){
-                return true;
-            }else if($user->hasBlocked($model) || $user->isBlockedBy($model)){
-                return false;
-            }else if($model->userprivacy->see_my_profiles==3){
-                return true;
-            }else if($model->userprivacy->see_my_profiles==2 && $user->isFriendWith($model)){
-                return true;
+        Gate::define('view-profile', function($user = null, $model){
+            if($user != null){
+                if($user->id === $model->id){
+                    return true;
+                }else if($user->is_admin){
+                    return true;
+                }else if($model->userprivacy->see_my_profiles==2 && $user->isFriendWith($model)){
+                    return true;
+                }else if($user->hasBlocked($model) || $user->isBlockedBy($model)){
+                    return false;
+                }
+            }else{
+                if($model->userprivacy->see_my_profiles==3){
+                    return true;
+                }
             }
+
+
         });
 
 
@@ -61,31 +67,39 @@ class AuthServiceProvider extends ServiceProvider
 
 
 
-        Gate::define('view-threads', function($user, $model){
-            if($user->id === $model->id){
-                return true;
-            }else if($user->is_admin){
-                return true;
-            }else if($user->hasBlocked($model) || $user->isBlockedBy($model)){
-                return false;
-            }else if($model->userprivacy->see_my_threads==3){
-                return true;
-            }else if($model->userprivacy->see_my_threads==2 && $user->isFriendWith($model)){
+        Gate::define('view-threads', function($user = null, $model){
+            if($user != null){
+                if($user->id === $model->id){
+                    return true;
+                }else if($user->is_admin){
+                    return true;
+                }else if($user->hasBlocked($model) || $user->isBlockedBy($model)){
+                    return false;
+                }else if($model->userprivacy->see_my_threads==2 && $user->isFriendWith($model)){
+                    return true;
+                }
+           }else{
+             if($model->userprivacy->see_my_threads==3){
                 return true;
             }
+           }
         });
 
-        Gate::define('view-favorites', function($user, $model){
-            if($user->id === $model->id){
-                return true;
-            }else if($user->is_admin){
-                return true;
-            }else if($user->hasBlocked($model) || $user->isBlockedBy($model)){
-                return false;
-            }else if($model->userprivacy->see_my_favorites==3){
-                return true;
-            }else if($model->userprivacy->see_my_favorites==2 && $user->isFriendWith($model)){
-                return true;
+        Gate::define('view-favorites', function($user = null, $model){
+            if($user != null){
+                if($user->id === $model->id){
+                    return true;
+                }else if($user->is_admin){
+                    return true;
+                }else if($user->hasBlocked($model) || $user->isBlockedBy($model)){
+                    return false;
+                }else if($model->userprivacy->see_my_favorites==2 && $user->isFriendWith($model)){
+                    return true;
+                }
+            }else{
+                 if($model->userprivacy->see_my_favorites==3){
+                    return true;
+                }
             }
         });
 

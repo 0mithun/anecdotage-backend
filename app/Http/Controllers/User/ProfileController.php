@@ -23,6 +23,8 @@ class ProfileController extends Controller
 
     public function __construct(IUser $users, IThread $threads)
     {
+        $this->middleware(['auth:api'])->only(['likes','subscriptions']);
+
         $this->users = $users;
         $this->threads = $threads;
     }
@@ -36,14 +38,16 @@ class ProfileController extends Controller
     public function user(User $user){
         Gate::authorize('view-profile', $user);
         $user = $this->users->withCriteria([
-            new EagerLoad(['threads','follows'])
+            new EagerLoad(['userprivacy'])
         ])->findWhereFirst('username', $user->username);
 
 
         return (new UserResource($user))->additional([
             'data'  => [
-                'followers'         => $user->followers,
+                // 'followers'         => $user->followers,
                 'is_follow'         =>  $user->is_follow,
+                'is_friend'         =>  $user->is_friend,
+                'is_blocked'         =>  $user->is_blocked,
             ]
         ]);
     }
