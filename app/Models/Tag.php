@@ -52,13 +52,9 @@ class Tag extends Model
         $this->attributes['name'] = strtolower($value);
     }
 
-
-    public function getProfileAvatarPathAttribute($avatar)
+    public function getPhotoUrlAttribute()
     {
         $avatar = $this->photo == '' ? 'images/avatars/default.png' : $this->photo;
-        //https://www.maxpixel.net/static/photo/1x/Geometric-Rectangles-Background-Shapes-Pattern-4973341.jpg
-        // $avatar = 'images/avatars/default.png';
-
         return asset($avatar);
     }
 

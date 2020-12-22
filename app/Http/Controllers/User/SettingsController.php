@@ -87,4 +87,16 @@ class SettingsController extends Controller
         }
     }
 
+    public function updateAbout(Request $request){
+        $this->validate($request, [
+            'about'     => ['required']
+        ]);
+
+        $user =  $this->users->update(\auth()->id(), [
+            'about' =>  $request->about,
+        ]);
+
+        return  \response(new UserResource($user), Response::HTTP_ACCEPTED);
+    }
+
 }

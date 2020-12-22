@@ -20,7 +20,7 @@ class TagResource extends JsonResource
             'slug'              =>  $this->slug,
             'photo'             =>  $this->photo,
             'description'       =>  $this->description,
-            'profileAvatarPath' =>  $this->profileAvatarPath,
+            'photo_url'         =>  $this->photo_url,
             'followType'        =>  $this->followType,
             // 'threads'           =>  ThreadResource::collection($this->whenLoaded('threads'))
 

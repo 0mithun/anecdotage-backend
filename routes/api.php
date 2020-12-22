@@ -60,6 +60,13 @@ Route::get('threads/{thread}/replies/{reply}/childs','Reply\ReplyController@chil
   Route::get('profile/{user}/threads','User\ProfileController@threads');
 
 
+  Route::get('/user/{user}/friends/friend-list','Friend\FriendShipController@getAllFriendLists');
+  Route::get('/user/{user}/friends/block-list','Friend\FriendShipController@getAllBlokcFriends');
+  Route::get('/user/{user}/friends/friend-request-list','Friend\FriendShipController@getAllPendingFriendRequests');
+  Route::get('/user/{user}/friends/followings','User\FollowController@followings');
+  Route::get('/user/{user}/friends/followers','User\FollowController@followers');
+
+
 
 // Route group for authenticated users only
 Route::group(['middleware' => ['auth:api']], function(){
@@ -68,6 +75,7 @@ Route::group(['middleware' => ['auth:api']], function(){
     Route::put('settings/profile', 'User\SettingsController@updateProfile');
     Route::put('settings/password', 'User\SettingsController@updatePassword');
     Route::put('settings/avatar', 'User\SettingsController@updateAvatar');
+    Route::put('settings/about', 'User\SettingsController@updateAbout');
 
     Route::put('user/{user}/privacy','User\PrivacyController@update');
     Route::put('user/{user}/notification','User\NotificationController@update');
@@ -140,9 +148,7 @@ Route::group(['middleware' => ['auth:api']], function(){
     Route::post('/user/{user}/friends/check-request-to','Friend\FriendShipController@checkHasSentFriendRequestTo');
     Route::post('/user/{user}/friends/check-block','Friend\FriendShipController@checkIsBlock');
 
-    Route::post('/user/{user}/friends/friend-list','Friend\FriendShipController@getAllFriendLists');
-    Route::post('/user/{user}/friends/block-list','Friend\FriendShipController@getAllBlokcFriends');
-    Route::post('/user/{user}/friends/friend-request-list','Friend\FriendShipController@getAllPendingFriendRequests');
+
 
 
     Route::group(['prefix' => 'chat', 'namespace'=> 'Chat'], function () {
