@@ -64,30 +64,6 @@ class FriendShipController extends Controller
     }
 
 
-    /**
-     * Denied friend request
-     * @param User $user
-     * @return mixed
-     */
-
-    public function deniedFriendRequest(User $user){
-        $authenticatedUser = auth()->user();
-        if($authenticatedUser->hasBlocked($user) || $authenticatedUser->isBlockedBy($user)){
-            return response(['errors' => ['message'=> 'You are block by user or you block the user']],  Response::HTTP_UNAUTHORIZED);
-        }
-        else if($authenticatedUser->isFriendWith($user)){
-            return response(['errors' => ['message'=> 'You are already friend with user']],  Response::HTTP_NOT_ACCEPTABLE);
-        }else if($authenticatedUser->hasSentFriendRequestTo($user)){
-            return response(['errors' => ['message'=> 'You are already sent a friend request to the user']],  Response::HTTP_NOT_ACCEPTABLE);
-        }
-        else if(!$authenticatedUser->hasFriendRequestFrom($user)){
-            return response(['errors' => ['message'=> 'User dose not sent friend request to you']],  Response::HTTP_NOT_FOUND);
-        }
-        $authenticatedUser->denyFriendRequest($user);
-
-        return \response(['success'=> true, 'message'=> 'Friend Request Denied Successfully'], Response::HTTP_ACCEPTED);
-    }
-
 
         /**
      * cancel friend request
@@ -279,7 +255,7 @@ class FriendShipController extends Controller
         Gate::authorize('view-own-friendship', $user);
 
         $pendingRequestsId = [];
-        foreach( $user->getPendingFriendships() as $friend){
+        foreach( $user->getFriendRequests() as $friend){
                 $pendingRequestsId[] = $friend->sender_id;
         }
         $pendingFriends = User::whereIn('id', $pendingRequestsId)->get();

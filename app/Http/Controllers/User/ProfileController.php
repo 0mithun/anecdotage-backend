@@ -68,7 +68,7 @@ class ProfileController extends Controller
 
         $threads = $this->threads->withCriteria([
             new ThreadSort(),
-            new EagerLoad(['creator','emojis'])
+            new EagerLoad(['creator','emojis','channel'])
         ])->findWhereInPaginate('id', $subscriptionsId);
 
         return ThreadResource::collection($threads);
@@ -93,7 +93,7 @@ class ProfileController extends Controller
 
         $threads = $this->threads->withCriteria([
             new ThreadSort(),
-            new EagerLoad(['creator','emojis'])
+            new EagerLoad(['creator','emojis','channel'])
         ])->findWhereInPaginate('id', $favoritesId);
 
         return ThreadResource::collection($threads);
@@ -109,6 +109,8 @@ class ProfileController extends Controller
      */
     public function likes(User $user){
         Gate::authorize('own-profile', $user);
+
+        //Something wrong
         $likesId = DB::table( 'likes' )
         ->where( 'user_id', $user->id )
         ->where('likeable_type', 'App\Models\Thread')
@@ -118,7 +120,7 @@ class ProfileController extends Controller
 
         $threads = $this->threads->withCriteria([
             new ThreadSort(),
-            new EagerLoad(['emojis','creator'])
+            new EagerLoad(['emojis','creator','channel'])
         ])->findWhereInPaginate('id', $likesId);
 
         return ThreadResource::collection($threads);
@@ -138,7 +140,7 @@ class ProfileController extends Controller
 
         $threads = $this->threads->withCriteria([
             new ThreadSort(),
-            new EagerLoad(['emojis','creator'])
+            new EagerLoad(['emojis','creator','channel'])
         ])->findWhereInPaginate('id', $threadsId);
 
         return ThreadResource::collection($threads);
