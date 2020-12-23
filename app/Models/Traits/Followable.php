@@ -19,11 +19,17 @@ trait Followable{
     }
 
     public function follow(){
+        if($this->isFollow()){
+            return;
+        }
         $attributes = ['user_id' => auth()->id()];
         $this->follows()->create($attributes);
     }
 
     public function unfollow(){
+        if(!$this->isFollow()){
+            return;
+        }
         $attributes = ['user_id' => auth()->id()];
         $this->follows()->where($attributes)->get()->each->delete();
     }

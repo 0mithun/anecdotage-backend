@@ -22,8 +22,10 @@ class FollowController extends Controller
      */
     public function store(Request $request, User $user)
     {
+        if(auth()->id() == $user->id){
+            return response(['errors' => ['message'=> 'You can not follow you']],  Response::HTTP_UNAUTHORIZED);
+        }
         $user->follow();
-
         return response(['success'=> true], Response::HTTP_ACCEPTED);
     }
 
@@ -59,7 +61,7 @@ class FollowController extends Controller
         $userFollowings = User::whereIn( 'id', $userFollowingId )->get();
         $users = UserResource::collection($userFollowings);
 
-        $tagFollowingId = DB::table( 'follows' )->where( 'user_id', $user->id )->where( 'followable_type', 'App\Models\User' )->get()->pluck( 'followable_id' );
+        $tagFollowingId = DB::table( 'follows' )->where( 'user_id', $user->id )->where( 'followable_type', 'App\Models\Tag' )->get()->pluck( 'followable_id' );
         $tagFollowings = Tag::whereIn( 'id', $tagFollowingId )->get();
         $tags = TagResource::collection($tagFollowings);
 

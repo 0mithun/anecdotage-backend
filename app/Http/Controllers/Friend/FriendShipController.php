@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Friend;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Gate;
@@ -19,7 +20,7 @@ class FriendShipController extends Controller
      */
     public function sentFriendRequestToUser(User $user){
         $authenticatedUser = auth()->user();
-        if($this->checkIsBlock($user)){
+        if($authenticatedUser->hasBlocked($user) || $authenticatedUser->isBlockedBy($user)){
             return response(['errors' => ['message'=> 'You are block by user or you block the user']],  Response::HTTP_UNAUTHORIZED);
         }
         else if($authenticatedUser->isFriendWith($user)){
@@ -46,7 +47,7 @@ class FriendShipController extends Controller
 
     public function acceptFriendRequest(User $user){
         $authenticatedUser = auth()->user();
-        if($this->checkIsBlock($user)){
+        if($authenticatedUser->hasBlocked($user) || $authenticatedUser->isBlockedBy($user)){
             return response(['errors' => ['message'=> 'You are block by user or you block the user']],  Response::HTTP_UNAUTHORIZED);
         }
         else if($authenticatedUser->isFriendWith($user)){
@@ -71,7 +72,7 @@ class FriendShipController extends Controller
 
     public function deniedFriendRequest(User $user){
         $authenticatedUser = auth()->user();
-        if($this->checkIsBlock($user)){
+        if($authenticatedUser->hasBlocked($user) || $authenticatedUser->isBlockedBy($user)){
             return response(['errors' => ['message'=> 'You are block by user or you block the user']],  Response::HTTP_UNAUTHORIZED);
         }
         else if($authenticatedUser->isFriendWith($user)){
@@ -88,6 +89,32 @@ class FriendShipController extends Controller
     }
 
 
+        /**
+     * cancel friend request
+     * @param User $user
+     * @return mixed
+     */
+
+    public function cancelFriendRequest(User $user){
+        $authenticatedUser = auth()->user();
+        if($authenticatedUser->hasBlocked($user) || $authenticatedUser->isBlockedBy($user)){
+            return response(['errors' => ['message'=> 'You are block by user or you block the user']],  Response::HTTP_UNAUTHORIZED);
+        }
+        else if($authenticatedUser->isFriendWith($user)){
+            return response(['errors' => ['message'=> 'You are already friend with user']],  Response::HTTP_NOT_ACCEPTABLE);
+        }
+
+        DB::table('friendships')->where('sender_type','App\Models\User')
+        ->where(function($query) use($authenticatedUser, $user) {
+            $query->where('sender_id', $authenticatedUser->id)->where('recipient_id', $user->id);
+        })->orWhere(function($query) use($authenticatedUser, $user) {
+            $query->where('recipient_id', $authenticatedUser->id)->where('sender_id', $user->id);
+        })
+        ->delete();
+
+        return \response(['success'=> true, 'message'=> 'Friend Request cancel Successfully'], Response::HTTP_NO_CONTENT);
+    }
+
     /**
      * Unfriend user
      * @param User $user
@@ -96,7 +123,7 @@ class FriendShipController extends Controller
 
     public function unfriendUser(User $user){
         $authenticatedUser = auth()->user();
-        if($this->checkIsBlock($user)){
+        if($authenticatedUser->hasBlocked($user) || $authenticatedUser->isBlockedBy($user)){
             return response(['errors' => ['message'=> 'You are block by user or you block the user']],  Response::HTTP_UNAUTHORIZED);
         }
         else if(!$authenticatedUser->isFriendWith($user)){

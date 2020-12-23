@@ -139,7 +139,7 @@ Route::group(['middleware' => ['auth:api']], function(){
     //Friendship
     Route::post('/user/{user}/friends/sent','Friend\FriendShipController@sentFriendRequestToUser');
     Route::post('/user/{user}/friends/accept','Friend\FriendShipController@acceptFriendRequest');
-    Route::post('/user/{user}/friends/denied','Friend\FriendShipController@deniedFriendRequest');
+    Route::post('/user/{user}/friends/cancel','Friend\FriendShipController@cancelFriendRequest');
     Route::post('/user/{user}/friends/unfriend','Friend\FriendShipController@unfriendUser');
     Route::post('/user/{user}/friends/block','Friend\FriendShipController@blockFriend');
     Route::post('/user/{user}/friends/unblock','Friend\FriendShipController@unblockUesr');

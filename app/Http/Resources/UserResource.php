@@ -33,6 +33,9 @@ class UserResource extends JsonResource
             $this->mergeWhen(auth()->check() && auth()->user()->is_admin && auth()->id() == $this->id, [
                 'is_admin'          => $this->is_admin,
             ]),
+            $this->mergeWhen(auth()->check() && auth()->user()->username  == $this->username, [
+                'is_owner'          => true,
+            ]),
 
             $this->mergeWhen(auth()->check() && auth()->user()->is_banned, [
                 'is_banned'     => $this->is_banned,

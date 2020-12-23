@@ -47,7 +47,7 @@ class ProfileController extends Controller
                 // 'followers'         => $user->followers,
                 'is_follow'         =>  $user->is_follow,
                 'is_friend'         =>  $user->is_friend,
-                'is_blocked'         =>  $user->is_blocked,
+                'is_blocked'        =>  $user->is_blocked,
             ]
         ]);
     }
