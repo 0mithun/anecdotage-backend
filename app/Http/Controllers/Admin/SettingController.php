@@ -35,7 +35,7 @@ class SettingController extends Controller
     public function update(Request $request)
     {
         $setting = Setting::first();
-        $setting->update($request->all());
+        $setting->update($request->except(['site_logo','site_favicon']));
 
         return response(new SettingResource($setting));
     }

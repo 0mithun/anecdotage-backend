@@ -17,6 +17,7 @@ class SetAgeThirteenController extends Controller
         ],[
             'title_13.required'  => 'The title field is required.'
         ]);
+
         Thread::where('title', 'LIKE', "%{$request->title_13}%")->chunk(100, function($threads){
             foreach($threads as $thread){
                 $thread->update(['age_restriction'=>13]);
@@ -24,7 +25,7 @@ class SetAgeThirteenController extends Controller
         });
 
 
-        return \response(['success'=> true, ['message'=>'Thread Age Restriction 13 Set Successfully']], Response::HTTP_NO_CONTENT);
+        return \response(['success'=> true, ['message'=>'Thread Age Restriction 13 Set Successfully']], Response::HTTP_ACCEPTED);
     }
 
 
@@ -40,20 +41,21 @@ class SetAgeThirteenController extends Controller
             }
         });
 
-        return \response(['success'=> true, ['message'=>'Thread Age Restriction 13 Set Successfully']], Response::HTTP_NO_CONTENT);
+        return \response(['success'=> true, ['message'=>'Thread Age Restriction 13 Set Successfully']], Response::HTTP_ACCEPTED);
     }
 
 
     public function tag(Request $request){
         $this->validate($request, [
-            'tag_13' =>  ['required']
+            'tag_13' =>  ['required', 'exists:tags,name']
         ],[
-            'tag_13.required' => 'The tag field is required.'
+            'tag_13.required' => 'The tag field is required.',
+            'tag_13.exists' => 'The tag was not found.',
         ]);
-        $tag = Tag::findOrFail($request->tag_13);
+        $tag = Tag::where('name',$request->tag_13)->first();
         $threadsId = $tag->threads()->pluck('id')->toArray();
         Thread::whereIn('id', $threadsId)->update(['age_restriction'=>13]);
 
-        return \response(['success'=> true, ['message'=>'Thread Age Restriction 13 Set Successfully']], Response::HTTP_NO_CONTENT);
+        return \response(['success'=> true, ['message'=>'Thread Age Restriction 13 Set Successfully']], Response::HTTP_ACCEPTED);
     }
 }

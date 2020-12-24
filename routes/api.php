@@ -190,9 +190,9 @@ Route::group(['middleware' => ['auth:api']], function(){
             Route::post('threads/set-age-thirteen-threads-tag','SetAgeThirteenController@tag');
 
             //Set age restriction 18
-            Route::post('threads/set-age-eighteen-threads-title','SetAgeThirteenController@title');
-            Route::post('threads/set-age-eighteen-threads-body','SetAgeThirteenController@body');
-            Route::post('threads/set-age-eighteen-threads-tag','SetAgeThirteenController@tag');
+            Route::post('threads/set-age-eighteen-threads-title','SetAgeEighteenController@title');
+            Route::post('threads/set-age-eighteen-threads-body','SetAgeEighteenController@body');
+            Route::post('threads/set-age-eighteen-threads-tag','SetAgeEighteenController@tag');
 
             //thread search & replace
             Route::post('threads/threads-replace-title','ThreadSearchReplaceController@title');
