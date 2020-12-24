@@ -52,21 +52,23 @@ Route::get('threads/{thread}/replies/{reply}/childs','Reply\ReplyController@chil
 
 
 
-  //Profiles
-  Route::get('profile/{user}','User\ProfileController@user');
-  Route::get('profile/{user}/subscriptions','User\ProfileController@subscriptions');
-  Route::get('profile/{user}/favorites','User\ProfileController@favorites');
-  Route::get('profile/{user}/likes','User\ProfileController@likes');
-  Route::get('profile/{user}/threads','User\ProfileController@threads');
+//Profiles
+Route::get('profile/{user}','User\ProfileController@user');
+Route::get('profile/{user}/subscriptions','User\ProfileController@subscriptions');
+Route::get('profile/{user}/favorites','User\ProfileController@favorites');
+Route::get('profile/{user}/likes','User\ProfileController@likes');
+Route::get('profile/{user}/threads','User\ProfileController@threads');
 
 
-  Route::get('/user/{user}/friends/friend-list','Friend\FriendShipController@getAllFriendLists');
-  Route::get('/user/{user}/friends/block-list','Friend\FriendShipController@getAllBlokcFriends');
-  Route::get('/user/{user}/friends/friend-request-list','Friend\FriendShipController@getAllPendingFriendRequests');
-  Route::get('/user/{user}/friends/followings','User\FollowController@followings');
-  Route::get('/user/{user}/friends/followers','User\FollowController@followers');
+Route::get('/user/{user}/friends/friend-list','Friend\FriendShipController@getAllFriendLists');
+Route::get('/user/{user}/friends/block-list','Friend\FriendShipController@getAllBlokcFriends');
+Route::get('/user/{user}/friends/friend-request-list','Friend\FriendShipController@getAllPendingFriendRequests');
+Route::get('/user/{user}/friends/followings','User\FollowController@followings');
+Route::get('/user/{user}/friends/followers','User\FollowController@followers');
 
 
+//Settings
+Route::get('/settings','Admin\SettingController@index');
 
 // Route group for authenticated users only
 Route::group(['middleware' => ['auth:api']], function(){
@@ -171,7 +173,9 @@ Route::group(['middleware' => ['auth:api']], function(){
         Route::delete('banned/{user}','BanController@destroy');
 
         //Admin Settings
-        Route::resource('settings', 'SettingController')->only(['index','show','update']);
+        Route::put('settings', 'SettingController@update');
+        Route::post('settings/logo', 'SettingController@updateLogo');
+        Route::post('settings/favicon', 'SettingController@updateFavicon');
 
         //Batch Tools
         Route::group(['prefix' => 'batch-tool','namespace'=>'BatchTool'], function () {

@@ -7,40 +7,40 @@ use Illuminate\Database\Eloquent\Model;
 
 class Setting extends Model
 {
-    protected $guarded = [];
+    protected $fillable = [
+        'site_name',
+        'site_title',
+        'default_email_address',
+        'site_logo',
+        'site_favicon',
+        'footer_copyright_text',
+        'seo_meta_title',
+        'seo_meta_description',
+        'social_facebook',
+        'social_twitter',
+        'social_instagram',
+        'social_linkedin',
+        'google_analytics',
+        'facebook_pixels',
+        'faq',
+        'tos',
+        'privacypolicy',
+    ];
 
-    public function getRouteKeyName()
-    {
-        return 'key';
-    }
-        /**
-     * @param $key
-     */
-    public static function get($key)
-    {
-        $setting = new self();
-        $entry = $setting->where('key', $key)->first();
-        if (!$entry) {
-            return false;
+    public function getLogoPathAttribute(){
+        if ($this->site_logo != '') {
+            return asset('storage/'.$this->site_logo);
+        } else {
+            return asset('images/logo.jpg');
         }
-        return $entry->value;
     }
 
-    /**
-     * @param $key
-     * @param null $value
-     * @return bool
-     */
-    public static function set($key, $value = null)
-    {
-        $setting = new self();
-        $entry = $setting->where('key', $key)->firstOrFail();
-        $entry->value = $value;
-        $entry->saveOrFail();
-        Config::set('key', $value);
-        if (Config::get($key) == $value) {
-            return true;
+
+    public function getFaviconPathAttribute(){
+        if ($this->site_favicon != '') {
+            return asset('storage/'.$this->site_favicon);
+        } else {
+            return asset('images/logo.png');
         }
-        return false;
     }
 }
