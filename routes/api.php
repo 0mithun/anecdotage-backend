@@ -166,11 +166,7 @@ Route::group(['middleware' => ['auth:api']], function(){
     //User ban
     Route::group(['prefix' => 'admin', 'middleware'=>['admin'],'namespace'=>'Admin'], function () {
 
-        //Ban user
-        Route::post('banned/{user}','BanController@store');
-        Route::get('banned','BanController@index');
-        Route::put('banned/{user}','BanController@update');
-        Route::delete('banned/{user}','BanController@destroy');
+
 
         //Admin Settings
         Route::put('settings', 'SettingController@update');
@@ -224,6 +220,19 @@ Route::group(['middleware' => ['auth:api']], function(){
              Route::post('threads/assign-to-user-threads-body','AssignToUserController@body');
              Route::post('threads/assign-to-user-threads-tag','AssignToUserController@tag');
 
+        });
+
+        Route::group(['prefix' => 'manage-users'], function () {
+             //Ban user
+            // Route::get('banned','BanController@index');
+
+            Route::post('threads/ban-users-title','BanController@title');
+            Route::post('threads/ban-users-body','BanController@body');
+            Route::post('threads/ban-users-tag','BanController@tag');
+            Route::post('threads/unban-all-users','BanController@unbanAllUser');
+
+            Route::post('threads/ban-single-user','BanController@banSingleUser');
+            Route::post('threads/unban-single-user','BanController@unBanSingleUser');
         });
 
     });
