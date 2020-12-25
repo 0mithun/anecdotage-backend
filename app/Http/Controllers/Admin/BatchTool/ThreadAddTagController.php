@@ -12,11 +12,12 @@ class ThreadAddTagController extends Controller
 {
     public function body(Request $request){
         $request->validate([
-            'add_tag_body' =>  'required',
-            'add_tag_body_tag_name' =>  'required'
+            'add_tag_body' =>  ['required'],
+            'add_tag_body_tag_name' =>  ['required','exists:tags,name']
         ],[
             'add_tag_body.required' => 'The body field is required.',
-            'add_tag_body_tag_name.required' => 'The tag name field is required.'
+            'add_tag_body_tag_name.exists' => 'Tag was not found.',
+            'add_tag_body_tag_name.required' => 'The tag name field is required.',
         ]);
 
         $tag = Tag::where('name', strtolower($request->add_tag_body_tag_name))->first();
@@ -36,10 +37,11 @@ class ThreadAddTagController extends Controller
 
     public function title(Request $request){
         $request->validate([
-            'add_tag_title' =>  'required',
-            'add_tag_title_tag_name' =>  'required'
+            'add_tag_title' =>  ['required'],
+            'add_tag_title_tag_name' =>  ['required','exists:tags,name']
         ],[
             'add_tag_title.required' => 'The title field is required.',
+            'add_tag_title_tag_name.exists' => 'Tag was not found.',
             'add_tag_title_tag_name.required' => 'The tag name field is required.'
         ]);
 
@@ -60,14 +62,15 @@ class ThreadAddTagController extends Controller
 
     public function tag(Request $request){
         $request->validate([
-            'add_tag_with_tag' =>  'required',
-            'add_tag_with_tag_tag_name' =>  'required'
+            'add_tag_with_tag' =>  ['required','exists:tags,name'],
+            'add_tag_with_tag_tag_name' =>  ['required']
         ],[
+            'add_tag_with_tag.exists' => 'Tag was not found.',
             'add_tag_with_tag.required' => 'The old tag name field is required.',
             'add_tag_with_tag_tag_name.required' => 'The tag name field is required.'
         ]);
 
-        $old_tag = Tag::where('name', strtolower($request->add_tag_with_tag))->firstOrFail();
+        $old_tag = Tag::where('name', strtolower($request->add_tag_with_tag))->first();
 
         $new_tag = Tag::where('name', strtolower($request->add_tag_with_tag_tag_name))->first();
         if(!$new_tag){

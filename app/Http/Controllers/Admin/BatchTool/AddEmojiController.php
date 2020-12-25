@@ -12,14 +12,16 @@ class AddEmojiController extends Controller
 {
     public function add(Request $request){
         $request->validate([
-            'add_emoji_tag_name' =>  'required',
-            'emoji_name' =>  'required',
+            'add_emoji_tag_name' =>  ['required','exists:tags,name'],
+            'emoji_name' =>  ['required','exists:emoji,id'],
         ],[
             'add_emoji_tag_name.required'    =>  'The tag name field is required.',
-            'emoji_name.required'    =>  'The emoji field is required.'
+            'add_emoji_tag_name.exists'    =>  'Tag was not found.',
+            'emoji_name.required'    =>  'The emoji field is required.',
+            'emoji_name.exists'    =>  'Emoji was not found.',
         ]);
 
-        $tag = Tag::where('name', strtolower($request->add_emoji_tag_name))->firstOrFail();
+        $tag = Tag::where('name', strtolower($request->add_emoji_tag_name))->first();
 
         $type = $request->emoji_name;
         $userId = 1; //Admin user id = 1

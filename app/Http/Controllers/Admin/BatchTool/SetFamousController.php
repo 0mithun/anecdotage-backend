@@ -50,13 +50,14 @@ class SetFamousController extends Controller
 
     public function tag(Request $request){
         $request->validate([
-            'set_famous_tag' =>  'required',
-            'set_famous_tag_category' =>  'required'
+            'set_famous_tag' =>  ['required','exists:tags,name'],
+            'set_famous_tag_category' =>  ['required']
         ],[
             'set_famous_tag.required' => 'The tag field is required.',
+            'set_famous_tag.exists' => 'Tag was not found.',
             'set_famous_tag_category.required' => 'The famous field is required.'
         ]);
-        $tag = Tag::where('name', strtolower($request->set_famous_tag))->firstOrFail();
+        $tag = Tag::where('name', strtolower($request->set_famous_tag))->first();
 
         $tag->threads()->chunk(100, function($threads) use($request){
             foreach($threads as $thread){

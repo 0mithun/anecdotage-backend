@@ -11,10 +11,12 @@ class ModifyTagController extends Controller
 {
     public function rename(Request $request){
         $this->validate($request, [
-            'old_tag_name' =>  ['required'],
+            'old_tag_name' =>  ['required','exists:tags,name'],
             'new_tag_name' =>  ['required','unique:tags,name']
+        ],[
+            'old_tag_name.exists'   => 'Tag was not found'
         ]);
-        $tag = Tag::where('name', strtolower($request->old_tag_name))->firstOrFail();
+        $tag = Tag::where('name', strtolower($request->old_tag_name))->first();
         $tag->update(['name' => strtolower($request->new_tag_name)]);
 
         return \response(['success'=> true, 'message'=>'Tag rename successfully'], Response::HTTP_ACCEPTED);
@@ -23,9 +25,10 @@ class ModifyTagController extends Controller
 
     public function delete(Request $request){
         $request->validate([
-            'delete_tag_name' =>  'required',
+            'delete_tag_name' =>  ['required','exists:tags,name'],
         ],[
-            'delete_tag_name.required'  =>  'The tag name field is required.'
+            'delete_tag_name.required'  =>  'The tag name field is required.',
+            'delete_tag_name.exists'  =>  'Tag was not found.',
         ]);
         $tag = Tag::where('name', strtolower($request->delete_tag_name))->firstOrFail();
         $tag->threads()->chunk(100, function($threads) use($tag){

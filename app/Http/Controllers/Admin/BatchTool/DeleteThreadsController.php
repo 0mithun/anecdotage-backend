@@ -42,11 +42,12 @@ class DeleteThreadsController extends Controller
 
     public function tag(Request $request){
         $this->validate($request, [
-            'delete_thread_tag' =>  ['required']
+            'delete_thread_tag' =>  ['required','exists:tags,name']
         ],[
-            'delete_thread_tag.required' => 'Delete thread tag field is required.'
+            'delete_thread_tag.required' => 'Delete thread tag field is required.',
+            'delete_thread_tag.exists' => 'Tag was not found',
         ]);
-        $tag = Tag::findOrFail($request->delete_thread_tag);
+        $tag =  Tag::where('name',$request->delete_thread_tag)->first();
 
         $tag->threads()->chunk(100, function($threads){
             foreach($threads as $thread){
