@@ -23,5 +23,12 @@ class UserPrivacy extends Model
         'restricted_18'
     ];
 
-
+    protected $casts = [
+        'thread_create_share_facebook'  =>  'boolean',
+        'thread_create_share_twitter'  =>  'boolean',
+        'anyone_share_my_thread_facebook'  =>  'boolean',
+        'anyone_share_my_thread_twitter'  =>  'boolean',
+        'restricted_13'  =>  'boolean',
+        'restricted_18'  =>  'boolean',
+    ];
 }

@@ -13,6 +13,7 @@ use App\Http\Resources\UserResource;
 use App\Repositories\Contracts\IUser;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Symfony\Component\HttpFoundation\Response;
+use Spatie\Geocoder\Geocoder;
 
 class SettingsController extends Controller
 {
@@ -32,11 +33,16 @@ class SettingsController extends Controller
             'date_of_birth' =>  ['date'],
             'about' => ['required', 'string', 'min:20'],
             'formatted_address' => ['required'],
-            'location.latitude' => ['required', 'numeric', 'min:-90', 'max:90'],
-            'location.longitude' => ['required', 'numeric', 'min:-180', 'max:180']
+            // 'location.latitude' => ['required', 'numeric', 'min:-90', 'max:90'],
+            // 'location.longitude' => ['required', 'numeric', 'min:-180', 'max:180']
         ]);
 
-        $location = new Point($request->location['latitude'], $request->location['longitude']);
+        // $location = $this->getGeocodeing($request->formatted_address);
+        // if ($location['accuracy'] != 'result_not_found') {
+        //     $data['location'] = new Point($location['lat'], $location['lng']);
+        // }
+
+        // $location = new Point($request->location['latitude'], $request->location['longitude']);
 
 
         $user = $this->users->update(auth()->id(), [
@@ -44,7 +50,7 @@ class SettingsController extends Controller
             'date_of_birth' => $request->date_of_birth,
             'about' => $request->about,
             'formatted_address' => $request->formatted_address,
-            'location' => $location,
+            // 'location' => $location,
         ]);
 
         return new UserResource($user);
@@ -98,5 +104,19 @@ class SettingsController extends Controller
 
         return  \response(new UserResource($user), Response::HTTP_ACCEPTED);
     }
+
+          /**
+     * Get lat, lng with thread location
+     */
+
+    public function getGeocodeing($address)
+    {
+        $client = new \GuzzleHttp\Client();
+        $geocoder = new Geocoder($client);
+        $geocoder->setApiKey(config('geocoder.key'));
+        $geocoder->setCountry(config('geocoder.country', 'US'));
+        return $geocoder->getCoordinatesForAddress($address);
+    }
+
 
 }

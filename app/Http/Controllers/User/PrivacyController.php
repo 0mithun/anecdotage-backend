@@ -28,7 +28,13 @@ class PrivacyController extends Controller
      */
     public function show(User $user)
     {
-        //
+        Gate::authorize('view-profile', $user);
+        $user = $this->users->withCriteria([
+            new EagerLoad(['userprivacy'])
+        ])->findWhereFirst('username', $user->username);
+
+
+        return new UserResource($user);
     }
 
 

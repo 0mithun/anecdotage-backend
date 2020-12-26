@@ -76,10 +76,13 @@ Route::group(['middleware' => ['auth:api']], function(){
     Route::post('logout', 'Auth\LoginController@logout');
     Route::put('settings/profile', 'User\SettingsController@updateProfile');
     Route::put('settings/password', 'User\SettingsController@updatePassword');
-    Route::put('settings/avatar', 'User\SettingsController@updateAvatar');
+    Route::post('settings/avatar', 'User\SettingsController@updateAvatar');
     Route::put('settings/about', 'User\SettingsController@updateAbout');
 
+    Route::get('user/{user}/privacy','User\PrivacyController@show');
     Route::put('user/{user}/privacy','User\PrivacyController@update');
+
+    Route::get('user/{user}/notification','User\NotificationController@show');
     Route::put('user/{user}/notification','User\NotificationController@update');
 
 
