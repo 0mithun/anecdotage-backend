@@ -3,20 +3,24 @@
 namespace App\Http\Controllers\Emoji;
 
 use App\Models\Emoji;
+use App\Models\Thread;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\EmojiResource;
-use App\Models\Thread;
+use App\Http\Resources\ThreadResource;
 use App\Repositories\Contracts\IEmoji;
+use App\Repositories\Contracts\IThread;
 use App\Repositories\Eloquent\Criteria\EagerLoad;
 
 class EmojiController extends Controller
 {
 
     protected $emojis;
+    protected $threads;
 
-    public function __construct(IEmoji $emojis){
+    public function __construct(IEmoji $emojis, IThread $threads){
         $this->emojis = $emojis;
+        $this->threads = $threads;
     }
 
 
@@ -40,15 +44,19 @@ class EmojiController extends Controller
      */
     public function show(Emoji $emoji)
     {
-        $emoji = $this->emojis->withCriteria([
-            new EagerLoad('threads')
-        ])->find($emoji->id);
+        $threadsId = $emoji->threads()->pluck('id')->toArray();
+        $threads = $this->threads->withCriteria([
+            new EagerLoad(['channel','emojis']),
+       ])->findWhereInPaginate('id',$threadsId, 2 );
 
+       $emojiResponse =  (new EmojiResource($emoji))->additional([
+            'data'  => [
 
+            ]
+        ]);
 
-        return new EmojiResource($emoji);
+        return response(['emoji' => $emojiResponse->response()->getData(true), 'threads'=> ThreadResource::collection($threads)->response()->getData(true)]);
     }
-
 
 
 }

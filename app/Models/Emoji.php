@@ -18,6 +18,14 @@ class Emoji extends Model
         return asset('images/emojis/'.$this->name.'.png');
     }
 
-
+       /**
+     * Get the route key name.
+     *
+     * @return string
+     */
+    public function getRouteKeyName()
+    {
+        return 'name';
+    }
 
 }
