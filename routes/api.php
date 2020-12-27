@@ -70,6 +70,9 @@ Route::get('/user/{user}/friends/followers','User\FollowController@followers');
 //Settings
 Route::get('/settings','Admin\SettingController@index');
 
+//Mapgs
+Route::get('maps', 'Maps\ThreadsCotnroller@getAllThread');
+
 // Route group for authenticated users only
 Route::group(['middleware' => ['auth:api']], function(){
     Route::get('me', 'User\MeController@getMe');
@@ -78,6 +81,7 @@ Route::group(['middleware' => ['auth:api']], function(){
     Route::put('settings/password', 'User\SettingsController@updatePassword');
     Route::post('settings/avatar', 'User\SettingsController@updateAvatar');
     Route::put('settings/about', 'User\SettingsController@updateAbout');
+    Route::put('settings/location', 'User\SettingsController@updateLoction');
 
     Route::get('user/{user}/privacy','User\PrivacyController@show');
     Route::put('user/{user}/privacy','User\PrivacyController@update');

@@ -118,5 +118,14 @@ class SettingsController extends Controller
         return $geocoder->getCoordinatesForAddress($address);
     }
 
+    public function updateLoction(Request $request){
+        $location = new Point($request->lat, $request->lng);
+        $user =  $this->users->update(\auth()->id(), [
+            'location' => $location,
+        ]);
+
+        return  \response(new UserResource($user), Response::HTTP_ACCEPTED);
+    }
+
 
 }

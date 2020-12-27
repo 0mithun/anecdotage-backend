@@ -13,12 +13,18 @@ use App\Models\Traits\Likeable;
 use App\Models\ThreadSubscription;
 use App\Models\Traits\Favoritable;
 use App\Models\Traits\Reportable;
+use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 class Thread extends Model
 {
-    use Favoritable, Likeable, Reportable;
+    use Favoritable, Likeable, Reportable, SpatialTrait;
+
+    protected $spatialFields = [
+        'location',
+    ];
+
       /**
      * Get the route key name.
      *

@@ -137,7 +137,7 @@ class ThreadController extends Controller
             //     $data['location'] = new Point($location['lat'], $location['lng']);
             // }
         }
-
+        // $data['location'] = new Point(43.93, 50.72);
         if($request->has('cno') && $request->cno != null){
             $cno = json_decode(json_encode(request('cno')));
             if($cno->famous == false){
