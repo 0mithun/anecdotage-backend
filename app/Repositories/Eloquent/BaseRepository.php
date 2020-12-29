@@ -125,4 +125,15 @@ abstract class BaseRepository implements IBase, ICriteria
         return $this->model->toSql();
     }
 
+
+
+    public function findWhereInSameOrderPaginate($column, array $data, $perPage = 10)
+    {
+        $this->currentPage();
+
+        return $this->model->whereIn($column, $data)
+        // ->reorder('id','desc')
+        ->orderByRaw("field(id,".implode(',',$data).")")
+        ->paginate($perPage);
+    }
 }

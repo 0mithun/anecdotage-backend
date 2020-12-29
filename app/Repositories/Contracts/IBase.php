@@ -20,4 +20,5 @@ interface IBase
 
     public function toSql();
 
+    public function findWhereInSameOrderPaginate($column, array $data, $perPage = 10);
 }

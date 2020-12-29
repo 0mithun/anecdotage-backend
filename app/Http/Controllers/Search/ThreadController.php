@@ -4,22 +4,27 @@ namespace App\Http\Controllers\Search;
 
 use App\Models\Thread;
 use Illuminate\Http\Request;
+use App\Http\Resources\TagResource;
 use App\Http\Controllers\Controller;
+use App\Repositories\Contracts\ITag;
+use App\Http\Resources\ThreadResource;
 use App\Repositories\Contracts\IThread;
+use App\Repositories\Eloquent\Criteria\EagerLoad;
 
 class ThreadController extends Controller
 {
     protected $threads;
+    protected $tags;
+
     protected $filter = [];
     protected $index = 0;
 
 
-    public function __construct(IThread $threads)
+    public function __construct(IThread $threads, ITag $tags)
     {
         $this->threads = $threads;
+        $this->tags = $tags;
     }
-
-
 
 
     public function index(Request $request){
@@ -29,11 +34,18 @@ class ThreadController extends Controller
 
         $results = $this->search($request);
 
-
-        $ids =  $results->pluck('id');
+        $threadIds =  $results->pluck('id')->toArray();
         $tags =  $results->pluck('tag_ids');
 
-        return $tags->collapse()->unique();
+        $tagIds = $tags->collapse()->unique()->toArray();
+        $tags = $this->tags->findWhereIn('id', $tagIds);
+
+        $threads = $this->threads->withCriteria([
+            new EagerLoad(['emojis','channel']),
+        ])->findWhereInSameOrderPaginate('id', $threadIds);
+
+        return response(['tags' => TagResource::collection($tags)->response()->getData(true), 'threads'=> ThreadResource::collection($threads)->response()->getData(true)]);
+
     }
 
 

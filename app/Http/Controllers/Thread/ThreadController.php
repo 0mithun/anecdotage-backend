@@ -55,6 +55,9 @@ class ThreadController extends Controller
     public function store(ThreadCreateRequest $request)
     {
         $data = $request->only(['title','body','source','main_subject','age_restriction','anonymous','famous',]);
+        $data['slug'] = str_slug(strip_tags( $request->title));
+
+
         if ($request->location != null) {
             // $location = $this->getGeocodeing($request->location);
             // if ($location['accuracy'] != 'result_not_found') {
@@ -91,9 +94,11 @@ class ThreadController extends Controller
         }
 
 
+
         $thread = $this->threads->create($data + ['user_id'=>auth()->id()]);
 
         $this->attachTags($request, $thread);
+
         return response(new ThreadResource($thread), Response::HTTP_CREATED);
 
     }

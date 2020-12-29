@@ -10,71 +10,21 @@ use App\Models\Channel;
 use App\Models\ThreadView;
 use App\Filters\ThreadFilter;
 use App\Models\Traits\Likeable;
+use App\Models\Traits\Reportable;
 use App\Models\ThreadSubscription;
 use App\Models\Traits\Favoritable;
-use App\Models\Traits\Reportable;
 use App\Models\Traits\SearchableTrait;
-use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
+
+use Illuminate\Database\Eloquent\Builder;
 
 class Thread extends Model
 {
     use Favoritable, Likeable, Reportable, SpatialTrait, SearchableTrait ;
 
 
-    protected $mappingProperties = array(
-        'title' => array(
-            'type' => 'string',
-            'analyzer' => 'standard'
-        ),
-        'body' => array(
-            'type' => 'string',
-            'analyzer' => 'standard'
-        ),
-        'tags' => array(
-            'type' => 'string',
-            'analyzer' => 'standard'
-        ),
-        'cno' => array(
-            'type' => 'string',
-            'analyzer' => 'not_analyzed'
-        ),
-        'is_published' => array(
-            'type' => 'boolean',
-        ),
-    );
-
-    function getIndexDocumentData()
-    {
-        return array(
-            'id'                    =>  $this->id,
-            'user_id'               =>  $this->user_id,
-            'title'                 =>  $this->title,
-            'body'                  =>  $this->body,
-            'is_published'          =>  $this->is_published,
-            'age_restriction'       =>  $this->age_restriction,
-            'like_count'            =>  $this->like_count,
-            'dislike_count'         =>  $this->dislike_count,
-            'favorite_count'        =>  $this->favorite_count,
-            'visits'                =>  $this->visits,
-            'word_count'            =>  $this->word_count,
-            'cno'                   =>  $this->cno,
-            'tag_ids'               =>  $this->tag_ids,
-            'tag_names'             =>  $this->tag_names,
-        );
-    }
-
-
-    function getIndexName()
-    {
-        return 'threads';
-    }
-
-    function getTypeName()
-    {
-        return 'threads';
-    }
 
 
     protected $spatialFields = [
@@ -121,6 +71,8 @@ class Thread extends Model
         parent::boot();
 
         static::deleting(function ($thread) {
+            $thread->removeFromIndex();
+
             $thread->replies->each->delete();
             $thread->subscriptions->each->delete();
 
@@ -132,11 +84,17 @@ class Thread extends Model
         });
 
         static::created(function ($thread) {
-            $thread->update(['slug' => str_slug(strip_tags( $thread->title))]);
+            // $thread->update(['slug' => str_slug(strip_tags( $thread->title))]);
+
+            $thread->addToIndex();
+
+        });
+
+        static::updated(function($thread){
+            $thread->updateIndex();
         });
 
         static::addGlobalScope(new ThreadFilter);
-
     }
 
     public function setTitleAttribute($value){
@@ -285,17 +243,6 @@ class Thread extends Model
     //     return $reply;
     // }
 
-    // /**
-    //  * Apply all relevant thread filters.
-    //  *
-    //  * @param  Builder       $query
-    //  * @param  ThreadFilters $filters
-    //  * @return Builder
-    //  */
-    // public function scopeFilter($query, ThreadFilters $filters)
-    // {
-    //     return $filters->apply($query);
-    // }
 
 
     /**

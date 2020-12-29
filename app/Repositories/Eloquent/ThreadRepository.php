@@ -44,4 +44,5 @@ class ThreadRepository extends BaseRepository implements IThread
         }
         return $query->get();
     }
+
 }
