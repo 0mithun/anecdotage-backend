@@ -29,7 +29,7 @@ class ThreadController extends Controller
 
     public function index(Request $request){
         $this->validate($request, [
-            'query' => ['required']
+            'q' => ['required']
         ]);
 
         $results = $this->search($request);
@@ -186,7 +186,7 @@ class ThreadController extends Controller
               $this->buildLengthQuery($request->length);
           }
 
-          $params = $this->buildParams(request()->get('query'));
+          $params = $this->buildParams(request()->get('q'));
 
           $search = Thread::searchByQuery($params);
           $results = Thread::customSearch($params, null, null, $search->totalHits());
