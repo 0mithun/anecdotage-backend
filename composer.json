@@ -11,6 +11,7 @@
         "php": "^7.2",
         "beyondcode/laravel-websockets": "^1.4",
         "cviebrock/eloquent-taggable": "^6.0",
+        "elasticquent/elasticquent": "^1.0",
         "fideloper/proxy": "^4.0",
         "fruitcake/laravel-cors": "^1.0",
         "grimzy/laravel-mysql-spatial": "^2.2",

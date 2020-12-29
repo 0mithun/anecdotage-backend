@@ -13,13 +13,69 @@ use App\Models\Traits\Likeable;
 use App\Models\ThreadSubscription;
 use App\Models\Traits\Favoritable;
 use App\Models\Traits\Reportable;
+use App\Models\Traits\SearchableTrait;
 use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 class Thread extends Model
 {
-    use Favoritable, Likeable, Reportable, SpatialTrait;
+    use Favoritable, Likeable, Reportable, SpatialTrait, SearchableTrait ;
+
+
+    protected $mappingProperties = array(
+        'title' => array(
+            'type' => 'string',
+            'analyzer' => 'standard'
+        ),
+        'body' => array(
+            'type' => 'string',
+            'analyzer' => 'standard'
+        ),
+        'tags' => array(
+            'type' => 'string',
+            'analyzer' => 'standard'
+        ),
+        'cno' => array(
+            'type' => 'string',
+            'analyzer' => 'not_analyzed'
+        ),
+        'is_published' => array(
+            'type' => 'boolean',
+        ),
+    );
+
+    function getIndexDocumentData()
+    {
+        return array(
+            'id'                    =>  $this->id,
+            'user_id'               =>  $this->user_id,
+            'title'                 =>  $this->title,
+            'body'                  =>  $this->body,
+            'is_published'          =>  $this->is_published,
+            'age_restriction'       =>  $this->age_restriction,
+            'like_count'            =>  $this->like_count,
+            'dislike_count'         =>  $this->dislike_count,
+            'favorite_count'        =>  $this->favorite_count,
+            'visits'                =>  $this->visits,
+            'word_count'            =>  $this->word_count,
+            'cno'                   =>  $this->cno,
+            'tag_ids'               =>  $this->tag_ids,
+            'tag_names'             =>  $this->tag_names,
+        );
+    }
+
+
+    function getIndexName()
+    {
+        return 'threads';
+    }
+
+    function getTypeName()
+    {
+        return 'threads';
+    }
+
 
     protected $spatialFields = [
         'location',
@@ -368,5 +424,13 @@ class Thread extends Model
         return (bool) auth()->check() && auth()->id() === $this->user_id;
     }
 
-
+    public function getWordCountAttribute(){
+        return str_word_count(strip_tags($this->body));
+    }
+    public function getTagNamesAttribute(){
+        return  $this->tags()->pluck('name');
+    }
+    public function getTagIdsAttribute(){
+        return  $this->tags()->pluck('id');
+    }
 }

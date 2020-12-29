@@ -73,6 +73,9 @@ Route::get('/settings','Admin\SettingController@index');
 //Mapgs
 Route::get('maps', 'Maps\ThreadsCotnroller@getAllThread');
 
+//Search
+Route::get('search','Search\ThreadController@index');
+
 // Route group for authenticated users only
 Route::group(['middleware' => ['auth:api']], function(){
     Route::get('me', 'User\MeController@getMe');

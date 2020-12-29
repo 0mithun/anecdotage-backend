@@ -55,7 +55,10 @@ class ThreadResource extends JsonResource
             // 'creator'                   =>  new UserResource($this->creator),
             'tags'                      =>  TagResource::collection($this->whenLoaded('tags')),
             'emojis'                    =>  EmojiResource::collection($this->whenLoaded('emojis')),
-            'is_owner'                  => $this->is_owner
+            'is_owner'                  => $this->is_owner,
+            'word_count'                =>  $this->word_count,
+            'tag_names'                =>  $this->tag_names,
+            'tag_ids'                =>  $this->tag_ids,
 
         ];
     }

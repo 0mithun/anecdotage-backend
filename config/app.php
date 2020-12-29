@@ -167,6 +167,7 @@ return [
         /*
          * Package Service Providers...
          */
+        Elasticquent\ElasticquentServiceProvider::class,
 
         /*
          * Application Service Providers...
