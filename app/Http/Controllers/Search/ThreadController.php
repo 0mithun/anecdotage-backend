@@ -143,7 +143,7 @@ class ThreadController extends Controller
     }
 
      /**
-     * Build query for filter length
+     * Build query for filter tags
      *
      * @param string $tags
      * @return void
@@ -157,6 +157,26 @@ class ThreadController extends Controller
                 $tag_ids[]= (int) preg_replace('/[^0-9]/', '', $tag);
             }
             $this->filter[$this->index]['terms']['tag_ids']  = $tag_ids;
+        }
+
+        $this->index = count($this->filter);
+    }
+
+     /**
+     * Build query for filter emojis
+     *
+     * @param string $emojis
+     * @return void
+     */
+    public function buildEmojisQuery($emojis){
+        $splitEmojis = explode(',', $emojis);
+
+        if(count($splitEmojis)> 0){
+            $emoji_ids = [];
+            foreach($splitEmojis as $emoji){
+                $emoji_ids[]= (int) preg_replace('/[^0-9]/', '', $emoji);
+            }
+            $this->filter[$this->index]['terms']['emoji_ids']  = $emoji_ids;
         }
 
         $this->index = count($this->filter);
@@ -211,6 +231,10 @@ class ThreadController extends Controller
 
           if($request->has('tags') && $request->tags != null ){
               $this->buildTagsQuery($request->tags);
+          }
+
+          if($request->has('emojis') && $request->emojis != null ){
+              $this->buildEmojisQuery($request->emojis);
           }
 
           $params = $this->buildParams(request()->get('q'));
