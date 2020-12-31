@@ -24,10 +24,32 @@ trait SearchableTrait
         ),
         'cno' => array(
             'type' => 'string',
-            'analyzer' => 'not_analyzed'
+            'analyzer' => 'standard'
         ),
         'is_published' => array(
             'type' => 'boolean',
+        ),
+        'is_published' => array(
+            'type' => 'boolean',
+        ),
+        'like_count' => array(
+            'type' => 'standard',
+        ),
+        'dislike_count' => array(
+            'type' => 'standard',
+        )
+        ,
+        'points' => array(
+            'type' => 'long',
+        ),
+        'visits' => array(
+            'type' => 'standard',
+        ),
+        'word_count' => array(
+            'type' => 'standard',
+        ),
+        'created_at' => array(
+            'type' => 'date',
         ),
     );
 
@@ -44,12 +66,14 @@ trait SearchableTrait
             'like_count'            =>  $this->like_count,
             'dislike_count'         =>  $this->dislike_count,
             'favorite_count'        =>  $this->favorite_count,
+            'points'                =>  $this->points,
             'visits'                =>  $this->visits,
             'word_count'            =>  $this->word_count,
             'cno'                   =>  $this->cno,
             'tag_ids'               =>  $this->tag_ids,
             'tag_names'             =>  $this->tag_names,
             'emoji_ids'             =>  $this->emoji_ids,
+            'date'                  =>   $this->created_at,
         );
     }
 

@@ -33,7 +33,6 @@ class ThreadController extends Controller
         ]);
 
         $results = $this->search($request);
-        return $results;
 
         $threadIds =  $results->pluck('id')->toArray();
         $tags =  $results->pluck('tag_ids');
@@ -41,14 +40,11 @@ class ThreadController extends Controller
         $tagIds = $tags->collapse()->unique()->toArray();
         $tags = $this->tags->findWhereIn('id', $tagIds);
 
-
-
         $threads = $this->threads->withCriteria([
             new EagerLoad(['emojis','channel']),
         ])->findWhereInSameOrderPaginate('id', $threadIds);
 
         return response(['tags' => TagResource::collection($tags)->response()->getData(true), 'threads'=> ThreadResource::collection($threads)->response()->getData(true)]);
-
     }
 
 
@@ -184,6 +180,37 @@ class ThreadController extends Controller
 
 
 
+
+    /**
+     * Sort Search results by parameter
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function sortSearch(Request $request){
+       $sort = [];
+
+        if($request->has('sort_by') && $request->sort_by != null){
+            $sortBy = $request->sort_by;
+            if($sortBy == 'visits'){
+                $sort[] =  ['visits'=>'desc'];
+            }
+            else if($sortBy == 'favorite'){
+                $sort[] =  ['favorite_count'=>'desc'];
+            }
+            else if($sortBy == 'like'){
+                $sort[] =  ['like_count'=>'desc'];
+            }
+            else if($sortBy == 'top'){
+                $sort[] =  ['points'=>'desc'];
+            }else if($sortBy == 'recent'){
+                $sort[] =  ['date'=>'desc'];
+            }
+        }
+
+        return $sort;
+    }
+
     /**
      * Build search params
      *
@@ -196,13 +223,15 @@ class ThreadController extends Controller
                 'must' => [
                     'multi_match' => [
                         'query' => $query,
-                        'fields' => ["title^3", "body^3", 'tag_names']
+                        'fields' => ["title^3", "body^3", 'tag_names'],
+                        // 'sort'  =>  [
+                        //     // 'visits'    => 'desc'
+                        // ]
                     ],
                 ],
 
                 'filter' =>   $this->filter
-            ]
-
+            ],
         ];
 
         return $params;
@@ -240,7 +269,9 @@ class ThreadController extends Controller
           $params = $this->buildParams(request()->get('q'));
 
           $search = Thread::searchByQuery($params);
-          $results = Thread::customSearch($params, null, null, $search->totalHits());
+          $sort =   $this->sortSearch($request);
+
+          $results = Thread::customSearch($params, null, null, $search->totalHits(),  null, $sort);
 
           return $results;
     }
