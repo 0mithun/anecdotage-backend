@@ -63,7 +63,7 @@ class ThreadController extends Controller
         if(count($splitCno)> 0){
             foreach($splitCno as $cno){
                 if(in_array( strtolower($cno), $validCno)){
-                    $this->filter[$this->index]['terms']['cno'][] = $cno;
+                    $this->filter[$this->index]['terms']['cno'][] = strtolower($cno);
                 }
             }
         }
@@ -114,13 +114,13 @@ class ThreadController extends Controller
             rsort($splitLength);
             foreach($splitLength as $length){
                 if(in_array( strtolower($length) , $validLength)){
-                    if($length == 'sort'){
+                    if(strtolower($length) == 'sort'){
                         $minArray[] = 0;
                         $maxArray[] = 100;
-                    }else if($length == 'medium'){
+                    }else if(strtolower($length) == 'medium'){
                         $minArray[] = 100;
                         $maxArray[] = 300;
-                    }else if($length == 'long'){
+                    }else if(strtolower($length) == 'long'){
                         $minArray[] = 300;
                         $maxArray = [];
                     }
