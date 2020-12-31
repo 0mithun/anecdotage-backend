@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
 
-use Illuminate\Database\Eloquent\Builder;
+
 
 class Thread extends Model
 {
@@ -77,7 +77,7 @@ class Thread extends Model
             $thread->subscriptions->each->delete();
 
             $thread->tags()->sync([]);
-            $thread->emojis->each->delete();
+            $thread->emojis()->sync([]);
             $thread->views->each->delete();
 
             Storage::disk('public')->delete($thread->image_path);
@@ -379,5 +379,8 @@ class Thread extends Model
     }
     public function getTagIdsAttribute(){
         return  $this->tags()->pluck('id');
+    }
+    public function getEmojiIdsAttribute(){
+        return $this->emojis()->distinct('id')->get()->pluck('id')->toArray();
     }
 }

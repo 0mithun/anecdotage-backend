@@ -49,6 +49,7 @@ trait SearchableTrait
             'cno'                   =>  $this->cno,
             'tag_ids'               =>  $this->tag_ids,
             'tag_names'             =>  $this->tag_names,
+            'emoji_ids'             =>  $this->emoji_ids,
         );
     }
 

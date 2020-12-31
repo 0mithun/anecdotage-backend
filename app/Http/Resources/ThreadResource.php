@@ -59,6 +59,7 @@ class ThreadResource extends JsonResource
             // 'word_count'                =>  $this->word_count,
             // 'tag_names'                =>  $this->tag_names,
             // 'tag_ids'                =>  $this->tag_ids,
+            // 'emoji_ids'                =>  $this->emoji_ids,
 
         ];
     }

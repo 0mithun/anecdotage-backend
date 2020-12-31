@@ -33,6 +33,7 @@ class ThreadController extends Controller
         ]);
 
         $results = $this->search($request);
+        return $results;
 
         $threadIds =  $results->pluck('id')->toArray();
         $tags =  $results->pluck('tag_ids');
@@ -141,6 +142,26 @@ class ThreadController extends Controller
         $this->index = count($this->filter);
     }
 
+     /**
+     * Build query for filter length
+     *
+     * @param string $tags
+     * @return void
+     */
+    public function buildTagsQuery($tags){
+        $splitTags = explode(',', $tags);
+
+        if(count($splitTags)> 0){
+            $tag_ids = [];
+            foreach($splitTags as $tag){
+                $tag_ids[]= (int) preg_replace('/[^0-9]/', '', $tag);
+            }
+            $this->filter[$this->index]['terms']['tag_ids']  = $tag_ids;
+        }
+
+        $this->index = count($this->filter);
+    }
+
 
 
     /**
@@ -186,6 +207,10 @@ class ThreadController extends Controller
 
           if($request->has('length') && $request->length != null ){
               $this->buildLengthQuery($request->length);
+          }
+
+          if($request->has('tags') && $request->tags != null ){
+              $this->buildTagsQuery($request->tags);
           }
 
           $params = $this->buildParams(request()->get('q'));

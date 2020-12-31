@@ -7,6 +7,7 @@ use App\Http\Resources\EmojiResource;
 use App\Models\Emoji;
 use App\Models\Thread;
 use App\Repositories\Contracts\IEmoji;
+use App\Repositories\Contracts\IThread;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -14,11 +15,12 @@ class EmojiController extends Controller
 {
 
     protected $emojis;
+    protected $threads;
 
-
-    public function __construct(IEmoji $emojis)
+    public function __construct(IEmoji $emojis, IThread $threads)
     {
         $this->emojis = $emojis;
+        $this->threads = $threads;
     }
 
     /**
@@ -35,11 +37,12 @@ class EmojiController extends Controller
 
         $emoji = $this->emojis->find($request->emoji_id);
         if($this->emojis->isVote($thread)){
-            $this->emojis->removeVote($thread);
+            $this->emojis->removeVote($thread, $emoji);
             $this->emojis->addVote($thread, $emoji);
         }else{
             $this->emojis->addVote($thread, $emoji);
         }
+        $thread->updateIndex();
 
         return \response(['success'=> true], Response::HTTP_ACCEPTED);
     }
@@ -52,7 +55,9 @@ class EmojiController extends Controller
      */
     public function destroy(Thread $thread, Emoji $emoji)
     {
-        $this->emojis->removeVote($thread);
+        $this->emojis->removeVote($thread, $emoji);
+        $thread->updateIndex();
+
         return \response(['success'=> true], Response::HTTP_NO_CONTENT);
     }
 

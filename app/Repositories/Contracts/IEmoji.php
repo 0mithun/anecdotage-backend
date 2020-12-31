@@ -11,5 +11,5 @@ interface IEmoji
     public function isVote(Thread $thread);
     public function addVote(Thread $thread, Emoji $emoji);
 
-    public function removeVote(Thread $thread);
+    public function removeVote(Thread $thread, Emoji $emoji);
 }
