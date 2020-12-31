@@ -40,6 +40,8 @@ class ThreadController extends Controller
         $tagIds = $tags->collapse()->unique()->toArray();
         $tags = $this->tags->findWhereIn('id', $tagIds);
 
+
+
         $threads = $this->threads->withCriteria([
             new EagerLoad(['emojis','channel']),
         ])->findWhereInSameOrderPaginate('id', $threadIds);
@@ -129,12 +131,12 @@ class ThreadController extends Controller
         }
 
         if(count($minArray)> 0){
-            // $filter[$index]['range']['word_count']['gte']=  min($minArray);
-            $this->filter[$this->index]['range']['visits']['gte']=  min($minArray);
+            // $filter[$index]['range']['visits']['gte']=  min($minArray);
+            $this->filter[$this->index]['range']['word_count']['gte']=  min($minArray);
         }
         if(count($maxArray) > 0){
-            // $filter[$index]['range']['word_count']['lte']=  max($maxArray);
-            $this->filter[$this->index]['range']['visits']['lte']=  max($maxArray);
+            // $filter[$index]['range']['visits']['lte']=  max($maxArray);
+            $this->filter[$this->index]['range']['word_count']['lte']=  max($maxArray);
         }
         $this->index = count($this->filter);
     }
