@@ -223,6 +223,16 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 
 
 
+    /**
+     * A thread can have many tags
+     *
+     * @return mixed
+     */
+    public function rooms()
+    {
+        return $this->belongsToMany(Room::class, 'room_user', 'user_id', 'room_id');
+    }
+
 
 
 

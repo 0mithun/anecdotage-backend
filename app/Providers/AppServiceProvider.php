@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Design;
 use App\Observers\DesignObserver;
 use Illuminate\Support\ServiceProvider;
+use App\Http\Resources\RoomUserResource;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,6 +26,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        
+        RoomUserResource::withoutWrapping();
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use App\Repositories\Contracts\{
     IEmoji,
     IReply,
+    IRoom,
     ITag,
     IUser,
     IThread,
@@ -17,7 +18,8 @@ use App\Repositories\Eloquent\{
     TagRepository,
     UserRepository,
     ThreadRepository,
-    UserBanRepository
+    UserBanRepository,
+    RoomRepository
 };
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -45,5 +47,6 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IEmoji::class, EmojiRepository::class);
         $this->app->bind(ITag::class, TagRepository::class);
         $this->app->bind(IUserBan::class, UserBanRepository::class);
+        $this->app->bind(IRoom::class, RoomRepository::class);
     }
 }

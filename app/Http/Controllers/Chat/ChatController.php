@@ -6,9 +6,20 @@ use App\Models\Chat;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
+use App\Repositories\Contracts\IUser;
 
 class ChatController extends Controller
 {
+    protected $users;
+
+    public function __construct(IUser $users)
+    {
+        $this->users = $users;
+    }
+
+
+
     public function sendMessage( Request $request ) {
 
         $message = Chat::create( [
@@ -95,4 +106,24 @@ class ChatController extends Controller
         return \response()->json(['users'=> $otherUsers]);
     }
 
+    public function getAllChatLists( Request $request ) {
+        $friendLists = auth()->user()->getFriends()->pluck('id');
+        $otherFromMessageUsers = Chat::
+            where( 'to', auth()->id() )
+            ->where( 'friend_message', 0 )
+            ->distinct()
+            ->pluck( 'from' );
+
+        $otherToMessageUsers = Chat::
+            where( 'from', auth()->id() )
+            ->where( 'friend_message', 0 )
+            ->distinct()
+            ->pluck( 'to' );
+
+        $all = collect([$friendLists, $otherFromMessageUsers, $otherToMessageUsers])->collapse()->toArray();
+
+        $chatUserLists = $this->users->findWhereIn('id', $all);
+
+        return UserResource::collection($chatUserLists);
+    }
 }
