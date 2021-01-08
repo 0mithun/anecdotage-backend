@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Chat extends Model
 {
     protected $fillable = [
-        'from','to','message','friend_message','reply_id','reply_message','seen_at'
+        'from','to','message','friend_message','parent_id','seen_at'
     ];
 
 
@@ -20,5 +20,12 @@ class Chat extends Model
 
     public function user(){
         return $this->belongsTo(User::class,'from');
+    }
+
+    public function reply(){
+        return $this->hasOne(Chat::class,'parent_id');
+    }
+    public function parent(){
+        return $this->belongsTo(Chat::class,'parent_id');
     }
 }

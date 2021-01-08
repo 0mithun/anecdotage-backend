@@ -20,24 +20,38 @@ class ChatController extends Controller
 
 
 
-    public function sendMessage( Request $request ) {
+    public function sendMessage( Request $request, User $user ) {
+        $this->validate($request, [
+            'message' =>  ['required'],
+        ]);
 
-        $message = Chat::create( [
-            'from'           => \auth()->id(),
-            'to'             => $request->recipient,
-            'message'        => $request->message,
-            'friend_message' => $request->is_friend,
-            'reply_id'       => $request->replyId,
-            'reply_message'  => $request->replyMessage,
-        ] );
+        if($request->has('reply_id') && $request->reply_id != null){
+            $message = Chat::create( [
+                'from'           => \auth()->id(),
+                'to'             => $user->id,
+                'parent_id'             => $request->reply_id,
+                'message'        => $request->message,
+                'friend_message' =>  (bool) auth()->user()->isFriendWith($user),
+            ] );
+        }else{
+            $message = Chat::create( [
+                'from'           => \auth()->id(),
+                'to'             => $user->id,
+                'message'        => $request->message,
+                'friend_message' =>  (bool) auth()->user()->isFriendWith($user),
+            ] );
+        }
 
-        $friend = User::where( 'id', $request->friend )->first();
+
+
+
+        // $friend = User::where( 'id', $request->friend )->first();
 
         // $friend->notify( new NewMessageNotification( $authUser, $message ) );
 
         // broadcast( new MessegeSentEvent( $message ) );
 
-        return response()->json( $message );
+        return response()->json( $message->load('parent') );
 
 
     }
@@ -61,7 +75,7 @@ class ChatController extends Controller
 
     public function getFriendMessage(User $user ) {
         $id = $user->id;
-        $messages = Chat::where( function ( $q ) use ( $id ) {
+        $messages = Chat::with(['parent'])->where( function ( $q ) use ( $id ) {
             $q->where( 'from', auth()->id() );
             $q->where( 'to', $id );
         } )->orWhere( function ( $q ) use ( $id ) {
@@ -128,4 +142,5 @@ class ChatController extends Controller
 
         return UserResource::collection($chatUserLists);
     }
+
 }
