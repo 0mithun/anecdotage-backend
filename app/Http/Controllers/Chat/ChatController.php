@@ -62,26 +62,28 @@ class ChatController extends Controller
     public function getFriendMessage(User $user ) {
         $id = $user->id;
         $messages = Chat::where( function ( $q ) use ( $id ) {
-            $q->where( 'from', auth()->user()->id );
+            $q->where( 'from', auth()->id() );
             $q->where( 'to', $id );
         } )->orWhere( function ( $q ) use ( $id ) {
-            $q->where( 'to', auth()->user()->id );
+            $q->where( 'to', auth()->id() );
             $q->where( 'from', $id );
         } )->get();
 
-        $last_seen = Chat::where( function ( $q ) use ( $id ) {
-            $q->where( 'from', auth()->user()->id );
-            $q->where( 'to', $id );
-        } )->orWhere( function ( $q ) use ( $id ) {
-            $q->where( 'to', auth()->user()->id );
-            $q->where( 'from', $id );
-        } )->where( 'seen_at', '!=', null )
-            ->orderBy( 'seen_at', 'DESC' )->first();
+        // $last_seen = Chat::where( function ( $q ) use ( $id ) {
+        //     $q->where( 'from', auth()->user()->id );
+        //     $q->where( 'to', $id );
+        // } )->orWhere( function ( $q ) use ( $id ) {
+        //     $q->where( 'to', auth()->user()->id );
+        //     $q->where( 'from', $id );
+        // } )->where( 'seen_at', '!=', null )
+        //     ->orderBy( 'seen_at', 'DESC' )->first();
 
-        return response()->json( [
-            'messages'  => $messages,
-            'last_seen' => $last_seen,
-        ] );
+        return \response($messages);
+
+        // return response()->json( [
+        //     'messages'  => $messages,
+        //     'last_seen' => $last_seen,
+        // ] );
     }
 
     public function getOtherMessageUsers() {

@@ -34,7 +34,7 @@ class ChatMessage extends Model
     ];
 
     public function childs(){
-        return $this->hasMany(ChatMessage::class,'parent_id');
+        return $this->hasOne(ChatMessage::class,'parent_id');
     }
     public function parent(){
         return $this->belongsTo(ChatMessage::class,'parent_id');

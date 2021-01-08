@@ -27,7 +27,7 @@ class ChatMessageResource extends JsonResource
             'seen'  => $this->seen,
             'disable_actions'   => $this->disable_actions,
             'disable_reactions' => $this->disable_reactions,
-            'messages'    => ChatMessageResource::collection($this->childs),
+            'replyMessage'    => new ChatMessageResource($this->childs)
         ];
     }
 }

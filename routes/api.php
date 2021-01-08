@@ -167,6 +167,7 @@ Route::group(['middleware' => ['auth:api']], function(){
         Route::get('rooms','RoomController@index');
         Route::get('rooms/{room}','RoomController@show');
         Route::get('chat-users-list','ChatController@getAllChatLists');
+        Route::get('user/{user}/messages','ChatController@getFriendMessage');
     });
 
 

@@ -30,7 +30,7 @@ class RoomController extends Controller
     }
 
     public function show(Request $request, Room $room){
-        $messages = $room->messages;
+        $messages = $room->messages()->whereNull('parent_id')->get();
 
         return ChatMessageResource::collection($messages);
     }
