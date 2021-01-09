@@ -168,6 +168,8 @@ Route::group(['middleware' => ['auth:api']], function(){
         // Route::get('rooms/{room}','RoomController@show');
         Route::get('chat-users-list','ChatController@getAllChatLists');
         Route::get('user/{user}/messages','ChatController@getFriendMessage');
+        Route::get('user/{user}/last-seen','ChatController@lastSeen');
+        Route::post('user/message-seen','ChatController@messageSeen');
         Route::post('user/{user}/messages','ChatController@sendMessage');
     });
 

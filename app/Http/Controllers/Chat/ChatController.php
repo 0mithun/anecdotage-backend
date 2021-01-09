@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Chat;
 use App\Models\Chat;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Events\MessegeSentEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Repositories\Contracts\IUser;
@@ -42,34 +43,33 @@ class ChatController extends Controller
             ] );
         }
 
-
-
-
         // $friend = User::where( 'id', $request->friend )->first();
-
         // $friend->notify( new NewMessageNotification( $authUser, $message ) );
-
-        // broadcast( new MessegeSentEvent( $message ) );
-
+        broadcast( new MessegeSentEvent( $message->load('parent') ) );
         return response()->json( $message->load('parent') );
+    }
 
+    public function lastSeen(User $user){
+        $id = $user->id;
 
+         $last_seen = Chat::where( function ( $q ) use ( $id ) {
+            $q->where( 'from', auth()->user()->id );
+            $q->where( 'to', $id );
+        } )->orWhere( function ( $q ) use ( $id ) {
+            $q->where( 'to', auth()->user()->id );
+            $q->where( 'from', $id );
+        } )->where( 'seen_at', '!=', null )
+            ->orderBy( 'seen_at', 'DESC' )->first();
+
+        return response()->json(['last_seeen' => $last_seen->seen_at]);
     }
 
 
 
-    public function seenMessage( Request $request ) {
-        $chat = Chat::find( $request->message );
-
+    public function messageSeen( Request $request ) {
         $current_timestamp = now();
-
-        $chat->seen_at = $current_timestamp;
-        $chat->save();
-
-        $chat = $chat->fresh();
-
-        return $chat;
-
+        $chat = Chat::where('id', $request->id)->update(['seen_at'=> $current_timestamp]);
+        return response()->json(['last_seeen' => $current_timestamp]);
     }
 
 
