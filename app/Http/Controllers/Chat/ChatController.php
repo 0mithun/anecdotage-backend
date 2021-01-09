@@ -9,6 +9,7 @@ use App\Events\MessegeSentEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Repositories\Contracts\IUser;
+use App\Notifications\NewMessageNotification;
 
 class ChatController extends Controller
 {
@@ -44,7 +45,7 @@ class ChatController extends Controller
         }
 
         // $friend = User::where( 'id', $request->friend )->first();
-        // $friend->notify( new NewMessageNotification( $authUser, $message ) );
+        $user->notify( new NewMessageNotification( auth()->user(), $message ) );
         broadcast( new MessegeSentEvent( $message->load('parent') ) );
         return response()->json( $message->load('parent') );
     }
@@ -83,43 +84,7 @@ class ChatController extends Controller
             $q->where( 'from', $id );
         } )->get();
 
-        // $last_seen = Chat::where( function ( $q ) use ( $id ) {
-        //     $q->where( 'from', auth()->user()->id );
-        //     $q->where( 'to', $id );
-        // } )->orWhere( function ( $q ) use ( $id ) {
-        //     $q->where( 'to', auth()->user()->id );
-        //     $q->where( 'from', $id );
-        // } )->where( 'seen_at', '!=', null )
-        //     ->orderBy( 'seen_at', 'DESC' )->first();
-
         return \response($messages);
-
-        // return response()->json( [
-        //     'messages'  => $messages,
-        //     'last_seen' => $last_seen,
-        // ] );
-    }
-
-    public function getOtherMessageUsers() {
-        $authUser = auth()->user();
-
-        $otherFromMessageUsers = Chat::
-            where( 'to', $authUser->id )
-            ->where( 'friend_message', 0 )
-            ->distinct()
-            ->pluck( 'from' );
-
-        $otherToMessageUsers = Chat::
-            where( 'from', $authUser->id )
-            ->where( 'friend_message', 0 )
-            ->distinct()
-            ->pluck( 'to' );
-
-        $otherMessageUsers = $otherFromMessageUsers->merge( $otherToMessageUsers );
-
-        $otherUsers = User::whereIn( 'id', $otherMessageUsers )->get();
-
-        return \response()->json(['users'=> $otherUsers]);
     }
 
     public function getAllChatLists( Request $request ) {
@@ -141,6 +106,15 @@ class ChatController extends Controller
         $chatUserLists = $this->users->findWhereIn('id', $all);
 
         return UserResource::collection($chatUserLists);
+    }
+
+    public function notifications(){
+        $notifications = auth()->user()->notifications()->where('type','App\Notifications\NewMessageNotification')->get();
+        return response()->json(['notifications'=> $notifications ]);
+    }
+
+    public function markAsRead($id){
+         auth()->user()->notifications()->where('type','App\Notifications\NewMessageNotification')->where('id', $id)->update(['read_at' => now()]);
     }
 
 }

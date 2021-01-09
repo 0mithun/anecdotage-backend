@@ -169,6 +169,8 @@ Route::group(['middleware' => ['auth:api']], function(){
         Route::get('chat-users-list','ChatController@getAllChatLists');
         Route::get('user/{user}/messages','ChatController@getFriendMessage');
         Route::get('user/{user}/last-seen','ChatController@lastSeen');
+        Route::get('user/notifications','ChatController@notifications');
+        Route::put('user/notifications/{id}','ChatController@markAsRead');
         Route::post('user/message-seen','ChatController@messageSeen');
         Route::post('user/{user}/messages','ChatController@sendMessage');
     });
