@@ -2,7 +2,7 @@
 
 namespace App\Notifications;
 
-use App\Thread;
+use App\Models\Thread;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,16 +14,16 @@ class ThreadReportAdminNotifications extends Notification implements ShouldQueue
     use Queueable;
 
     protected  $thread;
-    protected  $reason;
+    protected  $type;
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(Thread $thread, $reason)
+    public function __construct(Thread $thread, $type)
     {
         $this->thread = $thread;
-        $this->reason = $reason;
+        $this->type = $type;
     }
 
     /**
@@ -37,13 +37,13 @@ class ThreadReportAdminNotifications extends Notification implements ShouldQueue
         return ['database', 'broadcast'];
     }
 
-    
+
     public function toArray($notifiable)
     {
 
         return [
-            'message' => $this->reason,
-            'link' => $this->thread->path()
+            'type' => $this->type,
+            'thread' => $this->thread
         ];
     }
 
@@ -51,8 +51,8 @@ class ThreadReportAdminNotifications extends Notification implements ShouldQueue
     {
 
         return new BroadcastMessage([
-            'message' => $this->reason,
-            'link' => $this->thread->path()
+            'type' => $this->type,
+            'thread' => $this->thread
         ]);
     }
 }

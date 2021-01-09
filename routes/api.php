@@ -92,6 +92,9 @@ Route::group(['middleware' => ['auth:api']], function(){
     Route::get('user/{user}/notification','User\NotificationController@show');
     Route::put('user/{user}/notification','User\NotificationController@update');
 
+    Route::get('user/{user}/notifications','User\NotificationController@notifications');
+    Route::put('user/{user}/markAsRead/{id}','User\NotificationController@markAsRead');
+
 
 
 

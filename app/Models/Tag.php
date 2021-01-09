@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Thread;
+use App\Jobs\TagImageProcessing;
 use App\Models\Traits\Followable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
@@ -32,9 +33,9 @@ class Tag extends Model
     {
         parent::boot();
 
-        // static::created(function ($tag) {
-        //     TagImageProcessing::dispatch($tag);
-        // });
+        static::created(function ($tag) {
+            TagImageProcessing::dispatch($tag);
+        });
 
         static::deleting(function($tag){
             $tag->threads()->sync([]);

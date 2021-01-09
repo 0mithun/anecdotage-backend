@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Resources\ReplyResource;
+use App\Events\ThreadReceivedNewReply;
 use App\Repositories\Contracts\IReply;
 use Symfony\Component\HttpFoundation\Response;
 use App\Repositories\Eloquent\Criteria\EagerLoad;
@@ -55,6 +56,8 @@ class ReplyController extends Controller
         ]);
 
         $reply = $this->replies->create($request->only(['body','parent_id']) + ['thread_id'=> $thread->id, 'user_id'=> auth()->id()]);
+
+        event(new ThreadReceivedNewReply($reply));
 
         return response(new ReplyResource($reply->load('owner')), Response::HTTP_CREATED);
     }

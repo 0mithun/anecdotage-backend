@@ -11,9 +11,13 @@ use Spatie\Geocoder\Geocoder;
 use App\Models\Traits\UploadAble;
 use Illuminate\Http\UploadedFile;
 use App\Http\Controllers\Controller;
+use App\Jobs\DownloadThreadImageJob;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Resources\ThreadResource;
 use App\Repositories\Contracts\IThread;
+use App\Notifications\DownloadYourImage;
+use App\Notifications\ThreadPostTwitter;
+use App\Notifications\ThreadPostFacebook;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\Thread\ThreadCreateRequest;
@@ -112,7 +116,7 @@ class ThreadController extends Controller
     public function show(Thread $thread)
     {
         $thread->views()->create([]);
-        $thread->update(['visits' => $thread->visits  + 1]);
+        // $thread->update(['visits' => $thread->visits  + 1]);
 
 
 
@@ -174,6 +178,9 @@ class ThreadController extends Controller
 
         $thread = $this->threads->update($thread->id, $data);
         $this->attachTags($request, $thread);
+
+        // $this->user->notify(new ThreadWasUpdated($this->thread, $reply));
+
         return response(new ThreadResource($thread), Response::HTTP_ACCEPTED);
     }
 
@@ -319,6 +326,10 @@ class ThreadController extends Controller
     public function imageDescription(Request $request, Thread $thread){
         $thread->update($request->only(['temp_image_url','temp_image_description'])  + ['is_published' => true]);
 
+         // WikiImageProcess::dispatch(request('wiki_info_page_url'), $thread, false);
+         dispatch(new DownloadThreadImageJob(request('wiki_info_page_url'), $thread));
+         auth()->user()->notify(new DownloadYourImage($thread));
+
         return response('Description Update successfully');
     }
 
@@ -326,5 +337,31 @@ class ThreadController extends Controller
         $thread->update(['is_published' => true]);
 
         return response('Thread Update successfully');
+    }
+
+        /**
+     * Share Thread
+     */
+
+    public function share(Request $request)
+    {
+        $thread = Thread::where('id', $request->thread)->first();
+        $authUser = auth()->user();
+
+        //Send user Notification
+        if ($authUser->userprivacy->thread_create_share_facebook == 1) {
+            return response()->json('under default facebook');
+            $thread->notify(new ThreadPostFacebook);
+        } else if ($request->has('share_on_facebook') && $request->share_on_facebook == true) {
+            $thread->notify(new ThreadPostFacebook);
+        }
+
+        //Send user Notification
+        if ($authUser->userprivacy->thread_create_share_twitter == 1) {
+            return response()->json('under default twitter');
+            $thread->notify(new ThreadPostTwitter);
+        } else if ($request->has('share_on_twitter') && $request->share_on_twitter == true) {
+            $thread->notify(new ThreadPostTwitter);
+        }
     }
 }

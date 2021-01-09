@@ -2,7 +2,8 @@
 
 namespace App\Notifications;
 
-use App\Thread;
+
+use App\Models\Thread;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,16 +15,16 @@ class ThreadRestrictionReported extends Notification implements ShouldQueue
     use Queueable;
 
     protected $thread;
-    protected $reason;
+    protected $type;
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(Thread $thread, $reason)
+    public function __construct(Thread $thread, $type)
     {
         $this->thread = $thread;
-        $this->reason = $reason;
+        $this->type = $type;
     }
 
     /**
@@ -48,18 +49,17 @@ class ThreadRestrictionReported extends Notification implements ShouldQueue
 
     public function toArray($notifiable)
     {
-
         return [
-            'message' => $this->reason,
-            'link' => $this->thread->path()
+            'type' => $this->type,
+            'thread' => $this->thread
         ];
     }
 
     public function toBroadcast($notifiable)
     {
         return new BroadcastMessage([
-            'message' => $this->reason,
-            'link' => $this->thread->path()
+            'type' => $this->type,
+            'thread' => $this->thread
         ]);
     }
 }

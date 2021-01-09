@@ -69,4 +69,14 @@ class NotificationController extends Controller
 
     }
 
+
+    public function notifications(User $user){
+        $notifications = auth()->user()->notifications()->where('type', '!=', 'App\Notifications\NewMessageNotification')->get();
+        return response()->json(['notifications'=> $notifications ]);
+    }
+
+    public function markAsRead(User $user, $id){
+         auth()->user()->notifications()->where('type', '!=', 'App\Notifications\NewMessageNotification')->where('id', $id)->update(['read_at' => now()]);
+    }
+
  }

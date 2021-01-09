@@ -2,7 +2,8 @@
 
 namespace App\Notifications;
 
-use App\Thread;
+
+use App\Models\Thread;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -48,14 +49,14 @@ class DownloadYourImage extends Notification implements ShouldQueue
     {
         return [
             'message' => "Your image is downloading and may take a while to update.",
-            'link' => $this->thread->path()
+            'thread' => $this->thread
         ];
     }
     public function toBroadcast($notifiable)
     {
         return new BroadcastMessage([
             'message' => "Your image is downloading and may take a while to update.",
-            'link' => $this->thread->path()
+            'thread' => $this->thread
         ]);
     }
 }
