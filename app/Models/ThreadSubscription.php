@@ -5,9 +5,11 @@ namespace App\Models;
 use App\Models\User;
 use App\Models\Thread;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Notifications\Notifiable;
 class ThreadSubscription extends Model
 {
+    use Notifiable;
+
     protected $table = 'thread_subscriptions';
 
     protected $fillable = [

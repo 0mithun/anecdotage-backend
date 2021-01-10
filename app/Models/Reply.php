@@ -5,10 +5,13 @@ namespace App\Models;
 use App\Models\User;
 use App\Models\Thread;
 use Illuminate\Support\Facades\DB;
+use App\Events\ThreadReceivedNewReply;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 class Reply extends Model
 {
+    use Notifiable;
 
     /**
      * Don't auto-apply mass assignment protection.
@@ -24,6 +27,9 @@ class Reply extends Model
         parent::boot();
 
         static::created(function($reply){
+
+            event(new ThreadReceivedNewReply($reply));
+
             if(!$reply->thread->IsSubscribed()){
                 $reply->thread->subscribe();
             }

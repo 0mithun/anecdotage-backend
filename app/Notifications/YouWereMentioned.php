@@ -46,8 +46,9 @@ class YouWereMentioned extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            'message' => $this->reply->owner->name . ' mentioned you in ' . $this->reply->thread->title,
-            'link' => $this->reply->path()
+            'thread'        =>  $this->thread,
+            'reply'         =>  $this->reply,
+            'reply_owner'   =>   $this->reply->owner,
         ];
     }
 
@@ -55,8 +56,9 @@ class YouWereMentioned extends Notification implements ShouldQueue
     public function toBroadcast($notifiable)
     {
         return new BroadcastMessage([
-            'message' => $this->reply->owner->name . ' mentioned you in ' . $this->reply->thread->title,
-            'link' => $this->reply->path()
+            'thread'        =>  $this->thread,
+            'reply'         =>  $this->reply,
+            'reply_owner'   =>   $this->reply->owner,
         ]);
     }
 }

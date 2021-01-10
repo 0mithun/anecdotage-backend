@@ -47,14 +47,14 @@ class InvalidImageUrlNotification extends Notification implements ShouldQueue
     {
         return [
             'message' => "The Image url isn't a valid image url. Please check & add new image",
-            'link' => $this->thread->path()
+            'thread' => $this->thread
         ];
     }
     public function toBroadcast($notifiable)
     {
         return new BroadcastMessage([
             'message' => "The Image url isn't a valid image url. Please check & add new image",
-            'link' => $this->thread->path()
+            'thread' => $this->thread
         ]);
     }
 }

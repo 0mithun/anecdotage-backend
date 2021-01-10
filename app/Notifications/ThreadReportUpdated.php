@@ -48,8 +48,8 @@ class ThreadReportUpdated extends Notification implements ShouldQueue
     {
 
         return [
-            'message' => $this->reason,
-            'link' => $this->thread->path()
+            'type' => $this->type,
+            'thread' => $this->thread
         ];
     }
 
@@ -57,8 +57,8 @@ class ThreadReportUpdated extends Notification implements ShouldQueue
     {
 
         return new BroadcastMessage([
-            'message' => $this->reason,
-            'link' => $this->thread->path()
+            'type' => $this->type,
+            'thread' => $this->thread
         ]);
     }
 }

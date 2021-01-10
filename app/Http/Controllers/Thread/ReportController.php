@@ -43,8 +43,8 @@ class ReportController extends Controller
         $adminUser->notify( new ThreadReportAdminNotifications( $thread, $report_type ) );
 
         //Need check later
-        // Mail::to('anecdotage-reports@gmail.com')
-        // ->send(new TreadWasReportedEmail($thread, $report_type,  $reason ));
+        Mail::to('anecdotage-reports@gmail.com')
+        ->send(new TreadWasReportedEmail($thread, $report_type));
     }
 
 

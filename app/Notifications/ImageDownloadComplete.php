@@ -48,14 +48,14 @@ class ImageDownloadComplete extends Notification implements ShouldQueue
     {
         return [
             'message' => "Your thread image download complete you can check now.",
-            'link' => $this->thread->path()
+            'thread' => $this->thread
         ];
     }
     public function toBroadcast($notifiable)
     {
         return new BroadcastMessage([
             'message' => "Your thread image download complete you can check now.",
-            'link' => $this->thread->path()
+            'thread' => $this->thread
         ]);
     }
 }

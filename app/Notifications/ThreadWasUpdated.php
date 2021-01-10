@@ -54,16 +54,18 @@ class ThreadWasUpdated extends Notification implements ShouldQueue
     public function toArray()
     {
         return [
-            'message' => $this->reply->owner->name . ' replied to ' . $this->thread->title,
-            'link' => $this->reply->path()
+            'thread'        =>  $this->thread,
+            'reply'         =>  $this->reply,
+            'reply_owner'   =>   $this->reply->owner,
         ];
     }
 
     public function toBroadcast($notifiable)
     {
         return new BroadcastMessage([
-            'message' => $this->reply->owner->name . ' replied to ' . $this->thread->title,
-            'link' => $this->reply->path()
+            'thread'        =>  $this->thread,
+            'reply'         =>  $this->reply,
+            'reply_owner'   =>   $this->reply->owner,
         ]);
     }
 }
