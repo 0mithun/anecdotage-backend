@@ -1,5 +1,5 @@
 @component('mail::message')
-# From: {{$data['from']}}
+# From: {{$data['name']}}
 # Subject: {{$data['subject']}}
 
 {!! $data['body'] !!}

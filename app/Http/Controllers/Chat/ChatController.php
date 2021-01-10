@@ -31,7 +31,7 @@ class ChatController extends Controller
             $message = Chat::create( [
                 'from'           => \auth()->id(),
                 'to'             => $user->id,
-                'parent_id'             => $request->reply_id,
+                'parent_id'             => $request->reply_id ?? null,
                 'message'        => $request->message,
                 'friend_message' =>  (bool) auth()->user()->isFriendWith($user),
             ] );

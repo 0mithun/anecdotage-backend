@@ -63,10 +63,11 @@ class ThreadController extends Controller
 
 
         if ($request->location != null) {
-            // $location = $this->getGeocodeing($request->location);
-            // if ($location['accuracy'] != 'result_not_found') {
-            //     $data['location'] = new Point($location['lat'], $location['lng']);
-            // }
+            $location = $this->getGeocodeing($request->location);
+            if ($location['accuracy'] != 'result_not_found') {
+                $data['location'] = new Point($location['lat'], $location['lng']);
+                $data['formatted_address'] = $request->location;
+            }
         }
 
         if($request->has('cno') && $request->cno != null){
@@ -141,12 +142,13 @@ class ThreadController extends Controller
         }
 
         if ($request->location != null) {
-            // $location = $this->getGeocodeing($request->location);
-            // if ($location['accuracy'] != 'result_not_found') {
-            //     $data['location'] = new Point($location['lat'], $location['lng']);
-            // }
+            $location = $this->getGeocodeing($request->location);
+            if ($location['accuracy'] != 'result_not_found') {
+                $data['location'] = new Point($location['lat'], $location['lng']);
+                $data['formatted_address'] = $request->location;
+            }
         }
-        // $data['location'] = new Point(43.93, 50.72);
+        $data['location'] = new Point(43.93, 50.72);
         if($request->has('cno') && $request->cno != null){
             $cno = json_decode(json_encode(request('cno')));
             if($cno->famous == false){
@@ -327,7 +329,7 @@ class ThreadController extends Controller
         $thread->update($request->only(['temp_image_url','temp_image_description'])  + ['is_published' => true]);
 
          // WikiImageProcess::dispatch(request('wiki_info_page_url'), $thread, false);
-         dispatch(new DownloadThreadImageJob(request('wiki_info_page_url'), $thread));
+         dispatch(new DownloadThreadImageJob(request('temp_image_url'), $thread));
          auth()->user()->notify(new DownloadYourImage($thread));
 
         return response('Description Update successfully');
@@ -343,25 +345,20 @@ class ThreadController extends Controller
      * Share Thread
      */
 
-    public function share(Request $request)
+    public function share(Request $request, Thread $thread)
     {
-        $thread = Thread::where('id', $request->thread)->first();
         $authUser = auth()->user();
 
         //Send user Notification
-        if ($authUser->userprivacy->thread_create_share_facebook == 1) {
-            return response()->json('under default facebook');
-            $thread->notify(new ThreadPostFacebook);
-        } else if ($request->has('share_on_facebook') && $request->share_on_facebook == true) {
+       if ($request->has('share_on_facebook') && $request->share_on_facebook == true) {
             $thread->notify(new ThreadPostFacebook);
         }
 
         //Send user Notification
-        if ($authUser->userprivacy->thread_create_share_twitter == 1) {
-            return response()->json('under default twitter');
-            $thread->notify(new ThreadPostTwitter);
-        } else if ($request->has('share_on_twitter') && $request->share_on_twitter == true) {
+        if ($request->has('share_on_twitter') && $request->share_on_twitter == true) {
             $thread->notify(new ThreadPostTwitter);
         }
+
+        return response(['success'=> true]);
     }
 }

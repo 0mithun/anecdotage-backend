@@ -17,12 +17,11 @@ use App\Models\Traits\SearchableTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
-
-
+use Illuminate\Notifications\Notifiable;
 
 class Thread extends Model
 {
-    use Favoritable, Likeable, Reportable, SpatialTrait, SearchableTrait ;
+    use Notifiable, Favoritable, Likeable, Reportable, SpatialTrait, SearchableTrait ;
 
 
 
@@ -101,19 +100,19 @@ class Thread extends Model
         $this->attributes['title']  = title_case($value);
     }
 
-     /**
-     * Set the proper slug attribute.
-     *
-     * @param string $value
-     */
-    public function setSlugAttribute($value)
-    {
-        if (static::whereSlug($slug =  str_slug(strip_tags( $value)))->exists()) {
-            $slug = "{$slug}-{$this->id}";
-        }
+    //  /**
+    //  * Set the proper slug attribute.
+    //  *
+    //  * @param string $value
+    //  */
+    // public function setSlugAttribute($value)
+    // {
+    //     if (static::whereSlug($slug =  str_slug(strip_tags( $value)))->exists()) {
+    //         $slug = "{$slug}-{$this->id}";
+    //     }
 
-        $this->attributes['slug'] = $slug;
-    }
+    //     $this->attributes['slug'] = $slug;
+    // }
 
     /**
      * Access the body attribute.
@@ -177,26 +176,6 @@ class Thread extends Model
         return $this->threadImagePath();
     }
 
-
-
-    /**
-     * Get a string path for the thread.
-     *
-     * @return string
-     */
-    public function path()
-    {
-        $lower = strtolower($this->channel->slug);
-
-        return "/anecdotes/{$lower}/{$this->slug}";
-
-    }
-
-    public function getPathAttribute()
-    {
-        return url($this->path());
-    }
-
     /**
      * A thread belongs to a creator.
      *
@@ -227,22 +206,6 @@ class Thread extends Model
     {
         return $this->hasMany(Reply::class);
     }
-
-    // /**
-    //  * Add a reply to the thread.
-    //  *
-    //  * @param  array $reply
-    //  * @return Model
-    //  */
-    // public function addReply($reply)
-    // {
-    //     $reply = $this->replies()->create($reply);
-
-    //     event(new ThreadReceivedNewReply($reply));
-
-    //     return $reply;
-    // }
-
 
 
     /**
@@ -328,23 +291,6 @@ class Thread extends Model
     {
         return $this->belongsToMany(Emoji::class, 'thread_emoji', 'thread_id', 'emoji_id');
     }
-
-
-    // public function splitCategory()
-    // {
-    //     $categories = $this->category;
-    //     if ($categories != null) {
-    //         $categories = explode('|', $categories);
-    //     }
-
-    //     return $categories;
-    // }
-
-    // public function getSplitCategoryAttribute()
-    // {
-    //     return $this->splitCategory();
-    // }
-
 
     public function getPointsAttribute()
     {

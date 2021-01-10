@@ -76,6 +76,9 @@ Route::get('maps', 'Maps\ThreadsCotnroller@getAllThread');
 //Search
 Route::get('search','Search\ThreadController@index');
 
+//contact
+Route::post('contact','Frontend\ContactController@contact');
+
 // Route group for authenticated users only
 Route::group(['middleware' => ['auth:api']], function(){
     Route::get('me', 'User\MeController@getMe');
@@ -105,7 +108,9 @@ Route::group(['middleware' => ['auth:api']], function(){
     Route::resource('threads', 'Thread\ThreadController')->except(['create','edit', 'index','show']);
     Route::post('threads/{thread}/thumbnail','Thread\ThreadController@uploadThreadImages');
     Route::put('threads/{thread}/imageDescription','Thread\ThreadController@imageDescription');
+
     Route::put('threads/{thread}/skipThumbnailEdit','Thread\ThreadController@skipThumbnailEdit');
+    Route::post('threads/{thread}/share','Thread\ThreadController@share');
 
     //Replies
     Route::resource('threads.replies', 'Reply\ReplyController')->except(['create','edit','index']);

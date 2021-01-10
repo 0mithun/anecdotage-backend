@@ -32,6 +32,7 @@ class ThreadResource extends JsonResource
             'age_restriction'           =>  $this->age_restriction,
             'anonymous'                 =>  $this->anonymous,
             'location'                  =>  $this->location,
+            'formatted_address'         =>  $this->formatted_address,
             'favorites_count'           =>  $this->favorite_count,
             'visits'                    =>  $this->visits,
             'is_favorited'              =>  $this->is_favorited,

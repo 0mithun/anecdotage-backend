@@ -44,10 +44,11 @@ class EmojiController extends Controller
      */
     public function show(Emoji $emoji)
     {
-        $threadsId = $emoji->threads()->pluck('id')->toArray();
+        $threadsId =  $emoji->threads->pluck('id')->toArray();
+
         $threads = $this->threads->withCriteria([
             new EagerLoad(['channel','emojis']),
-       ])->findWhereInPaginate('id',$threadsId, 2 );
+       ])->findWhereInPaginate('id',$threadsId );
 
        $emojiResponse =  (new EmojiResource($emoji))->additional([
             'data'  => [
