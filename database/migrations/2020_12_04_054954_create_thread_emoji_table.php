@@ -14,6 +14,7 @@ class CreateThreadEmojiTable extends Migration
     public function up()
     {
         Schema::create('thread_emoji', function (Blueprint $table) {
+            $table->bigIncrements('id');
             $table->unsignedBigInteger('thread_id');
             $table->unsignedBigInteger('emoji_id');
             $table->unsignedBigInteger('user_id');

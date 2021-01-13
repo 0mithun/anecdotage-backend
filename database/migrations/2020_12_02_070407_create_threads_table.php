@@ -39,6 +39,10 @@ class CreateThreadsTable extends Migration
             $table->point('location')->nullable();
 
             $table->boolean('is_published')->default(1);
+            $table->bigInteger('visits')->default(0);
+            $table->bigInteger('favorite_count')->default(0);
+            $table->bigInteger('like_count')->default(0);
+            $table->bigInteger('dislike_count')->default(0);
             //New Items
             $table->boolean('famous')->default(0);
             $table->text('slide_body')->nullable();
