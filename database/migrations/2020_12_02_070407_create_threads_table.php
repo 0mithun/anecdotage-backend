@@ -22,7 +22,7 @@ class CreateThreadsTable extends Migration
             $table->text('body');
 
             $table->text('summary')->nullable();
-            $table->string('source')->nullable();
+            $table->text('source')->nullable();
             $table->string('main_subject')->nullable();
             $table->string('image_path')->nullable();
             $table->string('image_path_pixel_color', 50)->nullable();

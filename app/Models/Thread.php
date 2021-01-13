@@ -21,7 +21,7 @@ use Illuminate\Notifications\Notifiable;
 
 class Thread extends Model
 {
-    use Notifiable, Favoritable, Likeable, Reportable, SpatialTrait, SearchableTrait ;
+    use Notifiable, Favoritable, Likeable, Reportable, SpatialTrait, SearchableTrait;
 
 
 
@@ -30,7 +30,7 @@ class Thread extends Model
         'location',
     ];
 
-      /**
+    /**
      * Get the route key name.
      *
      * @return string
@@ -47,7 +47,7 @@ class Thread extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id','channel_id','slug', 'title','body','summary','source','main_subject','image_path','image_path_pixel_color','image_description','image_saved','cno','age_restriction','anonymous','formatted_address','location','is_published','famous', 'visits','favorite_count','like_count','dislike_count', 'slide_body','slide_image_pos','slide_color_bg','slide_color_0','slide_color_1','slide_color_2'
+        'user_id', 'channel_id', 'slug', 'title', 'body', 'summary', 'source', 'main_subject', 'image_path', 'image_path_pixel_color', 'image_description', 'temp_image_url', 'temp_image_description', 'image_saved', 'cno', 'age_restriction', 'anonymous', 'formatted_address', 'location', 'is_published', 'famous', 'visits', 'favorite_count', 'like_count', 'dislike_count', 'slide_body', 'slide_image_pos', 'slide_color_bg', 'slide_color_0', 'slide_color_1', 'slide_color_2'
 
     ];
 
@@ -86,17 +86,17 @@ class Thread extends Model
             // $thread->update(['slug' => str_slug(strip_tags( $thread->title))]);
 
             $thread->addToIndex();
-
         });
 
-        static::updated(function($thread){
+        static::updated(function ($thread) {
             $thread->updateIndex();
         });
 
         static::addGlobalScope(new ThreadFilter);
     }
 
-    public function setTitleAttribute($value){
+    public function setTitleAttribute($value)
+    {
         $this->attributes['title']  = title_case($value);
     }
 
@@ -125,7 +125,7 @@ class Thread extends Model
         return html_entity_decode($body);
     }
 
-     /**
+    /**
      * Access the title attribute.
      *
      * @param  string $title
@@ -165,7 +165,7 @@ class Thread extends Model
     public function threadImagePath()
     {
         if ($this->image_path != '') {
-            return asset('storage/'.$this->image_path);
+            return asset('storage/' . $this->image_path);
         } else {
             return 'https://www.maxpixel.net/static/photo/1x/Geometric-Rectangles-Background-Shapes-Pattern-4973341.jpg';
         }
@@ -298,35 +298,43 @@ class Thread extends Model
     }
 
 
-    public function views(){
+    public function views()
+    {
         return $this->hasMany(ThreadView::class);
     }
 
-    public function getViewsCountAttribute(){
+    public function getViewsCountAttribute()
+    {
         return $this->views()->count();
     }
 
-    public function getUserEmojiVoteAttribute(){
-        if(!auth()->check()){
+    public function getUserEmojiVoteAttribute()
+    {
+        if (!auth()->check()) {
             return null;
         }
         return $this->emojis()->where('user_id', auth()->id())->first();
     }
 
-    public function getIsOwnerAttribute(){
+    public function getIsOwnerAttribute()
+    {
         return (bool) auth()->check() && auth()->id() === $this->user_id;
     }
 
-    public function getWordCountAttribute(){
+    public function getWordCountAttribute()
+    {
         return str_word_count(strip_tags($this->body));
     }
-    public function getTagNamesAttribute(){
+    public function getTagNamesAttribute()
+    {
         return  $this->tags()->pluck('name');
     }
-    public function getTagIdsAttribute(){
+    public function getTagIdsAttribute()
+    {
         return  $this->tags()->pluck('id');
     }
-    public function getEmojiIdsAttribute(){
+    public function getEmojiIdsAttribute()
+    {
         return $this->emojis()->distinct('id')->get()->pluck('id')->toArray();
     }
 }
