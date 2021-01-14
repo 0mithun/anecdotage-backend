@@ -165,6 +165,9 @@ class Thread extends Model
     public function threadImagePath()
     {
         if ($this->image_path != '') {
+            if (preg_match("/http/i", $this->image_path)) {
+                return $this->image_path;
+            }
             return asset('storage/' . $this->image_path);
         } else {
             return 'https://www.maxpixel.net/static/photo/1x/Geometric-Rectangles-Background-Shapes-Pattern-4973341.jpg';

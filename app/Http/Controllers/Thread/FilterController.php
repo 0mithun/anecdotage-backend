@@ -82,7 +82,7 @@ class FilterController extends Controller
         }
         $threads = $this->threads->withCriteria([
             new EagerLoad(['emojis', 'channel'])
-        ])->closest($lat, $lng)->paginate(3);
+        ])->closest($lat, $lng)->paginate();
 
         return  ThreadResource::collection($threads);
     }

@@ -44,7 +44,7 @@ class ThreadController extends Controller
     {
         // $threads = Thread::paginate();
         $threads = $this->threads->withCriteria([
-            new EagerLoad(['emojis','channel']),
+            new EagerLoad(['emojis', 'channel']),
         ])->paginate();
         return  ThreadResource::collection($threads);
     }
@@ -58,8 +58,8 @@ class ThreadController extends Controller
      */
     public function store(ThreadCreateRequest $request)
     {
-        $data = $request->only(['title','body','source','main_subject','age_restriction','anonymous','famous',]);
-        $data['slug'] = str_slug(strip_tags( $request->title));
+        $data = $request->only(['title', 'body', 'source', 'main_subject', 'age_restriction', 'anonymous', 'famous',]);
+        $data['slug'] = str_slug(strip_tags($request->title));
 
 
         if ($request->location != null) {
@@ -70,13 +70,13 @@ class ThreadController extends Controller
             }
         }
 
-        if($request->has('cno') && $request->cno != null){
+        if ($request->has('cno') && $request->cno != null) {
             $cno = json_decode(json_encode(request('cno')));
-            if($cno->famous == false){
+            if ($cno->famous == false) {
                 $data['cno'] = 'O';
-            }else if($cno->famous == true && $cno->celebrity == true){
+            } else if ($cno->famous == true && $cno->celebrity == true) {
                 $data['cno'] = 'C';
-            }else{
+            } else {
                 $data['cno'] = 'N';
             }
         }
@@ -86,12 +86,12 @@ class ThreadController extends Controller
             $channel = json_decode(json_encode(request('channel')));
 
             $type = gettype($channel);
-            if($type == 'string'){
+            if ($type == 'string') {
                 $findChannel = Channel::where('name', $channel)->first();
-                if($findChannel){
+                if ($findChannel) {
                     $data['channel_id'] = $findChannel->id;
                 }
-            }else{
+            } else {
                 $data['channel_id'] = $channel->id;
             }
         } else {
@@ -100,12 +100,11 @@ class ThreadController extends Controller
 
 
 
-        $thread = $this->threads->create($data + ['user_id'=>auth()->id()]);
+        $thread = $this->threads->create($data + ['user_id' => auth()->id()]);
 
         $this->attachTags($request, $thread);
 
         return response(new ThreadResource($thread), Response::HTTP_CREATED);
-
     }
 
     /**
@@ -122,7 +121,7 @@ class ThreadController extends Controller
 
 
         $thread = $this->threads->withCriteria([
-            new EagerLoad(['tags','creator','emojis','channel'])
+            new EagerLoad(['tags', 'creator', 'emojis', 'channel'])
         ])->find($thread->id);
         return new ThreadResource($thread);
     }
@@ -136,9 +135,9 @@ class ThreadController extends Controller
      */
     public function update(ThreadUpdateRequest $request, Thread $thread)
     {
-        $data = $request->only(['title','body','source','main_subject','age_restriction','anonymous','famous',]);
-        if($request->has('title') && auth()->user()->is_admin){
-            $data['slug'] = str_slug(strip_tags( $request->title));
+        $data = $request->only(['title', 'body', 'source', 'main_subject', 'age_restriction', 'anonymous', 'famous',]);
+        if ($request->has('title') && auth()->user()->is_admin) {
+            $data['slug'] = str_slug(strip_tags($request->title));
         }
 
         if ($request->location != null) {
@@ -148,14 +147,13 @@ class ThreadController extends Controller
                 $data['formatted_address'] = $request->location;
             }
         }
-        $data['location'] = new Point(43.93, 50.72);
-        if($request->has('cno') && $request->cno != null){
+        if ($request->has('cno') && $request->cno != null) {
             $cno = json_decode(json_encode(request('cno')));
-            if($cno->famous == false){
+            if ($cno->famous == false) {
                 $data['cno'] = 'O';
-            }else if($cno->famous == true && $cno->celebrity == true){
+            } else if ($cno->famous == true && $cno->celebrity == true) {
                 $data['cno'] = 'C';
-            }else{
+            } else {
                 $data['cno'] = 'N';
             }
         }
@@ -165,12 +163,12 @@ class ThreadController extends Controller
             $channel = json_decode(json_encode(request('channel')));
 
             $type = gettype($channel);
-            if($type == 'string'){
+            if ($type == 'string') {
                 $findChannel = Channel::where('name', $channel)->first();
-                if($findChannel){
+                if ($findChannel) {
                     $data['channel_id'] = $findChannel->id;
                 }
-            }else{
+            } else {
                 $data['channel_id'] = $channel->id;
             }
         } else {
@@ -200,7 +198,7 @@ class ThreadController extends Controller
         return response(null, Response::HTTP_NO_CONTENT);
     }
 
-      /**
+    /**
      * Get lat, lng with thread location
      */
 
@@ -229,14 +227,14 @@ class ThreadController extends Controller
         if ($request->has('channel') && $request->channel != null) {
             $channel = json_decode(json_encode(request('channel')));
             $type = gettype($channel);
-            if($type == 'string'){
+            if ($type == 'string') {
                 $findChannel = Channel::where('name', $channel)->first();
-                if($findChannel){
+                if ($findChannel) {
                     if (!in_array(str_slug($findChannel->name), $tags)) {
                         $tags[] = str_slug($findChannel->name);
                     }
                 }
-            }else{
+            } else {
                 if (!in_array(str_slug($channel->name), $tags)) {
                     $tags[] = str_slug($channel->name);
                 }
@@ -258,7 +256,7 @@ class ThreadController extends Controller
                 $tag_ids[] = $searchTag->id;
             } else {
                 if ($tag != 'null') {
-                    $newTag = Tag::create(['name' => $tag,'slug'=>str_slug($tag)]);
+                    $newTag = Tag::create(['name' => $tag, 'slug' => str_slug($tag)]);
                     $tag_ids[] = $newTag->id;
                 }
             }
@@ -269,7 +267,7 @@ class ThreadController extends Controller
     }
 
 
-      /**
+    /**
      * Uplod Thread Images
      */
 
@@ -279,7 +277,7 @@ class ThreadController extends Controller
             if ($thread->image_path != null) {
                 $this->deleteOne($thread->image_path);
             }
-            $thread->image_path =  $this->uploadOne($request->file('image'), 'threads','public',$thread->id.uniqid());
+            $thread->image_path =  $this->uploadOne($request->file('image'), 'threads', 'public', $thread->id . uniqid());
             $thread->is_published = true;
             $thread->save();
         }
@@ -325,23 +323,25 @@ class ThreadController extends Controller
         return '';
     }
 
-    public function imageDescription(Request $request, Thread $thread){
-        $thread->update($request->only(['temp_image_url','temp_image_description'])  + ['is_published' => true]);
+    public function imageDescription(Request $request, Thread $thread)
+    {
+        $thread->update($request->only(['temp_image_url', 'temp_image_description'])  + ['is_published' => true]);
 
-         // WikiImageProcess::dispatch(request('wiki_info_page_url'), $thread, false);
-         dispatch(new DownloadThreadImageJob(request('temp_image_url'), $thread));
-         auth()->user()->notify(new DownloadYourImage($thread));
+        // WikiImageProcess::dispatch(request('wiki_info_page_url'), $thread, false);
+        dispatch(new DownloadThreadImageJob(request('temp_image_url'), $thread));
+        auth()->user()->notify(new DownloadYourImage($thread));
 
         return response('Description Update successfully');
     }
 
-    public function skipThumbnailEdit(Request $request, Thread $thread){
+    public function skipThumbnailEdit(Request $request, Thread $thread)
+    {
         $thread->update(['is_published' => true]);
 
         return response('Thread Update successfully');
     }
 
-        /**
+    /**
      * Share Thread
      */
 
@@ -350,7 +350,7 @@ class ThreadController extends Controller
         $authUser = auth()->user();
 
         //Send user Notification
-       if ($request->has('share_on_facebook') && $request->share_on_facebook == true) {
+        if ($request->has('share_on_facebook') && $request->share_on_facebook == true) {
             $thread->notify(new ThreadPostFacebook);
         }
 
@@ -359,6 +359,6 @@ class ThreadController extends Controller
             $thread->notify(new ThreadPostTwitter);
         }
 
-        return response(['success'=> true]);
+        return response(['success' => true]);
     }
 }
