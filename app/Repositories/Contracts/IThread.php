@@ -11,4 +11,6 @@ interface IThread
     public function whereLike(string $solumn, string $value);
 
     public function searchLocation(Request $request);
+
+    public function closest($lat, $lng);
 }

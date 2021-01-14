@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories\Eloquent;
 
 use App\Models\Thread;
@@ -14,30 +15,33 @@ class ThreadRepository extends BaseRepository implements IThread
         return Thread::class;
     }
 
-    public function orderByRaw(string $statement){
+    public function orderByRaw(string $statement)
+    {
         $this->model->getQuery()->orders = [];
         $this->model->orderByRaw($statement);
 
         return $this;
     }
 
-    public function whereLike(string $solumn, string $value){
+    public function whereLike(string $solumn, string $value)
+    {
         $this->model->where('body', 'LIKE', "%{$value}%");
 
         return $this;
     }
 
-    public function searchLocation(Request $request){
+    public function searchLocation(Request $request)
+    {
         $query = (new $this->model)->newQuery();
 
         $lat = $request->lat;
         $lng =  $request->lng;
-        $distance = request( 'radius' ) ?? 1000;
+        $distance = request('radius') ?? 1000;
         $distance *= 1609.34;
 
         $query->whereNotNull('location');
 
-        if($lat && $lng){
+        if ($lat && $lng) {
             $point = new Point($lat, $lng);
             $query->distanceSphereExcludingSelf('location', $point, $distance);
             $query->orderByDistance('location', $point, 'asc');
@@ -45,4 +49,16 @@ class ThreadRepository extends BaseRepository implements IThread
         return $query->get();
     }
 
+    public function closest($lat, $lng)
+    {
+        if ($lat && $lng) {
+            $point = new Point($lat, $lng);
+            $this->model
+                ->whereNotNull('location')
+                ->orderByDistance('location', $point, 'asc')
+                // ->get()
+            ;
+            return $this;
+        }
+    }
 }
