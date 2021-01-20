@@ -53,6 +53,8 @@ class CreateThreadsTable extends Migration
             $table->string('slide_color_2')->nullable();
 
             $table->timestamps();
+
+            $table->engine = 'InnoDB';
         });
     }
 
