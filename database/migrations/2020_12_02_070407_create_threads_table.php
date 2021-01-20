@@ -17,7 +17,7 @@ class CreateThreadsTable extends Migration
             $table->bigIncrements('id');
             $table->string('slug')->unique()->nullable();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('channel_id')->nullable();
+            $table->unsignedBigInteger('channel_id')->default(1);
             $table->string('title', 255);
             $table->text('body');
 
@@ -53,8 +53,6 @@ class CreateThreadsTable extends Migration
             $table->string('slide_color_2')->nullable();
 
             $table->timestamps();
-
-            $table->engine = 'InnoDB';
         });
     }
 
