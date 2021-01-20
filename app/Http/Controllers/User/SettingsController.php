@@ -37,24 +37,20 @@ class SettingsController extends Controller
             // 'location.longitude' => ['required', 'numeric', 'min:-180', 'max:180']
         ]);
 
-        // $location = $this->getGeocodeing($request->formatted_address);
-        // if ($location['accuracy'] != 'result_not_found') {
-        //     $data['location'] = new Point($location['lat'], $location['lng']);
-        // }
-
-        // $location = new Point($request->location['latitude'], $request->location['longitude']);
-
+        $location = $this->getGeocodeing($request->formatted_address);
+        if ($location['accuracy'] != 'result_not_found') {
+            $data['location'] = new Point($location['lat'], $location['lng']);
+        }
 
         $user = $this->users->update(auth()->id(), [
             'name' => $request->name,
             'date_of_birth' => $request->date_of_birth,
             'about' => $request->about,
             'formatted_address' => $request->formatted_address,
-            // 'location' => $location,
+            'location' => $location,
         ]);
 
         return new UserResource($user);
-
     }
 
     public function updatePassword(Request $request)
@@ -70,13 +66,13 @@ class SettingsController extends Controller
         ]);
 
         return response()->json(['message' => 'Password updated'], 200);
-
     }
 
-    public function updateAvatar(Request $request){
+    public function updateAvatar(Request $request)
+    {
 
         $this->validate($request, [
-            'avatar_path'       => ['required','mimes:png,jpg,jpeg','max:1024']
+            'avatar_path'       => ['required', 'mimes:png,jpg,jpeg', 'max:1024']
         ]);
 
         $user = auth()->user();
@@ -86,14 +82,15 @@ class SettingsController extends Controller
                 $this->deleteOne($user->avatar_path);
             }
             $user =  $this->users->update($user->id, [
-                'avatar_path'   => $this->uploadOne($request->file('avatar_path'), 'avatars','public',$user->username.uniqid()),
+                'avatar_path'   => $this->uploadOne($request->file('avatar_path'), 'avatars', 'public', $user->username . uniqid()),
             ]);
 
             return  \response(new UserResource($user), Response::HTTP_ACCEPTED);
         }
     }
 
-    public function updateAbout(Request $request){
+    public function updateAbout(Request $request)
+    {
         $this->validate($request, [
             'about'     => ['required']
         ]);
@@ -105,7 +102,7 @@ class SettingsController extends Controller
         return  \response(new UserResource($user), Response::HTTP_ACCEPTED);
     }
 
-          /**
+    /**
      * Get lat, lng with thread location
      */
 
@@ -118,7 +115,8 @@ class SettingsController extends Controller
         return $geocoder->getCoordinatesForAddress($address);
     }
 
-    public function updateLoction(Request $request){
+    public function updateLoction(Request $request)
+    {
         $location = new Point($request->lat, $request->lng);
         $user =  $this->users->update(\auth()->id(), [
             'location' => $location,
@@ -126,6 +124,4 @@ class SettingsController extends Controller
 
         return  \response(new UserResource($user), Response::HTTP_ACCEPTED);
     }
-
-
 }
