@@ -167,6 +167,8 @@ class Thread extends Model
         if ($this->image_path != '') {
             if (preg_match("/http/i", $this->image_path)) {
                 return $this->image_path;
+            } else if (preg_match("/download/i", $this->image_path)) {
+                return asset($this->image_path);
             }
             return asset('storage/' . $this->image_path);
         } else {
