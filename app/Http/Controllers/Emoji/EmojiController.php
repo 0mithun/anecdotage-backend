@@ -18,7 +18,8 @@ class EmojiController extends Controller
     protected $emojis;
     protected $threads;
 
-    public function __construct(IEmoji $emojis, IThread $threads){
+    public function __construct(IEmoji $emojis, IThread $threads)
+    {
         $this->emojis = $emojis;
         $this->threads = $threads;
     }
@@ -44,20 +45,14 @@ class EmojiController extends Controller
      */
     public function show(Emoji $emoji)
     {
-        $threadsId =  $emoji->threads->pluck('id')->toArray();
+        // $threadsId =  $emoji->threads->pluck('id')->toArray();
 
-        $threads = $this->threads->withCriteria([
-            new EagerLoad(['channel','emojis']),
-       ])->findWhereInPaginate('id',$threadsId );
+        // $threads = $this->threads->withCriteria([
+        //     new EagerLoad(['channel', 'emojis']),
+        // ])->findWhereInPaginate('id', $threadsId);
 
-       $emojiResponse =  (new EmojiResource($emoji))->additional([
-            'data'  => [
-
-            ]
-        ]);
-
-        return response(['emoji' => $emojiResponse->response()->getData(true), 'threads'=> ThreadResource::collection($threads)->response()->getData(true)]);
+        $emojiResponse =  (new EmojiResource($emoji));
+        $threads =  $emoji->threads()->with(['channel', 'emojis'])->paginate();
+        return response(['emoji' => $emojiResponse->response()->getData(true), 'threads' => ThreadResource::collection($threads)->response()->getData(true)]);
     }
-
-
 }

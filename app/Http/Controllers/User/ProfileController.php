@@ -23,7 +23,7 @@ class ProfileController extends Controller
 
     public function __construct(IUser $users, IThread $threads)
     {
-        $this->middleware(['auth:api'])->only(['likes','subscriptions']);
+        $this->middleware(['auth:api'])->only(['likes', 'subscriptions']);
 
         $this->users = $users;
         $this->threads = $threads;
@@ -35,7 +35,8 @@ class ProfileController extends Controller
      * @param User $user
      * @return mixed
      */
-    public function user(User $user){
+    public function user(User $user)
+    {
         Gate::authorize('view-profile', $user);
         $user = $this->users->withCriteria([
             new EagerLoad(['userprivacy'])
@@ -58,18 +59,23 @@ class ProfileController extends Controller
      * @param User $user
      * @return mixed
      */
-    public function subscriptions(User $user){
+    public function subscriptions(User $user)
+    {
         Gate::authorize('own-profile', $user);
-        $subscriptionsId = DB::table( 'thread_subscriptions' )
-            ->where( 'user_id', $user->id )
-            ->get()
-            ->pluck( 'thread_id' )
-            ->all();
+        // $subscriptionsId = DB::table('thread_subscriptions')
+        //     ->where('user_id', $user->id)
+        //     ->get()
+        //     ->pluck('thread_id')
+        //     ->all();
 
-        $threads = $this->threads->withCriteria([
-            new ThreadSort(),
-            new EagerLoad(['creator','emojis','channel'])
-        ])->findWhereInPaginate('id', $subscriptionsId);
+        // $threads = $this->threads->withCriteria([
+        //     new ThreadSort(),
+        //     new EagerLoad(['creator', 'emojis', 'channel'])
+        // ])->findWhereInPaginate('id', $subscriptionsId);
+
+        $threads = Thread::whereHas('subscriptions', function ($q) use ($user) {
+            $q->where('user_id', $user->id);
+        })->with(['channel', 'emojis'])->paginate();
 
         return ThreadResource::collection($threads);
     }
@@ -81,20 +87,25 @@ class ProfileController extends Controller
      * @param User $user
      * @return mixed
      */
-    public function favorites(User $user){
+    public function favorites(User $user)
+    {
         Gate::authorize('view-favorites', $user->load('userprivacy'));
 
-        $favoritesId = DB::table( 'favorites' )
-        ->where( 'user_id', $user->id )
-        ->where('favorited_type', 'App\Models\Thread')
-        ->get()
-        ->pluck( 'favorited_id' )
-        ->all();
+        // $favoritesId = DB::table('favorites')
+        //     ->where('user_id', $user->id)
+        //     ->where('favorited_type', 'App\Models\Thread')
+        //     ->get()
+        //     ->pluck('favorited_id')
+        //     ->all();
 
-        $threads = $this->threads->withCriteria([
-            new ThreadSort(),
-            new EagerLoad(['creator','emojis','channel'])
-        ])->findWhereInPaginate('id', $favoritesId);
+        // $threads = $this->threads->withCriteria([
+        //     new ThreadSort(),
+        //     new EagerLoad(['creator', 'emojis', 'channel'])
+        // ])->findWhereInPaginate('id', $favoritesId);
+
+        $threads = Thread::whereHas('favorites', function ($q) use ($user) {
+            $q->where('user_id', $user->id);
+        })->with(['channel', 'emojis'])->paginate();
 
         return ThreadResource::collection($threads);
     }
@@ -107,21 +118,26 @@ class ProfileController extends Controller
      * @param User $user
      * @return mixed
      */
-    public function likes(User $user){
+    public function likes(User $user)
+    {
         Gate::authorize('own-profile', $user);
 
         //Something wrong
-        $likesId = DB::table( 'likes' )
-        ->where( 'user_id', $user->id )
-        ->where('likeable_type', 'App\Models\Thread')
-        ->get()
-        ->pluck( 'likeable_id' )
-        ->all();
+        // $likesId = DB::table('likes')
+        //     ->where('user_id', $user->id)
+        //     ->where('likeable_type', 'App\Models\Thread')
+        //     ->get()
+        //     ->pluck('likeable_id')
+        //     ->all();
 
-        $threads = $this->threads->withCriteria([
-            new ThreadSort(),
-            new EagerLoad(['emojis','creator','channel'])
-        ])->findWhereInPaginate('id', $likesId);
+        // $threads = $this->threads->withCriteria([
+        //     new ThreadSort(),
+        //     new EagerLoad(['emojis', 'creator', 'channel'])
+        // ])->findWhereInPaginate('id', $likesId);
+
+        $threads = Thread::whereHas('likes', function ($q) use ($user) {
+            $q->where('user_id', $user->id);
+        })->with(['channel', 'emojis'])->paginate();
 
         return ThreadResource::collection($threads);
     }
@@ -134,16 +150,21 @@ class ProfileController extends Controller
      * @param User $user
      * @return mixed
      */
-    public function threads(User $user){
+    public function threads(User $user)
+    {
         Gate::authorize('view-threads', $user->load('userprivacy'));
-        $threadsId = $user->threads()->pluck('id')->toArray();
 
-        $threads = $this->threads->withCriteria([
-            new ThreadSort(),
-            new EagerLoad(['emojis','creator','channel'])
-        ])->findWhereInPaginate('id', $threadsId);
 
+
+        // $threadsId = $user->threads()->pluck('id')->toArray();
+
+        // $threads = $this->threads->withCriteria([
+        //     new ThreadSort(),
+        //     new EagerLoad(['emojis', 'channel'])
+        // ])->findWhereInPaginate('id', $threadsId);
+
+
+        $threads = $user->threads()->with(['channel', 'emojis', 'creator'])->paginate(10);
         return ThreadResource::collection($threads);
     }
-
 }
