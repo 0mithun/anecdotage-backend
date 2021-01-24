@@ -44,13 +44,14 @@ class CreateThreadsTable extends Migration
             $table->bigInteger('like_count')->default(0);
             $table->bigInteger('dislike_count')->default(0);
             //New Items
-            $table->boolean('famous')->default(0);
+
             $table->text('slide_body')->nullable();
             $table->string('slide_image_pos')->nullable();
             $table->string('slide_color_bg')->nullable();
             $table->string('slide_color_0')->nullable();
             $table->string('slide_color_1')->nullable();
             $table->string('slide_color_2')->nullable();
+
 
             $table->timestamps();
         });

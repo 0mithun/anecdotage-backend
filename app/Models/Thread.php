@@ -47,7 +47,7 @@ class Thread extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'channel_id', 'slug', 'title', 'body', 'summary', 'source', 'main_subject', 'image_path', 'image_path_pixel_color', 'image_description', 'temp_image_url', 'temp_image_description', 'image_saved', 'cno', 'age_restriction', 'anonymous', 'formatted_address', 'location', 'is_published', 'famous', 'visits', 'favorite_count', 'like_count', 'dislike_count', 'slide_body', 'slide_image_pos', 'slide_color_bg', 'slide_color_0', 'slide_color_1', 'slide_color_2'
+        'user_id', 'channel_id', 'slug', 'title', 'body', 'summary', 'source', 'main_subject', 'image_path', 'image_path_pixel_color', 'image_description', 'temp_image_url', 'temp_image_description', 'image_saved', 'cno', 'age_restriction', 'anonymous', 'formatted_address', 'location', 'is_published', 'visits', 'favorite_count', 'like_count', 'dislike_count', 'slide_body', 'slide_image_pos', 'slide_color_bg', 'slide_color_0', 'slide_color_1', 'slide_color_2'
 
     ];
 
@@ -85,11 +85,11 @@ class Thread extends Model
         static::created(function ($thread) {
             // $thread->update(['slug' => str_slug(strip_tags( $thread->title))]);
 
-            $thread->addToIndex();
+            // $thread->addToIndex();
         });
 
         static::updated(function ($thread) {
-            $thread->updateIndex();
+            // $thread->updateIndex();
         });
 
         static::addGlobalScope(new ThreadFilter);

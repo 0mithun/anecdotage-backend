@@ -37,24 +37,25 @@ class TagController extends Controller
     public function show(Tag $tag)
     {
         // $threads = $tag->setRelation('threads', $tag->threads()->paginate());
-        // $threads = $tag->threads()->paginate(10)->toArray();
+        // $threads = $tag->threads()->with(['channel', 'emojis'])->paginate(10);
+        // return $threads;
 
 
-        $threadsId = $tag->threads()->pluck('id')->toArray();
-        $threads = $this->threads->withCriteria([
-            new EagerLoad(['channel','emojis']),
-       ])->findWhereInPaginate('id',$threadsId );
+        // $threadsId = $tag->threads()->pluck('id')->toArray();
+        // $threads = $this->threads->withCriteria([
+        //     new EagerLoad(['channel', 'emojis']),
+        // ])->findWhereInPaginate('id', $threadsId);
 
 
-       $tagResponse =  (new TagResource($tag))->additional([
+        $tagResponse =  (new TagResource($tag))->additional([
             'data'  => [
                 'is_follow'         =>  $tag->is_follow,
                 'followers_count'    =>  $tag->followers_count
             ]
         ]);
 
-
-        return response(['tag' => $tagResponse->response()->getData(true), 'threads'=> ThreadResource::collection($threads)->response()->getData(true)]);
+        $threads = $tag->threads()->with(['channel', 'emojis'])->paginate(10);
+        return response(['tag' => $tagResponse->response()->getData(true), 'threads' => ThreadResource::collection($threads)->response()->getData(true)]);
     }
 
     /**
@@ -66,12 +67,12 @@ class TagController extends Controller
      */
     public function update(Request $request, Tag $tag)
     {
-        $data = $request->only(['name','description']);
+        $data = $request->only(['name', 'description']);
         if ($request->has('photo') && ($request->file('photo') instanceof UploadedFile)) {
             if ($tag->photo != null) {
                 $this->deleteOne($tag->photo);
             }
-            $data['photo'] = $this->uploadOne($request->file('photo'), 'tags','public',$tag->slug.uniqid());
+            $data['photo'] = $this->uploadOne($request->file('photo'), 'tags', 'public', $tag->slug . uniqid());
         }
         $tag = $this->tags->update($tag->id, $data  + ['slug' => str_slug($request->name ?? $tag->name)]);
 
@@ -111,11 +112,12 @@ class TagController extends Controller
     }
 
 
-    public function search(){
-        if(request()->has('q')){
+    public function search()
+    {
+        if (request()->has('q')) {
             $query = request()->q;
-            $tags = Tag::where('name','LIKE',"$query%")->orderBy('name', 'ASC')->limit(5)->get()->pluck('name');
-        }else{
+            $tags = Tag::where('name', 'LIKE', "$query%")->orderBy('name', 'ASC')->limit(5)->get()->pluck('name');
+        } else {
             $tags = Tag::orderBy('name', 'ASC')->limit(5)->get()->pluck('name');
         }
 
