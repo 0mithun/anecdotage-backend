@@ -85,11 +85,11 @@ class Thread extends Model
         static::created(function ($thread) {
             // $thread->update(['slug' => str_slug(strip_tags( $thread->title))]);
 
-            // $thread->addToIndex();
+            $thread->addToIndex();
         });
 
         static::updated(function ($thread) {
-            // $thread->updateIndex();
+            $thread->updateIndex();
         });
 
         static::addGlobalScope(new ThreadFilter);

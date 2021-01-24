@@ -263,7 +263,7 @@ class ThreadController extends Controller
         }
 
         $thread->tags()->sync($tag_ids);
-        // $thread->updateIndex();
+        $thread->updateIndex();
     }
 
 
