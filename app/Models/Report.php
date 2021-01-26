@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Report extends Model
 {
-    protected $fillable  =[
+    protected $fillable  = [
         'user_id',
         'reason',
         'report_type',
@@ -23,5 +23,10 @@ class Report extends Model
     public function reported()
     {
         return $this->morphTo();
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

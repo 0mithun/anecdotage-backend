@@ -192,7 +192,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     //User ban
     Route::group(['prefix' => 'admin', 'middleware' => ['admin'], 'namespace' => 'Admin'], function () {
 
-
+        Route::resource('reports', 'ReportController')->only(['index', 'destroy']);
 
         //Admin Settings
         Route::put('settings', 'SettingController@update');
