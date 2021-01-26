@@ -22,6 +22,7 @@ use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\Thread\ThreadCreateRequest;
 use App\Http\Requests\Thread\ThreadUpdateRequest;
+use App\Jobs\WikiImageProcess;
 use App\Repositories\Eloquent\Criteria\EagerLoad;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 
@@ -42,7 +43,6 @@ class ThreadController extends Controller
      */
     public function index()
     {
-        // $threads = Thread::paginate();
         $threads = $this->threads->withCriteria([
             new EagerLoad(['emojis', 'channel']),
         ])->paginate();
@@ -180,6 +180,10 @@ class ThreadController extends Controller
         $this->attachTags($request, $thread);
 
         // $this->user->notify(new ThreadWasUpdated($this->thread, $reply));
+
+        if (($request->has('scrape_image') && $request->scrape_image == true) && ($request->has('main_subject') && $request->main_subject != null)) {
+            dispatch(new WikiImageProcess($request->main_subject, $thread));
+        }
 
         return response(new ThreadResource($thread), Response::HTTP_ACCEPTED);
     }

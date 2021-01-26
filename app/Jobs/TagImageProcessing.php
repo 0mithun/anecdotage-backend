@@ -33,33 +33,6 @@ class TagImageProcessing implements ShouldQueue
     public function handle()
     {
         if ($this->tag->name != null) {
-            $client = new Client();
-
-            $url = 'https://en.wikipedia.org/wiki/' . $this->tag->name;
-            $crawler = $client->request('GET', $url);
-
-            // $meta = $crawler->filter( 'meta' );
-
-            // $meta->each( function ( $node ) {
-            //     $property = $node->extract( ['property'] )[0];
-            //     if ( $property != '' ) {
-            //         $full_image_link = $node->extract( ['content'] )[0];
-            //         $fileExtension = explode( '.', $full_image_link );
-            //         $fileExtension = array_pop( $fileExtension );
-            //         $fileName = strtolower( $this->tag->name );
-
-            //         $fullFileName = $fileName . '.' . $fileExtension;
-            //         $image_path = strtolower( 'download/tag/' . $fullFileName );
-            //         $fullPath = 'public/' . $image_path;
-
-            //         $this->file_download_curl( $fullPath, $full_image_link );
-            //         $this->saveInfo( $image_path );
-
-            //     }
-
-            // } );
-
-
             $this->scrapeWithKeyword();
         }
     }
@@ -95,17 +68,21 @@ class TagImageProcessing implements ShouldQueue
         $client = new Client();
 
         $authorText = '';
-        $licenseText = '';
+        $$htmlLicense = '';
         $descriptionText = '';
-        $shopText =  "http://www.amazon.com/gp/search?ie=UTF8&camp=1789&creative=9325&index=aps&keywords={$this->tag->name}&linkCode=ur2&tag=anecdotagecom-20";
-
+        $shopText = '<a class="btn btn-xs btn-primary" href="http://www.amazon.com/gp/search?ie=UTF8&camp=1789&creative=9325&index=aps&keywords=' . $this->tag->name . '&linkCode=ur2&tag=anecdotage01-20">Shop for ' . $this->tag->name . '</a>';
         $image_page = $client->request('GET', $image_page_url);
 
+        if ($image_page->filter('span.mw-filepage-other-resolutions')->count() > 0) {
+            $full_image_link = $image_page->filter('span.mw-filepage-other-resolutions a')->first()->extract(['href'])[0];
+        } else
+
         if ($image_page->filter('.fullImageLink a')->count() > 0) {
-            $full_image_link =  $image_page->filter('.fullImageLink a')->first()->extract(['href'])[0];
-            $full_image_link = str_replace('//upload', 'upload', $full_image_link);
-            $full_image_link = 'https://' . $full_image_link;
+            $full_image_link = $image_page->filter('.fullImageLink a')->first()->extract(['href'])[0];
         }
+
+        $full_image_link = str_replace('//upload', 'upload', $full_image_link);
+        $full_image_link = 'https://' . $full_image_link;
 
         if (isset($full_image_link)) {
 
@@ -116,23 +93,39 @@ class TagImageProcessing implements ShouldQueue
             }
             $license = $image_page->filter('table.licensetpl span.licensetpl_short');
             if ($license->count() > 0) {
-                $acceptedLicenses = [
+                $saLicenseType = [
                     'CC BY-SA 1.0',
                     'CC BY-SA 1.5',
+                    'CC BY-SA 2.5',
+                    'CC BY-SA 3.0',
+                    'CC BY-SA 4.0',
+                ];
+                $nonSaLicenseType = [
                     'CC BY 1.0',
                     'CC BY 1.5',
-                    'CC BY-SA 2.5',
                     'CC BY 2.0 ',
                     'CC BY 2.5 ',
-                    'CC BY-SA 3.0',
                     'CC BY 3.0',
-                    'Public domain',
-                    'CC BY-SA 4.0',
                     'CC BY 4.0',
                 ];
 
-                if (in_array($license->first()->text(), $acceptedLicenses)) {
-                    $licenseText = $license->first()->text();
+                $licenseText = $license->first()->text();
+                if ($licenseText == 'Public domain') {
+                    $htmlLicense = 'Public domain';
+                } else if (in_array($licenseText, $saLicenseType)) {
+                    if (\preg_match('&(\d)\.?\d?&', $licenseText, $matches)) {
+                        $htmlLicense = '<a href="https://creativecommons.org/licenses/by-sa/' . $matches[0] . '">' . $licenseText . '</a>';
+                    }
+                } else if (in_array($licenseText, $nonSaLicenseType)) {
+                    if (\preg_match('&(\d)\.?\d?&', $licenseText, $matches)) {
+                        $htmlLicense = '<a href="https://creativecommons.org/licenses/by/' . $matches[0] . '">' . $licenseText . '</a>';
+                    }
+                }
+
+                if ($htmlLicense != '') {
+                    \dump($htmlLicense);
+                } else {
+                    \dump('other license');
                 }
             }
             $author = $image_page->filter('td#fileinfotpl_aut');
@@ -143,7 +136,7 @@ class TagImageProcessing implements ShouldQueue
                     $authorText =  $newAuthor->first()->text();
                 }
             }
-            $fullDescriptionText = sprintf("%s %s %s %s", $descriptionText, $authorText, $licenseText, $shopText);
+            $fullDescriptionText = sprintf("%s %s %s %s", $descriptionText, $authorText, $htmlLicense, $shopText);
             $data = [
                 'photo' =>  $full_image_link,
                 'description' =>  $fullDescriptionText,
@@ -152,34 +145,6 @@ class TagImageProcessing implements ShouldQueue
             $this->saveInfo($data);
         }
     }
-
-    public function file_download_curl($fullPath, $full_image_link)
-    {
-        $parts = explode('/', $fullPath);
-        array_pop($parts);
-        $dir = implode('/', $parts);
-
-        if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
-
-        $fp = fopen($fullPath, 'wb');
-        $ch = curl_init($full_image_link);
-        curl_setopt($ch, CURLOPT_FILE, $fp);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_exec($ch);
-        $error = curl_error($ch);
-        curl_close($ch);
-        fclose($fp);
-    }
-
-    // public function saveInfo($image_path)
-    // {
-    //     $tag = Tags::where('id', $this->tag->id)->first();
-    //     $tag->photo = $image_path;
-    //     $tag->save();
-    // }
 
     public function saveInfo($data)
     {
