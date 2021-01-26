@@ -35,8 +35,9 @@ abstract class BaseRepository implements IBase, ICriteria
         return $this->model->where($column, $value)->get();
     }
 
-    public function findWhereArray(array $criteria){
-          return  $this->model->where($criteria)->get();
+    public function findWhereArray(array $criteria)
+    {
+        return  $this->model->where($criteria)->get();
     }
 
     public function findWhereIn($column, array $data)
@@ -57,7 +58,8 @@ abstract class BaseRepository implements IBase, ICriteria
     }
 
     public function paginate($perPage = 10)
-    {   $this->currentPage();
+    {
+        $this->currentPage();
         return $this->model->paginate($perPage);
     }
 
@@ -85,7 +87,7 @@ abstract class BaseRepository implements IBase, ICriteria
     {
         $criteria = Arr::flatten($criteria);
 
-        foreach($criteria as $criterion){
+        foreach ($criteria as $criterion) {
             $this->model = $criterion->apply($this->model);
         }
 
@@ -96,32 +98,33 @@ abstract class BaseRepository implements IBase, ICriteria
 
     protected function getModelClass()
     {
-        if( !method_exists($this, 'model'))
-        {
+        if (!method_exists($this, 'model')) {
             throw new ModelNotDefined();
         }
 
         return app()->make($this->model());
-
     }
 
 
-    protected function currentPage(){
-        Paginator::currentPageResolver(function(){
-            if(request()->has('page') && request()->page != null){
+    protected function currentPage()
+    {
+        Paginator::currentPageResolver(function () {
+            if (request()->has('page') && request()->page != null) {
                 return request()->page;
-            }else{
+            } else {
                 return 1;
             }
         });
     }
 
-    public function orderBy($column , $sort = 'ASC'){
+    public function orderBy($column, $sort = 'ASC')
+    {
         $this->model->orderBy($column, $sort);
         return $this;
     }
 
-    public function toSql(){
+    public function toSql()
+    {
         return $this->model->toSql();
     }
 
@@ -132,8 +135,14 @@ abstract class BaseRepository implements IBase, ICriteria
         $this->currentPage();
 
         return $this->model->whereIn($column, $data)
-        // ->reorder('id','desc')
-        ->orderByRaw("field(id,".implode(',',$data).")")
-        ->paginate($perPage);
+            // ->reorder('id','desc')
+            ->orderByRaw("field(id," . implode(',', $data) . ")")
+            ->paginate($perPage);
+    }
+
+    public function select(array $column = ['*'])
+    {
+        $this->model->select($column);
+        return $this;
     }
 }

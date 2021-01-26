@@ -16,9 +16,11 @@ interface IBase
     public function update($id, array $data);
     public function delete($id);
 
-    public function orderBy($column , $sort = 'ASC');
+    public function orderBy($column, $sort = 'ASC');
 
     public function toSql();
 
     public function findWhereInSameOrderPaginate($column, array $data, $perPage = 10);
+
+    public function select(array $column = ['*']);
 }
