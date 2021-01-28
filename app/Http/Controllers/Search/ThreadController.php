@@ -27,7 +27,8 @@ class ThreadController extends Controller
     }
 
 
-    public function index(Request $request){
+    public function index(Request $request)
+    {
         $this->validate($request, [
             'q' => ['required']
         ]);
@@ -41,10 +42,10 @@ class ThreadController extends Controller
         $tags = $this->tags->findWhereIn('id', $tagIds);
 
         $threads = $this->threads->withCriteria([
-            new EagerLoad(['emojis','channel']),
+            new EagerLoad(['emojis', 'channel']),
         ])->findWhereInSameOrderPaginate('id', $threadIds);
 
-        return response(['tags' => TagResource::collection($tags)->response()->getData(true), 'threads'=> ThreadResource::collection($threads)->response()->getData(true)]);
+        return response(['tags' => TagResource::collection($tags)->response()->getData(true), 'threads' => ThreadResource::collection($threads)->response()->getData(true)]);
     }
 
 
@@ -55,13 +56,14 @@ class ThreadController extends Controller
      * @param string $cno
      * @return void
      */
-    protected function buildCnoQuery($cno){
-        $validCno = ['c','n','o'];
+    protected function buildCnoQuery($cno)
+    {
+        $validCno = ['c', 'n', 'o'];
         $splitCno = explode(',', $cno);
 
-        if(count($splitCno)> 0){
-            foreach($splitCno as $cno){
-                if(in_array( strtolower($cno), $validCno)){
+        if (count($splitCno) > 0) {
+            foreach ($splitCno as $cno) {
+                if (in_array(strtolower($cno), $validCno)) {
                     $this->filter[$this->index]['terms']['cno'][] = strtolower($cno);
                 }
             }
@@ -77,13 +79,14 @@ class ThreadController extends Controller
      * @param string $ages
      * @return void
      */
-    protected function buildAgesQuery($ages){
-        $validAges = [18,13,0];
+    protected function buildAgesQuery($ages)
+    {
+        $validAges = [18, 13, 0];
         $splitAges = explode(',', $ages);
 
-        if(count($splitAges)> 0){
-            foreach($splitAges as $age){
-                if(in_array( (int) $age , $validAges)){
+        if (count($splitAges) > 0) {
+            foreach ($splitAges as $age) {
+                if (in_array((int) $age, $validAges)) {
                     $this->filter[$this->index]['terms']['age_restriction'][] = $age;
                 }
             }
@@ -99,8 +102,9 @@ class ThreadController extends Controller
      * @param string $length
      * @return void
      */
-    protected function buildLengthQuery($length){
-        $validLength = ['sort', 'medium','long'];
+    protected function buildLengthQuery($length)
+    {
+        $validLength = ['sort', 'medium', 'long'];
         $splitLength = explode(',', $length);
 
         //sort min(0) max(100)
@@ -109,17 +113,17 @@ class ThreadController extends Controller
         $minArray = [];
         $maxArray = [];
 
-        if(count($splitLength)> 0){
+        if (count($splitLength) > 0) {
             rsort($splitLength);
-            foreach($splitLength as $length){
-                if(in_array( strtolower($length) , $validLength)){
-                    if(strtolower($length) == 'sort'){
+            foreach ($splitLength as $length) {
+                if (in_array(strtolower($length), $validLength)) {
+                    if (strtolower($length) == 'sort') {
                         $minArray[] = 0;
                         $maxArray[] = 100;
-                    }else if(strtolower($length) == 'medium'){
+                    } else if (strtolower($length) == 'medium') {
                         $minArray[] = 100;
                         $maxArray[] = 300;
-                    }else if(strtolower($length) == 'long'){
+                    } else if (strtolower($length) == 'long') {
                         $minArray[] = 300;
                         $maxArray = [];
                     }
@@ -127,30 +131,31 @@ class ThreadController extends Controller
             }
         }
 
-        if(count($minArray)> 0){
+        if (count($minArray) > 0) {
             // $filter[$index]['range']['visits']['gte']=  min($minArray);
-            $this->filter[$this->index]['range']['word_count']['gte']=  min($minArray);
+            $this->filter[$this->index]['range']['word_count']['gte'] =  min($minArray);
         }
-        if(count($maxArray) > 0){
+        if (count($maxArray) > 0) {
             // $filter[$index]['range']['visits']['lte']=  max($maxArray);
-            $this->filter[$this->index]['range']['word_count']['lte']=  max($maxArray);
+            $this->filter[$this->index]['range']['word_count']['lte'] =  max($maxArray);
         }
         $this->index = count($this->filter);
     }
 
-     /**
+    /**
      * Build query for filter tags
      *
      * @param string $tags
      * @return void
      */
-    public function buildTagsQuery($tags){
+    public function buildTagsQuery($tags)
+    {
         $splitTags = explode(',', $tags);
 
-        if(count($splitTags)> 0){
+        if (count($splitTags) > 0) {
             $tag_ids = [];
-            foreach($splitTags as $tag){
-                $tag_ids[]= (int) preg_replace('/[^0-9]/', '', $tag);
+            foreach ($splitTags as $tag) {
+                $tag_ids[] = (int) preg_replace('/[^0-9]/', '', $tag);
             }
             $this->filter[$this->index]['terms']['tag_ids']  = $tag_ids;
         }
@@ -158,19 +163,20 @@ class ThreadController extends Controller
         $this->index = count($this->filter);
     }
 
-     /**
+    /**
      * Build query for filter emojis
      *
      * @param string $emojis
      * @return void
      */
-    public function buildEmojisQuery($emojis){
+    public function buildEmojisQuery($emojis)
+    {
         $splitEmojis = explode(',', $emojis);
 
-        if(count($splitEmojis)> 0){
+        if (count($splitEmojis) > 0) {
             $emoji_ids = [];
-            foreach($splitEmojis as $emoji){
-                $emoji_ids[]= (int) preg_replace('/[^0-9]/', '', $emoji);
+            foreach ($splitEmojis as $emoji) {
+                $emoji_ids[] = (int) preg_replace('/[^0-9]/', '', $emoji);
             }
             $this->filter[$this->index]['terms']['emoji_ids']  = $emoji_ids;
         }
@@ -187,24 +193,22 @@ class ThreadController extends Controller
      * @param Request $request
      * @return array
      */
-    public function sortSearch(Request $request){
-       $sort = [];
+    public function sortSearch(Request $request)
+    {
+        $sort = [];
 
-        if($request->has('sort_by') && $request->sort_by != null){
+        if ($request->has('sort_by') && $request->sort_by != null) {
             $sortBy = $request->sort_by;
-            if($sortBy == 'visits'){
-                $sort[] =  ['visits'=>'desc'];
-            }
-            else if($sortBy == 'favorite'){
-                $sort[] =  ['favorite_count'=>'desc'];
-            }
-            else if($sortBy == 'like'){
-                $sort[] =  ['like_count'=>'desc'];
-            }
-            else if($sortBy == 'top'){
-                $sort[] =  ['points'=>'desc'];
-            }else if($sortBy == 'recent'){
-                $sort[] =  ['date'=>'desc'];
+            if ($sortBy == 'visits') {
+                $sort[] =  ['visits' => 'desc'];
+            } else if ($sortBy == 'favorite') {
+                $sort[] =  ['favorite_count' => 'desc'];
+            } else if ($sortBy == 'like') {
+                $sort[] =  ['like_count' => 'desc'];
+            } else if ($sortBy == 'top') {
+                $sort[] =  ['points' => 'desc'];
+            } else if ($sortBy == 'recent') {
+                $sort[] =  ['date' => 'desc'];
             }
         }
 
@@ -217,8 +221,9 @@ class ThreadController extends Controller
      * @param string $query
      * @return mixed
      */
-    protected function buildParams($query){
-       $params = [
+    protected function buildParams($query)
+    {
+        $params = [
             "bool" => [
                 'must' => [
                     'multi_match' => [
@@ -245,34 +250,35 @@ class ThreadController extends Controller
      * @param Request $request
      * @return mixed
      */
-    protected function search(Request $request){
-        if($request->has('cno') && $request->cno != null ){
+    protected function search(Request $request)
+    {
+        if ($request->has('cno') && $request->cno != null) {
             $this->buildCnoQuery($request->cno);
-          }
+        }
 
-          if($request->has('ages') && $request->ages != null ){
-              $this->buildAgesQuery($request->ages);
-          }
+        if ($request->has('ages') && $request->ages != null) {
+            $this->buildAgesQuery($request->ages);
+        }
 
-          if($request->has('length') && $request->length != null ){
-              $this->buildLengthQuery($request->length);
-          }
+        if ($request->has('length') && $request->length != null) {
+            $this->buildLengthQuery($request->length);
+        }
 
-          if($request->has('tags') && $request->tags != null ){
-              $this->buildTagsQuery($request->tags);
-          }
+        if ($request->has('tags') && $request->tags != null) {
+            $this->buildTagsQuery($request->tags);
+        }
 
-          if($request->has('emojis') && $request->emojis != null ){
-              $this->buildEmojisQuery($request->emojis);
-          }
+        if ($request->has('emojis') && $request->emojis != null) {
+            $this->buildEmojisQuery($request->emojis);
+        }
 
-          $params = $this->buildParams(request()->get('q'));
+        $params = $this->buildParams(request()->get('q'));
 
-          $search = Thread::searchByQuery($params);
-          $sort =   $this->sortSearch($request);
+        $search = Thread::searchByQuery($params);
+        $sort =   $this->sortSearch($request);
 
-          $results = Thread::customSearch($params, null, null, $search->totalHits(),  null, $sort);
+        $results = Thread::customSearch($params, null, null, $search->totalHits(),  null, $sort);
 
-          return $results;
+        return $results;
     }
 }

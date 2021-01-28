@@ -37,8 +37,7 @@ trait SearchableTrait
         ),
         'dislike_count' => array(
             'type' => 'standard',
-        )
-        ,
+        ),
         'points' => array(
             'type' => 'long',
         ),
