@@ -13,10 +13,10 @@ use App\Providers\RouteServiceProvider;
 
 class VerificationController extends Controller
 {
-    
+
     protected $users;
 
-   
+
     /**
      * Create a new controller instance.
      *
@@ -28,17 +28,18 @@ class VerificationController extends Controller
         $this->users = $users;
     }
 
-    public function verify(Request $request, User $user)
+    public function verify(Request $request, $userId)
     {
+        $user = $this->users->findWhereFirst('id', $userId);
         // check if the url is a valid signed url
-        if(! URL::hasValidSignature($request)){
+        if (!URL::hasValidSignature($request)) {
             return response()->json(["errors" => [
                 "message" => "Invalid verification link or signature"
             ]], 422);
         }
 
         // check if the user has already verified account
-        if($user->hasVerifiedEmail()){
+        if ($user->hasVerifiedEmail()) {
             return response()->json(["errors" => [
                 "message" => "Email address already verified"
             ]], 422);
@@ -48,7 +49,6 @@ class VerificationController extends Controller
         event(new Verified($user));
 
         return response()->json(['message' => 'Email successfully verified'], 200);
-
     }
 
     public function resend(Request $request)
@@ -56,17 +56,17 @@ class VerificationController extends Controller
         $this->validate($request, [
             'email' => ['email', 'required']
         ]);
-        
+
         $user = $this->users->findWhereFirst('email', $request->email);
         // $user = User::where('email', $request->email)->first();
-        
-        if(! $user){
+
+        if (!$user) {
             return response()->json(["errors" => [
                 "email" => "No user could be found with this email address"
             ]], 422);
         }
 
-        if($user->hasVerifiedEmail()){
+        if ($user->hasVerifiedEmail()) {
             return response()->json(["errors" => [
                 "message" => "Email address already verified"
             ]], 422);
@@ -75,9 +75,5 @@ class VerificationController extends Controller
         $user->sendEmailVerificationNotification();
 
         return response()->json(['status' => "verification link resent"]);
-
     }
-
-
-
 }
