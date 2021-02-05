@@ -39,10 +39,10 @@ class WikiImageProcess implements ShouldQueue
         $this->scrapeWithKeyword($this->keyword);
     }
 
-    public function scrapeWithKeyword($keyword)
+    public function scrapeWithKeyword()
     {
+        $keyword = $this->tag->name;
 
-        $originalKeyword = $keyword;
         $keyword = ucwords($keyword);
         $keyword = str_replace(' ', '_', $keyword);
         $newUrl = "https://en.wikipedia.org/wiki" . '/' . $keyword;
@@ -62,11 +62,7 @@ class WikiImageProcess implements ShouldQueue
                 $image_page_url = 'https://en.wikipedia.org' . $href;
             }
         }
-
-
-        if (isset($image_page_url)) {
-            $this->scrpeImagePageUrl($image_page_url, $originalKeyword);
-        }
+        $this->scrpeImagePageUrl($image_page_url);
     }
 
 
@@ -79,12 +75,16 @@ class WikiImageProcess implements ShouldQueue
 
         $image_page = $client->request('GET', $image_page_url);
 
+        if ($image_page->filter('span.mw-filepage-other-resolutions')->count() > 0) {
+            $full_image_link = $image_page->filter('span.mw-filepage-other-resolutions a')->first()->extract(['href'])[0];
+        } else
+
         if ($image_page->filter('.fullImageLink a')->count() > 0) {
-            $full_image_link =  $image_page->filter('.fullImageLink a')->first()->extract(['href'])[0];
-            $full_image_link = str_replace('//upload', 'upload', $full_image_link);
-            $full_image_link = 'https://' . $full_image_link;
-            $full_image_link =  str_replace("//https:", '//', $full_image_link);
+            $full_image_link = $image_page->filter('.fullImageLink a')->first()->extract(['href'])[0];
         }
+
+        $full_image_link = str_replace('//upload', 'upload', $full_image_link);
+        $full_image_link = 'https://' . $full_image_link;
 
         if (isset($full_image_link)) {
             $description = $image_page->filter('div.description');

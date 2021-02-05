@@ -192,6 +192,8 @@ Route::group(['middleware' => ['auth:api']], function () {
     //User ban
     Route::group(['prefix' => 'admin', 'middleware' => ['admin'], 'namespace' => 'Admin'], function () {
 
+        Route::put('threads/{thread}', 'ThreadController@update');
+
         Route::resource('reports', 'ReportController')->only(['index', 'destroy']);
 
         //Admin Settings
