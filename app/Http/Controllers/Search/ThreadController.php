@@ -18,6 +18,7 @@ class ThreadController extends Controller
 
     protected $filter = [];
     protected $index = 0;
+    protected $per_page = 10;
 
 
     public function __construct(IThread $threads, ITag $tags)
@@ -35,17 +36,19 @@ class ThreadController extends Controller
 
         $results = $this->search($request);
 
-        $threadIds =  $results->pluck('id')->toArray();
-        $tags =  $results->pluck('tag_ids');
+        $pagination = $this->buildPaginate($results);
 
+        $threadIds =  $results->pluck('id')->toArray();
+
+        $tags =  $results->pluck('tag_ids');
         $tagIds = $tags->collapse()->unique()->toArray();
         $tags = $this->tags->findWhereIn('id', $tagIds);
 
         $threads = $this->threads->withCriteria([
             new EagerLoad(['emojis', 'channel']),
-        ])->findWhereInSameOrderPaginate('id', $threadIds);
+        ])->findWhereIn('id', $threadIds);
 
-        return response(['tags' => TagResource::collection($tags)->response()->getData(true), 'threads' => ThreadResource::collection($threads)->response()->getData(true)]);
+        return response(['tags' => TagResource::collection($tags)->response()->getData(true), 'threads' => ['data' => ThreadResource::collection($threads), 'meta' => $pagination]]);
     }
 
 
@@ -274,11 +277,40 @@ class ThreadController extends Controller
 
         $params = $this->buildParams(request()->get('q'));
 
-        $search = Thread::searchByQuery($params);
         $sort =   $this->sortSearch($request);
 
-        $results = Thread::customSearch($params, null, null, $search->totalHits(),  null, $sort);
+        // $search = Thread::searchByQuery($params);
+        // $tags = Thread::customSearch($params, null, ['tag_names', 'tag_ids'], $search->totalHits(),  null, $sort);
+
+
+        $results = Thread::customSearch($params, null, ['id', 'tag_ids'], $this->per_page,  null, $sort)->paginate($this->per_page);
+
 
         return $results;
+    }
+
+    public function buildPaginate($results)
+    {
+        // "total":total(),
+        // "per_page": perPage(),
+        // "current_page": $results->currentPage(),
+        // "last_page": lastPage(),
+        // "next_page_url": nextPageUrl(),
+        // "prev_page_url": previousPageUrl()
+        // "from": 21,
+        // "to": 30,
+
+        $data = [
+            'total'     =>  $results->total(),
+            'per_page'     =>  $results->perPage(),
+            'current_page'     =>  $results->currentPage(),
+            'last_page'     =>  $results->lastPage(),
+            'next_page_url'     =>  $results->nextPageUrl(),
+            'prev_page_url'     =>  $results->previousPageUrl(),
+            'from'     =>  $results->firstItem(),
+            'to'     =>  $results->lastItem(),
+        ];
+
+        return $data;
     }
 }
