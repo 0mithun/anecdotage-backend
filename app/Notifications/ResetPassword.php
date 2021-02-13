@@ -10,10 +10,10 @@ use Illuminate\Notifications\Messages\MailMessage;
 
 class ResetPassword extends Notification
 {
-    
+
     public function toMail($notifiable)
     {
-        $url = url(config('app.client_url').'/password/reset/'.$this->token).
+        $url = url(config('app.client_base_url').'/password/reset/'.$this->token).
                     '?email='.urlencode($notifiable->email);
         return (new MailMessage)
                     ->line('you are receiving this email because we received a password reset request for your account')
