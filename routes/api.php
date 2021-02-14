@@ -144,7 +144,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 
     //Tags
-    Route::resource('tags', 'Tag\TagController')->only(['update', 'destroy']);
+    Route::post('tags/{tag}', 'Tag\TagController@update');
+    // Route::delete('tags/{tag}', 'Tag\TagController@destroy');
 
 
 

@@ -13,7 +13,12 @@ class ThreadController extends Controller
     {
         $title = $request->title;
 
-        $split_title = explode("*", $title);
+        // $split_title = explode("*", $title);
+        // if (count($split_title) > 0 && $split_title[0] != '') {
+        //     $keyword = $split_title[0];
+        //     dispatch(new WikiImageProcess($keyword, $thread));
+        // }
+        $split_title = preg_split("@('|:|-)@", $title);
         if (count($split_title) > 0 && $split_title[0] != '') {
             $keyword = $split_title[0];
             dispatch(new WikiImageProcess($keyword, $thread));

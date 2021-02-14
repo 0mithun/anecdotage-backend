@@ -28,22 +28,22 @@ trait Reportable
     }
 
     /**
-     * Favorite the current reply.
+     * report the current thread.
      *
      * @return Model
      */
     public function report(array $data)
     {
         $attributes = ['user_id' => auth()->check() ?  auth()->id() : 1 ];
-
-        if (! $this->reports()->where($attributes)->exists()) {
-            return $this->reports()->create($attributes + $data);
-        }
+        return $this->reports()->create($attributes + $data);
+        // if (! $this->reports()->where($attributes)->exists()) {
+        //     return $this->reports()->create($attributes + $data);
+        // }
     }
 
 
     /**
-     * Determine if the current reply has been favorited.
+     * Determine if the current thread has been favorited.
      *
      * @return boolean
      */
@@ -52,7 +52,7 @@ trait Reportable
     }
 
     /**
-     * Fetch the favorited status as a property.
+     * Fetch the reported status as a property.
      *
      * @return bool
      */

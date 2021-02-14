@@ -12,6 +12,7 @@ class Report extends Model
         'report_type',
         'reported_id',
         'reported_type',
+        'contact'
     ];
 
 

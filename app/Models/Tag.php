@@ -55,8 +55,18 @@ class Tag extends Model
 
     public function getPhotoUrlAttribute()
     {
-        $avatar = $this->photo == '' ? 'images/avatars/default.png' : $this->photo;
-        return asset($avatar);
+         if ($this->photo != '') {
+            if (preg_match("/http/i", $this->photo)) {
+                return $this->photo;
+            } else if (preg_match("/download/i", $this->photo)) {
+                return asset($this->photo);
+            }
+            return asset('storage/' . $this->photo);
+        } else {
+            return 'https://www.maxpixel.net/static/photo/1x/Geometric-Rectangles-Background-Shapes-Pattern-4973341.jpg';
+        }
+
+
     }
 
     public function getFollowTypeAttribute($type)

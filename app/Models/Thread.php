@@ -154,7 +154,7 @@ class Thread extends Model
         $body = strip_tags($this->body);
         $body = preg_replace('/\s+/', ' ', $this->body);
 
-        $body = substr(strip_tags($body), 0, 250);
+        $body = substr(strip_tags($body), 0, 350);
         if (strlen($body) <= 250) {
             $body = $body . '<strong>...</strong>';
         }
