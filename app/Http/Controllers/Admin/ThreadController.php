@@ -18,10 +18,12 @@ class ThreadController extends Controller
         //     $keyword = $split_title[0];
         //     dispatch(new WikiImageProcess($keyword, $thread));
         // }
-        $split_title = preg_split("@('|:|-)@", $title);
+        $split_title = preg_split("@('|:|-|\*)@", $title);
         if (count($split_title) > 0 && $split_title[0] != '') {
             $keyword = $split_title[0];
             dispatch(new WikiImageProcess($keyword, $thread));
         }
+
+        return response(['success'=>true]);
     }
 }
