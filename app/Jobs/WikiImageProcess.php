@@ -39,9 +39,7 @@ class WikiImageProcess implements ShouldQueue
         $this->scrapeWithKeyword($this->keyword);
     }
 
-    public function scrapeWithKeyword()
-    {
-        $keyword = $this->tag->name;
+    public function scrapeWithKeyword($keyword){
 
         $keyword = ucwords($keyword);
         $keyword = str_replace(' ', '_', $keyword);
@@ -124,9 +122,9 @@ class WikiImageProcess implements ShouldQueue
                 }
 
                 if ($htmlLicense != '') {
-                    \dump($htmlLicense);
+                    // \dump($htmlLicense);
                 } else {
-                    \dump('other license');
+                    // \dump('other license');
                 }
             }
 
