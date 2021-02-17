@@ -11,7 +11,12 @@ class ThreadController extends Controller
 {
     public function update(Request $request, Thread $thread)
     {
+        $this->validate($request, [
+            'title'     =>  ['required'],
+        ]);
+
         $title = $request->title;
+
 
         // $split_title = explode("*", $title);
         // if (count($split_title) > 0 && $split_title[0] != '') {
@@ -19,7 +24,7 @@ class ThreadController extends Controller
         //     dispatch(new WikiImageProcess($keyword, $thread));
         // }
 
-        $thread->update(['title'=> $request->title]);
+        $thread->update(['title'=> $request->title, 'slug'=>$request->title]);
 
         $split_title = preg_split("@('|:|-|\*)@", $title);
         if (count($split_title) > 0 && $split_title[0] != '') {
