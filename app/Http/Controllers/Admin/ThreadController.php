@@ -25,6 +25,7 @@ class ThreadController extends Controller
         // }
 
         $thread->update(['title'=> $request->title, 'slug'=>$request->title]);
+        $thread = $thread->fresh();
 
         $split_title = preg_split("@('|:|-|\*)@", $title);
         if (count($split_title) > 0 && $split_title[0] != '') {
@@ -32,6 +33,6 @@ class ThreadController extends Controller
             dispatch(new WikiImageProcess($keyword, $thread));
         }
 
-        return response(['success'=>true]);
+        return response(['success'=>true,'thread'=> $thread]);
     }
 }
