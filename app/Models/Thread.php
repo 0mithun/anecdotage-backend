@@ -100,19 +100,19 @@ class Thread extends Model
         $this->attributes['title']  = title_case($value);
     }
 
-    //  /**
-    //  * Set the proper slug attribute.
-    //  *
-    //  * @param string $value
-    //  */
-    // public function setSlugAttribute($value)
-    // {
-    //     if (static::whereSlug($slug =  str_slug(strip_tags( $value)))->exists()) {
-    //         $slug = "{$slug}-{$this->id}";
-    //     }
+     /**
+     * Set the proper slug attribute.
+     *
+     * @param string $value
+     */
+    public function setSlugAttribute($value)
+    {
+        if (static::whereSlug($slug =  str_slug(strip_tags( $value)))->exists()) {
+            $slug = "{$slug}-{$this->id}";
+        }
 
-    //     $this->attributes['slug'] = $slug;
-    // }
+        $this->attributes['slug'] = $slug;
+    }
 
     /**
      * Access the body attribute.

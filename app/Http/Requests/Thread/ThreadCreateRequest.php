@@ -24,7 +24,7 @@ class ThreadCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            'title'         => ['required','unique:threads,title'],
+            'title'         => ['required'],
             'body'          => ['required'],
             // 'image_path'    =>  ['mimes:png,jpg,jpeg,giff,svg','max:1024']
 
