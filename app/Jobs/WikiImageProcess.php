@@ -72,17 +72,21 @@ class WikiImageProcess implements ShouldQueue
         $descriptionText = '';
 
         $image_page = $client->request('GET', $image_page_url);
+	 if($image_page->filter('.mw-filepage-resolutioninfo a')->count() > 0){
+            $full_image_link =  $image_page->filter('.mw-filepage-resolutioninfo a')->first()->extract(['href'])[0];
+            $full_image_link = str_replace('//upload', 'upload', $full_image_link);
+            $full_image_link = 'https://' . $full_image_link;
+            $full_image_link =  str_replace("//https:", '//', $full_image_link);
 
-        if ($image_page->filter('span.mw-filepage-other-resolutions')->count() > 0) {
-            $full_image_link = $image_page->filter('span.mw-filepage-other-resolutions a')->first()->extract(['href'])[0];
-        } else
-
-        if ($image_page->filter('.fullImageLink a')->count() > 0) {
-            $full_image_link = $image_page->filter('.fullImageLink a')->first()->extract(['href'])[0];
+            dump($full_image_link);
         }
-
-        $full_image_link = str_replace('//upload', 'upload', $full_image_link);
-        $full_image_link = 'https://' . $full_image_link;
+        elseif ($image_page->filter('.fullImageLink a')->count() > 0) {
+            $full_image_link =  $image_page->filter('.fullImageLink a')->first()->extract(['href'])[0];
+            $full_image_link = str_replace('//upload', 'upload', $full_image_link);
+            $full_image_link = 'https://' . $full_image_link;
+            $full_image_link =  str_replace("//https:", '//', $full_image_link);
+            dump('default resolution');
+        }
 
         if (isset($full_image_link)) {
             $description = $image_page->filter('div.description');
@@ -130,12 +134,16 @@ class WikiImageProcess implements ShouldQueue
 
             $author = $image_page->filter('td#fileinfotpl_aut');
 
+            
             if ($author->count() > 0) {
-                $newAuthor = $image_page->filter('td#fileinfotpl_aut')->nextAll();
-                $newAuthor = $newAuthor->filter('a');
+                 $newAuthor = $image_page->filter('td#fileinfotpl_aut')->nextAll();
+                $newAuthorAnchor = $newAuthor->filter('a');
 
-                if ($newAuthor->count() > 0) {
-                    $authorText = $newAuthor->first()->text();
+
+                if ($newAuthorAnchor->count() > 0) {
+                    $authorText = $newAuthorAnchor->first()->text();
+                }else{
+                   $authorText = $newAuthor->first()->text();
                 }
             }
 

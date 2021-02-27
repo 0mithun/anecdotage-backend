@@ -73,16 +73,21 @@ class TagImageProcessing implements ShouldQueue
         $shopText = '<a class="btn btn-xs btn-primary" href="http://www.amazon.com/gp/search?ie=UTF8&camp=1789&creative=9325&index=aps&keywords=' . $this->tag->name . '&linkCode=ur2&tag=anecdotage01-20">Shop for ' . $this->tag->name . '</a>';
         $image_page = $client->request('GET', $image_page_url);
 
-        if ($image_page->filter('span.mw-filepage-other-resolutions')->count() > 0) {
-            $full_image_link = $image_page->filter('span.mw-filepage-other-resolutions a')->first()->extract(['href'])[0];
-        } else
+         if($image_page->filter('.mw-filepage-resolutioninfo a')->count() > 0){
+            $full_image_link =  $image_page->filter('.mw-filepage-resolutioninfo a')->first()->extract(['href'])[0];
+            $full_image_link = str_replace('//upload', 'upload', $full_image_link);
+            $full_image_link = 'https://' . $full_image_link;
+            $full_image_link =  str_replace("//https:", '//', $full_image_link);
 
-        if ($image_page->filter('.fullImageLink a')->count() > 0) {
-            $full_image_link = $image_page->filter('.fullImageLink a')->first()->extract(['href'])[0];
+            dump($full_image_link);
         }
-
-        $full_image_link = str_replace('//upload', 'upload', $full_image_link);
-        $full_image_link = 'https://' . $full_image_link;
+        elseif ($image_page->filter('.fullImageLink a')->count() > 0) {
+            $full_image_link =  $image_page->filter('.fullImageLink a')->first()->extract(['href'])[0];
+            $full_image_link = str_replace('//upload', 'upload', $full_image_link);
+            $full_image_link = 'https://' . $full_image_link;
+            $full_image_link =  str_replace("//https:", '//', $full_image_link);
+            dump('default resolution');
+        }
 
         if (isset($full_image_link)) {
 
@@ -129,13 +134,19 @@ class TagImageProcessing implements ShouldQueue
                 }
             }
             $author = $image_page->filter('td#fileinfotpl_aut');
+            
             if ($author->count() > 0) {
-                $newAuthor = $image_page->filter('td#fileinfotpl_aut')->nextAll();
-                $newAuthor = $newAuthor->filter('a');
-                if ($newAuthor->count() > 0) {
-                    $authorText =  $newAuthor->first()->text();
+                 $newAuthor = $image_page->filter('td#fileinfotpl_aut')->nextAll();
+                $newAuthorAnchor = $newAuthor->filter('a');
+
+
+                if ($newAuthorAnchor->count() > 0) {
+                    $authorText = $newAuthorAnchor->first()->text();
+                }else{
+                   $authorText = $newAuthor->first()->text();
                 }
             }
+
             $fullDescriptionText = sprintf("%s %s %s %s", $descriptionText, $authorText, $htmlLicense, $shopText);
             $data = [
                 'photo' =>  $full_image_link,

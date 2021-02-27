@@ -38,4 +38,5 @@ class ThreadController extends Controller
 
         return response(['success'=>true,'thread'=> $thread]);
     }
+
 }

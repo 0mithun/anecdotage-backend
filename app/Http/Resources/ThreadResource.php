@@ -25,6 +25,7 @@ class ThreadResource extends JsonResource
             'source'                    =>  $this->source,
             'main_subject'              =>  $this->main_subject,
             'thread_image_path'         =>  $this->thread_image_path,
+            'temp_thread_image_path'    =>  $this->temp_thread_image_path,
             'image_path'                =>  $this->image_path,
             'image_path_pixel_color'    =>  $this->image_path_pixel_color,
             'image_description'         =>  $this->image_description,

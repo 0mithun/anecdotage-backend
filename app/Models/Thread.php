@@ -83,9 +83,9 @@ class Thread extends Model
         });
 
         static::created(function ($thread) {
-            // $thread->update(['slug' => str_slug(strip_tags( $thread->title))]);
-
             $thread->addToIndex();
+            $thread->update(['slug' => str_slug(strip_tags( $thread->title))]);
+
         });
 
         static::updated(function ($thread) {
@@ -176,9 +176,25 @@ class Thread extends Model
         }
     }
 
+    public function tempThreadImagePath(){
+         if ($this->image_path != '' || $this->image_path != null) {
+            if (preg_match("/http/i", $this->image_path)) {
+                return $this->image_path;
+            }
+
+            return '';
+        }
+
+        return '';
+    }
+
     public function getThreadImagePathAttribute()
     {
         return $this->threadImagePath();
+    }
+
+    public function getTempThreadImagePathAttribute(){
+        return $this->tempThreadImagePath();
     }
 
     /**

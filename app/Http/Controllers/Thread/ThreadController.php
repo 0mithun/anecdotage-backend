@@ -59,7 +59,7 @@ class ThreadController extends Controller
     public function store(ThreadCreateRequest $request)
     {
         $data = $request->only(['title', 'body', 'source', 'main_subject', 'age_restriction', 'anonymous', 'famous',]);
-        $data['slug'] = str_slug(strip_tags($request->title));
+        // $data['slug'] = str_slug(strip_tags($request->title));
 
 
         if ($request->location != null) {
