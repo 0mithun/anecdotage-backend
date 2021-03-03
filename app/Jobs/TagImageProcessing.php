@@ -91,7 +91,7 @@ class TagImageProcessing implements ShouldQueue
 
         if (isset($full_image_link)) {
 
-            $description = $image_page->filter('div.description');
+            $description = $image_page->filter('td.description');
             if ($description->count() > 0) {
                 $description =  $description->first()->text();
                 $descriptionText = str_replace('English: ', '', $description);
@@ -139,12 +139,16 @@ class TagImageProcessing implements ShouldQueue
                  $newAuthor = $image_page->filter('td#fileinfotpl_aut')->nextAll();
                 $newAuthorAnchor = $newAuthor->filter('a');
 
+/*
 
                 if ($newAuthorAnchor->count() > 0) {
                     $authorText = $newAuthorAnchor->first()->text();
                 }else{
                    $authorText = $newAuthor->first()->text();
                 }
+
+
+*/
             }
 
             $fullDescriptionText = sprintf("%s %s %s %s", $descriptionText, $authorText, $htmlLicense, $shopText);
