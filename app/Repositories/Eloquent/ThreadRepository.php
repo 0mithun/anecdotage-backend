@@ -46,7 +46,7 @@ class ThreadRepository extends BaseRepository implements IThread
             $query->distanceSphereExcludingSelf('location', $point, $distance);
             $query->orderByDistance('location', $point, 'asc');
         }
-        return $query->get();
+        return $query->limit(100)->get();
     }
 
     public function closest($lat, $lng)
