@@ -151,12 +151,16 @@ class Thread extends Model
 
     public function getExcerptAttribute()
     {
+        $limit = 120;
         $body = strip_tags($this->body);
         $body = preg_replace('/\s+/', ' ', $this->body);
 
-        $body = substr(strip_tags($body), 0, 350);
-        if (strlen($body) <= 250) {
-            $body = $body . '<strong>...</strong>';
+        $splitBody = explode(" ", $body);
+        if(count($splitBody)>$limit){
+            $splitBody = array_slice($splitBody,0, $limit);
+
+            $body =  implode(" ", $splitBody);
+            $body = $body." <strong>...</strong>";
         }
 
         return $body;
