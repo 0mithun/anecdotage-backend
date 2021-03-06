@@ -36,8 +36,13 @@ class ThreadPostFacebook extends Notification implements ShouldQueue
 
     public function toFacebookPoster($notifiable)
     {
+
+        $appUrl = config('app.client_url', config('app.url'));
+        $fullUrl = '/anecdotes/'.$notifiable->slug;
+
+        $fullUrl = url($appUrl.$fullUrl);
         return (new FacebookPosterPost($notifiable->title))
-            ->withLink(url($notifiable->path()))
+            ->withLink($fullUrl)
             // ->withLink("https://laravel.com")
             // ->withImage($notifiable->threadImagePath)
             //->withImage("http://142.93.11.128/uploads/threads/143.jpeg")

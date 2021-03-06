@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0c0c2f147a12c82275bd79efd0b01f74",
+    "content-hash": "a7b7d52244f0de6ed3f71fab9d5ead73",
     "packages": [
         {
             "name": "abraham/twitteroauth",
@@ -4960,16 +4960,16 @@
         },
         {
             "name": "spatie/geocoder",
-            "version": "3.10.0",
+            "version": "3.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/geocoder.git",
-                "reference": "c40e58de925aeab10d7052936aafab831cb01354"
+                "reference": "083438f249cdbfb0d7d8a9b95aa17c60a204d925"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/geocoder/zipball/c40e58de925aeab10d7052936aafab831cb01354",
-                "reference": "c40e58de925aeab10d7052936aafab831cb01354",
+                "url": "https://api.github.com/repos/spatie/geocoder/zipball/083438f249cdbfb0d7d8a9b95aa17c60a204d925",
+                "reference": "083438f249cdbfb0d7d8a9b95aa17c60a204d925",
                 "shasum": ""
             },
             "require": {
@@ -5018,7 +5018,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/geocoder/issues",
-                "source": "https://github.com/spatie/geocoder/tree/3.10.0"
+                "source": "https://github.com/spatie/geocoder/tree/3.10.1"
             },
             "funding": [
                 {
@@ -5026,7 +5026,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2020-12-01T21:21:11+00:00"
+            "time": "2020-12-02T15:47:29+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",

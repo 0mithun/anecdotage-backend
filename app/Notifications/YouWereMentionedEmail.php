@@ -47,7 +47,7 @@ class YouWereMentionedEmail extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         $appUrl = config('app.client_url', config('app.url'));
-        $fullUrl = '/threads/'.$this->reply->thread->slug;
+        $fullUrl = '/anecdotes/'.$this->reply->thread->slug;
         return (new MailMessage)
             ->line($this->reply->owner->name . ' mentioned you in ' . $this->reply->thread->title)
             ->action('Visit reply', url($appUrl.$fullUrl))

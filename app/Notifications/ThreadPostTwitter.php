@@ -34,28 +34,48 @@ class ThreadPostTwitter extends Notification implements ShouldQueue
         return [TwitterChannel::class];
     }
 
-    
+
 
     public function toTwitter($notifiable)
     {
         $limit = 270;
         // $title_count = strlen($notifiable->title);
         $tag_count = strlen("#anecdotes");
-        $path_count = strlen($notifiable->path);
+
+        $appUrl = config('app.client_url', config('app.url'));
+        $fullUrl = '/anecdotes/'.$notifiable->slug;
+
+        $fullUrl = url($appUrl.$fullUrl);
+
+
+        $path_count = strlen($fullUrl);
         $total_count = $path_count + $tag_count;
         $end = $limit - $total_count;
 
         $description = substr(strip_tags($notifiable->body), 0, $end);
 
-        $status = "{$description} #anecdotes {$notifiable->path} ";
+        $status = "{$description} #anecdotes {$fullUrl} ";
 
         if ($notifiable->image_path == '') {
             // return (new TwitterStatusUpdate($notifiable->title));
             return (new TwitterStatusUpdate($status));
         } else {
             // return (new TwitterStatusUpdate($notifiable->title))
+
+            if (preg_match("/http/i", $notifiable->image_path)) {
+                $image_path = $notifiable->image_path;
+            } else if (preg_match("/download/i", $notifiable->image_path)) {
+                 $image_path =  asset($notifiable->image_path);
+            }else{
+                $image_path =  asset('storage/' . $notifiable->image_path);
+            }
+
+
+
+            dump($image_path);
             return (new TwitterStatusUpdate($status))
-                ->withImage($notifiable->image_path);
+                // ->withImage($image_path)notifiable->
+                ;
         }
     }
 }
