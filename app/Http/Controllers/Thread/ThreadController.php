@@ -142,6 +142,8 @@ class ThreadController extends Controller
 
         if ($request->location != null) {
             $location = $this->getGeocodeing($request->location);
+
+            // return $location;
             if ($location['accuracy'] != 'result_not_found') {
                 $data['location'] = new Point($location['lat'], $location['lng']);
                 $data['formatted_address'] = $request->location;
@@ -329,6 +331,11 @@ class ThreadController extends Controller
 
     public function imageDescription(Request $request, Thread $thread)
     {
+        if($request->temp_image_url!='' || $request->temp_image_url!= null){
+            $thread->update(['image_description'=> $request->temp_image_description]);
+            return response('Description Update successfully');
+        }
+
         $thread->update($request->only(['temp_image_url', 'temp_image_description'])  + ['is_published' => true]);
 
         // WikiImageProcess::dispatch(request('wiki_info_page_url'), $thread, false);
