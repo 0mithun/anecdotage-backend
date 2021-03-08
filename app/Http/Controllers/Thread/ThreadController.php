@@ -138,7 +138,7 @@ class ThreadController extends Controller
         $data = $request->only(['title', 'body', 'source', 'main_subject', 'age_restriction', 'anonymous',
         'slide_body','slide_image_pos','slide_color_bg','slide_color_0','slide_color_1','slide_color_2']);
         if ($request->has('title') && auth()->user()->is_admin) {
-            // $data['slug'] = str_slug(strip_tags($request->title));
+            $data['slug'] = str_slug(strip_tags($request->title));
         }
 
         if ($request->location != null) {

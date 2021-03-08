@@ -27,8 +27,8 @@ class ThreadController extends Controller
         $title = str_replace('*','', $title);
 
 
-        // $thread->update(['title'=> $title, 'slug'=>$title]);
-        $thread->update(['title'=> $title]);
+        $thread->update(['title'=> $title, 'slug'=>$title]);
+        // $thread->update(['title'=> $title]);
         $thread = $thread->fresh();
 
         $split_title = preg_split("@('|:|-|\*)@", $request->title);
