@@ -332,7 +332,11 @@ class ThreadController extends Controller
 
     public function imageDescription(Request $request, Thread $thread)
     {
-        if($request->temp_image_url!='' || $request->temp_image_url!= null){
+        if($request->temp_image_url == $thread->image_path){
+            return response('Description Update successfully');
+        }
+
+        if($request->temp_image_url=='' || $request->temp_image_url== null){
             $thread->update(['image_description'=> $request->temp_image_description]);
             return response('Description Update successfully');
         }

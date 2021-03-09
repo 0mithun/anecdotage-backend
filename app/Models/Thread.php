@@ -201,6 +201,16 @@ class Thread extends Model
         return $this->tempThreadImagePath();
     }
 
+    public function getRemoteImageUrlAttribute(){
+         if ($this->image_path != '' || $this->image_path != null) {
+            if (preg_match("/http/i", $this->image_path)) {
+                return $this->image_path;
+            }
+
+            return $this->temp_image_url;
+        }
+    }
+
     /**
      * A thread belongs to a creator.
      *
