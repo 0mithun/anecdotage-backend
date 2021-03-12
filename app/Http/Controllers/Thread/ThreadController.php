@@ -138,7 +138,17 @@ class ThreadController extends Controller
         $data = $request->only(['title', 'body', 'source', 'main_subject', 'age_restriction', 'anonymous',
         'slide_body','slide_image_pos','slide_color_bg','slide_color_0','slide_color_1','slide_color_2']);
         if ($request->has('title') && auth()->user()->is_admin) {
-            $data['slug'] = str_slug(strip_tags($request->title));
+            $slug = str_slug(strip_tags( $request->title));
+            if($slug != $thread->slug){
+                $data['slug'] =$request->title;
+            }
+
+            // $newThread = Thread::whereSlug($slug)->first();
+            // if ($newThread && $newThread->id == $thread->id) {
+            //     $data['slug'] = $slug = "{$slug}-{$thread->id}";
+            // }
+
+
         }
 
         if ($request->location != null) {
@@ -332,7 +342,7 @@ class ThreadController extends Controller
 
     public function imageDescription(Request $request, Thread $thread)
     {
-        if($request->temp_image_url == $thread->image_path){
+        if($request->temp_image_url == $thread->image_path && $thread->image_path != null){
             return response('Description Update successfully');
         }
 

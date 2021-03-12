@@ -17,18 +17,21 @@ class ThreadController extends Controller
 
         $title = $request->title;
 
-
-        // $split_title = explode("*", $title);
-        // if (count($split_title) > 0 && $split_title[0] != '') {
-        //     $keyword = $split_title[0];
-        //     dispatch(new WikiImageProcess($keyword, $thread));
-        // }
-
         $title = str_replace('*','', $title);
+        $data = [
+            'title' =>  $title
+        ];
 
+        if ($request->has('title') && auth()->user()->is_admin) {
+            $slug = str_slug(strip_tags( $title));
+            if($slug != $thread->slug){
+                $data['slug'] = $title;
+            }
+        }
 
-        $thread->update(['title'=> $title, 'slug'=>$title]);
+        // $thread->update(['title'=> $title, 'slug'=>$title]);
         // $thread->update(['title'=> $title]);
+        $thread->update($data);
         $thread = $thread->fresh();
 
         $split_title = preg_split("@('|:|-|\*)@", $request->title);
