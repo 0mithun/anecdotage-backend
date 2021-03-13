@@ -34,7 +34,8 @@ class ThreadController extends Controller
         $thread->update($data);
         $thread = $thread->fresh();
 
-        $split_title = preg_split("@('|:|-|\*)@", $request->title);
+        $split_title = preg_split("@(\*)@", $request->title);
+        // $split_title = preg_split("@('|:|-|\*)@", $request->title);
         if (count($split_title) > 0 && $split_title[0] != '') {
             $keyword = $split_title[0];
             dispatch(new WikiImageProcess($keyword, $thread));
