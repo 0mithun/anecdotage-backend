@@ -25,6 +25,8 @@ class ThreadController extends Controller
     {
         $this->threads = $threads;
         $this->tags = $tags;
+
+
     }
 
 
@@ -82,18 +84,43 @@ class ThreadController extends Controller
      * @param string $ages
      * @return void
      */
-    protected function buildAgesQuery($ages)
+    protected function buildAgesQuery($request)
     {
         $validAges = [18, 13, 0];
-        $splitAges = explode(',', $ages);
+        $ages = [];
 
-        if (count($splitAges) > 0) {
-            foreach ($splitAges as $age) {
-                if (in_array((int) $age, $validAges)) {
-                    $this->filter[$this->index]['terms']['age_restriction'][] = $age;
+
+        //  $this->filter[$this->index]['terms']['age_restriction'][] = 18;
+        if(\auth()->check()){
+            if(auth()->id() !==1){
+                $privacy = auth()->user()->userprivacy;
+                if($privacy->restricted_18 ==1){
+                    $validAges = [0,13,18];
+                }else if($privacy->restricted_13 == 1){
+                    $validAges = [0,13,18];
+                }else if($privacy->restricted_18 ==0){
+                    $validAges = [0];
                 }
             }
+        }else{
+           $validAges = [0];
         }
+
+        if ($request->has('ages') && $request->ages != null) {
+             $splitAges = explode(',', $request->ages);
+            if (count($splitAges) > 0) {
+                foreach ($splitAges as $age) {
+                    if (in_array((int) $age, $validAges)) {
+                        $this->filter[$this->index]['terms']['age_restriction'][] = $age;
+                    }
+                }
+            }
+        }else{
+            foreach ($validAges as $age) {
+                $this->filter[$this->index]['terms']['age_restriction'][] = $age;
+            }
+        }
+
         $this->index = count($this->filter);
     }
 
@@ -259,9 +286,8 @@ class ThreadController extends Controller
             $this->buildCnoQuery($request->cno);
         }
 
-        if ($request->has('ages') && $request->ages != null) {
-            $this->buildAgesQuery($request->ages);
-        }
+        $this->buildAgesQuery($request);
+
 
         if ($request->has('length') && $request->length != null) {
             $this->buildLengthQuery($request->length);
@@ -282,8 +308,9 @@ class ThreadController extends Controller
         // $search = Thread::searchByQuery($params);
         // $tags = Thread::customSearch($params, null, ['tag_names', 'tag_ids'], $search->totalHits(),  null, $sort);
 
+        $offset = (request('page',1) - 1) * $this->per_page;
 
-        $results = Thread::customSearch($params, null, ['id', 'tag_ids'], $this->per_page,  null, $sort)->paginate($this->per_page);
+        $results = Thread::customSearch($params, null, ['id', 'tag_ids'], $this->per_page,  $offset, $sort)->paginate($this->per_page);
 
 
         return $results;

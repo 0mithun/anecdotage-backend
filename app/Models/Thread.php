@@ -121,8 +121,22 @@ class Thread extends Model
      * @return string
      */
     public function getBodyAttribute($body)
+    {   $pattern =  '<p>&nbsp;</p>';
+        $body = str_replace($pattern, '', $body);
+        $body =  html_entity_decode($body);
+        return $body;
+    }
+    /**
+     * Access the body attribute.
+     *
+     * @param  string $body
+     * @return string
+     */
+    public function setBodyAttribute($value)
     {
-        return html_entity_decode($body);
+        $pattern =  '<p>&nbsp;</p>';
+        $body = str_replace($pattern, '', $value);
+        $this->attributes['body'] = $body;
     }
 
     /**
