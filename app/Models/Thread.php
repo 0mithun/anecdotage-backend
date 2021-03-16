@@ -95,10 +95,7 @@ class Thread extends Model
         static::addGlobalScope(new ThreadFilter);
     }
 
-    public function setTitleAttribute($value)
-    {
-        $this->attributes['title']  = title_case($value);
-    }
+
 
      /**
      * Set the proper slug attribute.
@@ -147,7 +144,7 @@ class Thread extends Model
      */
     public function getTitleAttribute($title)
     {
-        return title_case(html_entity_decode($title));
+        return (html_entity_decode($title));
     }
 
     /**

@@ -22,6 +22,7 @@ use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\Thread\ThreadCreateRequest;
 use App\Http\Requests\Thread\ThreadUpdateRequest;
+use App\Jobs\TagImageProcessing;
 use App\Jobs\WikiImageProcess;
 use App\Repositories\Eloquent\Criteria\EagerLoad;
 use Illuminate\Support\Facades\Request as FacadesRequest;
@@ -135,7 +136,7 @@ class ThreadController extends Controller
      */
     public function update(ThreadUpdateRequest $request, Thread $thread)
     {
-        $data = $request->only(['title', 'body', 'source', 'main_subject', 'age_restriction', 'anonymous',
+        $data = $request->only(['body', 'source', 'main_subject', 'age_restriction', 'anonymous',
         'slide_body','slide_image_pos','slide_color_bg','slide_color_0','slide_color_1','slide_color_2']);
         if ($request->has('title') && auth()->user()->is_admin) {
             $slug = str_slug(strip_tags( $request->title));
@@ -149,6 +150,12 @@ class ThreadController extends Controller
             // }
 
 
+        }
+
+        if($request->title_case == true){
+            $data['title']  =  title_case($request->title);
+        }else{
+            $data['title']  =  $request->title;
         }
 
         if ($request->location != null) {
@@ -275,6 +282,7 @@ class ThreadController extends Controller
                 if ($tag != 'null') {
                     $newTag = Tag::create(['name' => $tag, 'slug' => str_slug($tag)]);
                     $tag_ids[] = $newTag->id;
+                    dispatch(new TagImageProcessing($tag));
                 }
             }
         }

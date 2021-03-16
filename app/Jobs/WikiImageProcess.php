@@ -99,6 +99,7 @@ class WikiImageProcess implements ShouldQueue
                 $saLicenseType = [
                     'CC BY-SA 1.0',
                     'CC BY-SA 1.5',
+                    'CC BY-SA 2.0',
                     'CC BY-SA 2.5',
                     'CC BY-SA 3.0',
                     'CC BY-SA 4.0',
@@ -106,8 +107,8 @@ class WikiImageProcess implements ShouldQueue
                 $nonSaLicenseType = [
                     'CC BY 1.0',
                     'CC BY 1.5',
-                    'CC BY 2.0 ',
-                    'CC BY 2.5 ',
+                    'CC BY 2.0',
+                    'CC BY 2.5',
                     'CC BY 3.0',
                     'CC BY 4.0',
                 ];
@@ -128,13 +129,15 @@ class WikiImageProcess implements ShouldQueue
                 if ($htmlLicense != '') {
                     // \dump($htmlLicense);
                 } else {
-                    // \dump('other license');
+                   $htmlLicense = $this->checkLicense($image_page);
                 }
+            }else{
+                $htmlLicense = $this->checkLicense($image_page);
             }
 
             $author = $image_page->filter('td#fileinfotpl_aut');
 
-            
+
             if ($author->count() > 0) {
                  $newAuthor = $image_page->filter('td#fileinfotpl_aut')->nextAll();
                 $newAuthorAnchor = $newAuthor->filter('a');
@@ -196,5 +199,50 @@ class WikiImageProcess implements ShouldQueue
     public function saveInfo($data)
     {
         $this->thread->update($data);
+    }
+
+     public function checkLicense($image_page){
+
+        $text =    $image_page->text();
+         $htmlLicense = '';
+            $saLicenseType = [
+                'CC BY-SA 1.0',
+                'CC BY-SA 1.5',
+                'CC BY-SA 2.0',
+                'CC BY-SA 2.5',
+                'CC BY-SA 3.0',
+                'CC BY-SA 4.0',
+            ];
+            $nonSaLicenseType = [
+                'CC BY 1.0',
+                'CC BY 1.5',
+                'CC BY 2.0',
+                'CC BY 2.5',
+                'CC BY 3.0',
+                'CC BY 4.0',
+            ];
+            $matches = false;
+
+            foreach ($saLicenseType as $license) {
+                $pattern = "/$license/";
+                if(preg_match($pattern ,$text)){
+                    $htmlLicense = '<a href="https://creativecommons.org/licenses/by-sa/'.$license.'">' . $license . '</a>';
+                    $matches = true;
+                    break;
+                }
+            }
+
+            if($matches == false){
+                foreach ($nonSaLicenseType as $license) {
+                    $pattern = "/$license/";
+                    if(preg_match($pattern ,$text)){
+                        $htmlLicense = '<a href="https://creativecommons.org/licenses/by/'.$license.'">' . $license . '</a>';
+                        $matches = true;
+                        break;
+                    }
+                }
+            }
+
+       return $htmlLicense;
     }
 }
