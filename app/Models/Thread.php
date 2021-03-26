@@ -133,6 +133,25 @@ class Thread extends Model
     {
         $pattern =  '<p>&nbsp;</p>';
         $body = str_replace($pattern, '', $value);
+
+        $pattern = '/<a(.*?)<\/a>/i';
+        $body = preg_replace_callback($pattern, function($match){
+            return '<em><a href="https://www.amazon.com/s?k='.trim($match[1]).'&linkCode=ur2&tag=anecdotage01-20">'.trim($match[1]).'</a></em>';
+        }, $body);
+
+
+        $pattern = '@<i>\s*?<a(.*?)>(.*?)<\/a>\s*?<\/i>@i';
+        $body = preg_replace_callback($pattern, function($match){
+            return '<em><a href="https://www.amazon.com/s?k='.trim($match[2]).'&linkCode=ur2&tag=anecdotage01-20">'.trim($match[2]).'</a></em>';
+        }, $body);
+
+
+        $pattern = '/<i>(.*?)<\/i>/i';
+        $body = preg_replace_callback($pattern, function($match){
+            return '<em><a href="https://www.amazon.com/s?k='.trim($match[1]).'&linkCode=ur2&tag=anecdotage01-20">'.trim($match[1]).'</a></em>';
+        }, $body);
+
+
         $this->attributes['body'] = $body;
     }
 
@@ -220,6 +239,19 @@ class Thread extends Model
 
             return $this->temp_image_url;
         }
+    }
+
+    public function getImageDescriptionAttribute($value){
+        //image_description
+        if (preg_match("@https://upload.wikimedia.org/@i", $this->image_path)) {
+            return $value;
+        }
+
+        if($this->old_image_description == null || $this->old_image_description == ''){
+            return $value;
+        }
+
+        return $this->old_image_description;
     }
 
     /**

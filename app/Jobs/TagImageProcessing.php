@@ -70,7 +70,7 @@ class TagImageProcessing implements ShouldQueue
         $authorText = '';
         $htmlLicense = '';
         $descriptionText = '';
-        $shopText = '<a class="btn btn-sm btn-secondary" href="http://www.amazon.com/gp/search?ie=UTF8&camp=1789&creative=9325&index=aps&keywords=' . $this->tag->name . '&linkCode=ur2&tag=anecdotage01-20">Shop</a>';
+        // $shopText = '<a class="btn btn-sm btn-secondary" href="http://www.amazon.com/gp/search?ie=UTF8&camp=1789&creative=9325&index=aps&keywords=' . $this->tag->name . '&linkCode=ur2&tag=anecdotage01-20">Shop</a>';
         $image_page = $client->request('GET', $image_page_url);
 
          if($image_page->filter('.mw-filepage-resolutioninfo a')->count() > 0){
@@ -154,7 +154,8 @@ class TagImageProcessing implements ShouldQueue
 */
             }
 
-            $fullDescriptionText = sprintf("%s %s %s %s", $descriptionText, $authorText, $htmlLicense, $shopText);
+            // $fullDescriptionText = sprintf("%s %s %s %s", $descriptionText, $authorText, $htmlLicense, $shopText);
+            $fullDescriptionText = sprintf("%s Credit: %s (%s) %s", $descriptionText, $authorText, $htmlLicense);
             $data = [
                 'photo' =>  $full_image_link,
                 'description' =>  $fullDescriptionText,
