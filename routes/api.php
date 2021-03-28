@@ -194,6 +194,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::group(['prefix' => 'admin', 'middleware' => ['admin'], 'namespace' => 'Admin'], function () {
 
         Route::put('threads/{thread}', 'ThreadController@update');
+        Route::get('threads/sort-by-title-length', 'ThreadController@sortByTitleLength');
 
         Route::resource('reports', 'ReportController')->only(['index', 'destroy']);
 

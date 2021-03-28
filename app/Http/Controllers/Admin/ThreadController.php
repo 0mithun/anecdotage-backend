@@ -2,13 +2,24 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Jobs\WikiImageProcess;
 use App\Models\Thread;
 use Illuminate\Http\Request;
+use App\Jobs\WikiImageProcess;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\ThreadResource;
+use App\Repositories\Contracts\IThread;
+use App\Repositories\Eloquent\Criteria\EagerLoad;
 
 class ThreadController extends Controller
 {
+    protected $threads;
+
+    public function __construct(IThread $threads)
+    {
+        $this->threads = $threads;
+    }
+
+
     public function update(Request $request, Thread $thread)
     {
         $this->validate($request, [
@@ -42,6 +53,13 @@ class ThreadController extends Controller
         }
 
         return response(['success'=>true,'thread'=> $thread]);
+    }
+
+    public function sortByTitleLength(){
+          $threads = $this->threads->withCriteria([
+            new EagerLoad(['emojis', 'channel']),
+        ])->orderByRaw('length(title)')->paginate();
+        return  ThreadResource::collection($threads);
     }
 
 }
