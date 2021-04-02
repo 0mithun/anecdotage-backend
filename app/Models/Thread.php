@@ -243,15 +243,33 @@ class Thread extends Model
 
     public function getImageDescriptionAttribute($value){
         //image_description
-        if (preg_match("@https://upload.wikimedia.org/@i", $this->image_path)) {
-            return $value;
+        $description = '';
+        if (preg_match("%wikimedia.org%i", $this->image_path)) {
+            return $this->imageDescriptionReplace($value);
         }
 
         if($this->old_image_description == null || $this->old_image_description == ''){
-            return $value;
+             return $this->imageDescriptionReplace($value);
         }
 
-        return $this->old_image_description;
+        $description = $this->imageDescriptionReplace($this->old_image_description);
+
+        return html_entity_decode($description);
+    }
+
+    public function imageDescriptionReplace($description){
+        $pattern = '/<a(.*?)>(.*?)<\/a>/i';
+        $description = preg_replace_callback($pattern, function($match){
+            return ' <a'.$match[1].'>Shop</a>';
+        }, $description);
+
+
+        $pattern = '/(class="(.*)?" )/i';
+        $description = preg_replace_callback($pattern, function($match){
+            return ' class="btn btn-sm btn-secondary" ';
+        }, $description);
+
+        return $description;
     }
 
     /**
