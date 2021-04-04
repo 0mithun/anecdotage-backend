@@ -91,7 +91,15 @@ class WikiImageProcess implements ShouldQueue
         if (isset($full_image_link)) {
             $description = $image_page->filter('td.description');
             if ($description->count() > 0) {
-                $description =  $description->first()->text();
+                  //description mw-content-ltr en
+                $english = $description->filter('div.en');
+                if($english->count()>0){
+                    $description =  $english->first()->text();
+                    dump('English Description', $description);
+                }else{
+                    $description =  $description->first()->text();
+                }
+
                 $descriptionText = str_replace('English: ', '', $description);
             }
             $license = $image_page->filter('table.licensetpl span.licensetpl_short');
@@ -139,18 +147,35 @@ class WikiImageProcess implements ShouldQueue
 
 
             if ($author->count() > 0) {
-                 $newAuthor = $image_page->filter('td#fileinfotpl_aut')->nextAll();
-                $newAuthorAnchor = $newAuthor->filter('a');
+                $newAuthor = $image_page->filter('td#fileinfotpl_aut')->nextAll();
+                // $newAuthorAnchor = $newAuthor->filter('a');
 
-/*
+                /*
+                                if ($newAuthorAnchor->count() > 0) {
+                                    $authorText = $newAuthorAnchor->first()->text();
+                                }else{
+                                $authorText = $newAuthor->first()->text();
+                                }
+
+                */
+                // $authorText = $newAuthor->first()->text();
+
+                $newAuthorAnchor = $newAuthor->filter('a.extiw');
                 if ($newAuthorAnchor->count() > 0) {
                     $authorText = $newAuthorAnchor->first()->text();
                 }else{
                    $authorText = $newAuthor->first()->text();
                 }
 
-*/
- $authorText = $newAuthor->first()->text();
+                // $authorText = $newAuthor->first()->text();
+                if($authorText != null || $authorText !=''){
+                    $authorText = "Credit: ".$authorText;
+                }
+            }
+
+             // $authorText = $newAuthor->first()->text();
+            if($htmlLicense != null || $htmlLicense !=''){
+                $htmlLicense = "($htmlLicense)";
             }
 
             $fullDescriptionText = sprintf('%s Credit: %s (%s)', $descriptionText, $authorText, $htmlLicense);
@@ -201,9 +226,11 @@ class WikiImageProcess implements ShouldQueue
         $this->thread->update($data);
     }
 
-     public function checkLicense($image_page){
-
+      //[Scraped description]. Author: [scraped author] ([scraped license type])
+    public function checkLicense($image_page){
+        dump('inside check license');
         $text =    $image_page->text();
+         $licenseText = '';
          $htmlLicense = '';
             $saLicenseType = [
                 'CC BY-SA 1.0',
@@ -212,6 +239,13 @@ class WikiImageProcess implements ShouldQueue
                 'CC BY-SA 2.5',
                 'CC BY-SA 3.0',
                 'CC BY-SA 4.0',
+
+                'CC-BY-SA 1.0',
+                'CC-BY-SA 1.5',
+                'CC-BY-SA 2.0',
+                'CC-BY-SA 2.5',
+                'CC-BY-SA 3.0',
+                'CC-BY-SA 4.0',
             ];
             $nonSaLicenseType = [
                 'CC BY 1.0',
@@ -220,29 +254,58 @@ class WikiImageProcess implements ShouldQueue
                 'CC BY 2.5',
                 'CC BY 3.0',
                 'CC BY 4.0',
+
+                'CC-BY-1.0',
+                'CC-BY-1.5',
+                'CC-BY-2.0',
+                'CC-BY-2.5',
+                'CC-BY-3.0',
+                'CC-BY-4.0',
             ];
-            $matches = false;
+            $matched = false;
 
             foreach ($saLicenseType as $license) {
-                $pattern = "/$license/";
-                if(preg_match($pattern ,$text)){
-                    $htmlLicense = '<a href="https://creativecommons.org/licenses/by-sa/'.$license.'">' . $license . '</a>';
-                    $matches = true;
+                $pattern = "/$license/i";
+                if(preg_match($pattern, $text)){
+                    $licenseText = $license;
+                    $matched = true;
                     break;
                 }
             }
 
-            if($matches == false){
+            if($matched == false){
                 foreach ($nonSaLicenseType as $license) {
-                    $pattern = "/$license/";
+                    $pattern = "/$license/i";
                     if(preg_match($pattern ,$text)){
-                        $htmlLicense = '<a href="https://creativecommons.org/licenses/by/'.$license.'">' . $license . '</a>';
-                        $matches = true;
+                       $licenseText = $license;
+                        $matched = true;
                         break;
                     }
                 }
+            }else{
+                if(preg_match("/fair use/i" ,$text)){
+                    $licenseText = 'Fair use';
+                }else if(preg_match('/public domain/i', $text)){
+                    $licenseText = 'Public domain';
+                }
             }
+
+            if ($licenseText == 'Public domain') {
+                $htmlLicense = 'Public domain';
+            }elseif($licenseText == 'Fair use'){
+                $licenseText = 'Fair use';
+            } else if (in_array($licenseText, $saLicenseType)) {
+                if (\preg_match('&(\d)\.?\d?&', $licenseText, $matches)) {
+                    $htmlLicense = '<a href="https://creativecommons.org/licenses/by-sa/' . $matches[0] . '">' . $licenseText . '</a>';
+                }
+            } else if (in_array($licenseText, $nonSaLicenseType)) {
+                if (\preg_match('&(\d)\.?\d?&', $licenseText, $matches)) {
+                    $htmlLicense = '<a href="https://creativecommons.org/licenses/by/' . $matches[0] . '">' . $licenseText . '</a>';
+                }
+            }
+
 
        return $htmlLicense;
     }
+
 }

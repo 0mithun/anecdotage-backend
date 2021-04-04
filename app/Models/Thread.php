@@ -245,7 +245,8 @@ class Thread extends Model
         //image_description
         $description = '';
         if (preg_match("%wikimedia.org%i", $this->image_path)) {
-            return $this->imageDescriptionReplace($value);
+            // return $this->imageDescriptionReplace($value);
+            return $value;
         }
 
         if($this->old_image_description == null || $this->old_image_description == ''){
@@ -260,7 +261,7 @@ class Thread extends Model
     public function imageDescriptionReplace($description){
         $pattern = '/<a(.*?)>(.*?)<\/a>/i';
         $description = preg_replace_callback($pattern, function($match){
-            return ' <a'.$match[1].'>Shop</a>';
+            return ' <a'.$match[1].'>Buy it here</a>';
         }, $description);
 
 

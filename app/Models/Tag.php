@@ -59,7 +59,7 @@ class Tag extends Model
 
         $splitDescription = explode('<a class="btn btn-xs btn-primary" href="http://www.amazon.com',$value);
         $shopText = $splitDescription[0];
-        $shopText =  $shopText . '<a class="btn btn-sm btn-secondary" href="http://www.amazon.com/gp/search?ie=UTF8&camp=1789&creative=9325&index=aps&keywords=' . $this->name . '&linkCode=ur2&tag=anecdotage01-20">SHOP</a>';
+        $shopText =  $shopText . '<a class="btn btn-sm btn-secondary" href="http://www.amazon.com/gp/search?ie=UTF8&camp=1789&creative=9325&index=aps&keywords=' . $this->name . '&linkCode=ur2&tag=anecdotage01-20">Buy it here</a>';
         return $shopText;
     }
 
