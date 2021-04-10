@@ -106,7 +106,7 @@ class EmojiController extends Controller
                     //     // ]
                     // ],
                     'exists'    =>  [
-                         'field' => ["title"],
+                         'field' => ["body"],
                     ]
                 ],
 
