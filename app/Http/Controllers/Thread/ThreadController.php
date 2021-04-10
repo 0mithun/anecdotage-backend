@@ -22,6 +22,7 @@ use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\Thread\ThreadCreateRequest;
 use App\Http\Requests\Thread\ThreadUpdateRequest;
+use App\Jobs\OptimizeThreadImageJob;
 use App\Jobs\TagImageProcessing;
 use App\Jobs\WikiImageProcess;
 use App\Repositories\Eloquent\Criteria\EagerLoad;
@@ -302,9 +303,16 @@ class ThreadController extends Controller
             if ($thread->image_path != null) {
                 $this->deleteOne($thread->image_path);
             }
-            $thread->image_path =  $this->uploadOne($request->file('image'), 'threads', 'public', $thread->id . uniqid());
+            $image_path = $this->uploadOne($request->file('image'), 'threads', 'public', $thread->id . uniqid());
+
+            $thread->image_path =  $image_path;
+            $thread->image_path_pixel_color = $this->getImageColorAttribute($image_path);
             $thread->is_published = true;
             $thread->save();
+
+
+            dispatch(new OptimizeThreadImageJob($image_path, $thread));
+            return $thread;
         }
 
         return response('Thumbnail upload successfully');
@@ -323,6 +331,8 @@ class ThreadController extends Controller
         if ($image_path != '') {
             $splitName = explode('.', $image_path);
             $extension = strtolower(array_pop($splitName));
+
+            $image_path = storage_path('app/public/'.$image_path);
 
             if ($extension == 'jpg') {
                 $im = imagecreatefromjpeg($image_path);
@@ -358,10 +368,10 @@ class ThreadController extends Controller
             return response('Description Update successfully');
         }
 
-        if($request->temp_image_url == $thread->temp_image_url){
-            $thread->update($data);
-            return response('Description Update successfully');
-        }
+        // if($request->temp_image_url == $thread->temp_image_url){
+        //     $thread->update($data);
+        //     return response('Description Update successfully');
+        // }
 
         if($request->temp_image_url=='' || $request->temp_image_url== null){
            $thread->update($data);

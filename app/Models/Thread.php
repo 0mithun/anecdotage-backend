@@ -201,9 +201,10 @@ class Thread extends Model
         if ($this->image_path != '') {
             if (preg_match("/http/i", $this->image_path)) {
                 return $this->image_path;
-            } else if (preg_match("/download/i", $this->image_path)) {
-                return asset($this->image_path);
             }
+            // else if (preg_match("/download/i", $this->image_path)) {
+            //     return asset($this->image_path);
+            // }
             return asset('storage/' . $this->image_path);
         } else {
             return 'https://www.maxpixel.net/static/photo/1x/Geometric-Rectangles-Background-Shapes-Pattern-4973341.jpg';
@@ -242,6 +243,9 @@ class Thread extends Model
     }
 
     public function getImageDescriptionAttribute($value){
+
+         return trim(html_entity_decode($value)." ".$this->amazon_product_url);
+
         //image_description
         $description = '';
         if (preg_match("%wikimedia.org%i", $this->image_path)) {
@@ -250,7 +254,8 @@ class Thread extends Model
         }
 
         if($this->old_image_description == null || $this->old_image_description == ''){
-             return $this->imageDescriptionReplace($value);
+            //  return $this->imageDescriptionReplace($value);
+            return 'sama';
         }
 
         $description = $this->imageDescriptionReplace($this->old_image_description);

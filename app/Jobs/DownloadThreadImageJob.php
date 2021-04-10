@@ -2,11 +2,13 @@
 
 namespace App\Jobs;
 
+use Image;
 use Goutte\Client;
 use App\Models\User;
 use App\Models\Thread;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -39,29 +41,30 @@ class DownloadThreadImageJob implements ShouldQueue
     public function handle()
     {
        if($this->checkIsValidImageUrl($this->image_url)){
+            $extension = $this->getFileExtensionFromURl( $this->image_url );
+            $fileName =  $this->thread->id .'_'. uniqid();
+            $fullFileName = $fileName . '.' . $extension;
+            $image_path = 'download/threads/' . $fullFileName;
 
-        $extension = $this->getFileExtensionFromURl( $this->image_url );
-        $fileName = md5( time() . uniqid() );
-        $fullFileName = $fileName . '.' . $extension;
-        $image_path = 'download/threads/' . $fullFileName;
+            $pixel_color = $this->getImageColorAttribute($this->image_url);
 
-        $pixel_color = $this->getImageColorAttribute($this->image_url);
+            $this->file_download_curl($image_path, $this->image_url);
 
-        $this->file_download_curl($image_path, $this->image_url);
+            $old_image_path = $this->thread->image_path;
 
-        if($this->thread->image_path != ''){
-            $this->deleteImage($this->thread->image_path);
-        }
+            $data = [
+                'image_path'    => $this->optimizeImage($image_path),
+                'image_path_pixel_color'    => $pixel_color
+            ];
 
-        $data = [
-            'image_path'    =>  $image_path ,
-            'image_path_pixel_color'    => $pixel_color
-        ];
+            $this->saveInfo($data);
 
-        $this->saveInfo($data);
+            if($old_image_path != ''){
+                 Storage::disk('public')->delete($old_image_path);
+            }
 
-        $user = User::where('id', $this->thread->user_id)->first();
-        $user->notify(new ImageDownloadComplete($this->thread));
+            $user = User::where('id', $this->thread->user_id)->first();
+            $user->notify(new ImageDownloadComplete($this->thread));
 
 
 
@@ -149,7 +152,7 @@ class DownloadThreadImageJob implements ShouldQueue
 
     public function file_download_curl(string $fullPath, string $full_image_link)
     {
-        $parts = explode('/', public_path($fullPath));
+        $parts = explode('/', storage_path('app/public/'.$fullPath));
         array_pop($parts);
         $dir = implode('/', $parts);
 
@@ -157,7 +160,7 @@ class DownloadThreadImageJob implements ShouldQueue
             mkdir($dir, 0777, true);
         }
 
-        $fp = fopen(public_path($fullPath), 'wb');
+        $fp = fopen(storage_path('app/public/'.$fullPath), 'wb');
         $ch = curl_init($full_image_link);
         curl_setopt($ch, CURLOPT_FILE, $fp);
         curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -169,17 +172,34 @@ class DownloadThreadImageJob implements ShouldQueue
     }
 
 
-    /**
-     * @param string $url
-     * @return mixed
-     */
+    public function optimizeImage($image_path){
+        $pathToImage = storage_path(sprintf('app/public/%s',$image_path));
+        $file_path = sprintf('public/%s',$image_path);
+        $pathToOutput = storage_path(sprintf("app/public/%s", $file_path));
 
-    public function deleteImage(string $url)
-    {
-        if (\File::exists(public_path() . '/' . $url)) {
-            \File::delete(public_path() . '/' . $url);
-        } else {
-            echo ('File does not exists.');
+        $parts = explode('/', $pathToOutput);
+        array_pop($parts);
+        $dir = implode('/', $parts);
+
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
         }
+
+        $width = Image::make($pathToImage)->width();
+
+        if($width>600){
+            Image::make($pathToImage)
+                ->fit(600,360, function ($constraint){
+                    $constraint->aspectRatio();
+                })->save($large = $pathToOutput);
+
+            ;
+            Storage::disk('public')->delete($image_path);
+        }else{
+            Storage::disk('public')->copy($image_path , $file_path);
+            Storage::disk('public')->delete($image_path);
+        }
+
+        return $file_path;
     }
 }
