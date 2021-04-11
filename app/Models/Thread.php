@@ -134,10 +134,10 @@ class Thread extends Model
         $pattern =  '<p>&nbsp;</p>';
         $body = str_replace($pattern, '', $value);
 
-        $pattern = '/<a(.*?)<\/a>/i';
-        $body = preg_replace_callback($pattern, function($match){
-            return '<em><a href="https://www.amazon.com/s?k='.trim($match[1]).'&linkCode=ur2&tag=anecdotage01-20">'.trim($match[1]).'</a></em>';
-        }, $body);
+        // $pattern = '/<a(.*?)<\/a>/i';
+        // $body = preg_replace_callback($pattern, function($match){
+        //     return '<em><a href="https://www.amazon.com/s?k='.trim($match[1]).'&linkCode=ur2&tag=anecdotage01-20">'.trim($match[1]).'</a></em>';
+        // }, $body);
 
 
         $pattern = '@<i>\s*?<a(.*?)>(.*?)<\/a>\s*?<\/i>@i';
