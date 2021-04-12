@@ -178,7 +178,7 @@ class WikiImageProcess implements ShouldQueue
                 $htmlLicense = "($htmlLicense)";
             }
 
-            $fullDescriptionText = sprintf('%s Credit: %s (%s)', $descriptionText, $authorText, $htmlLicense);
+            $fullDescriptionText = sprintf('%s Credit: %s %s', $descriptionText, $authorText, $htmlLicense);
             $pixelColor = $this->getImageColorAttribute($full_image_link);
             $data = [
                 'image_path' => $full_image_link,

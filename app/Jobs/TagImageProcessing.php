@@ -181,7 +181,7 @@ class TagImageProcessing implements ShouldQueue
             }
 
             // $fullDescriptionText = sprintf("%s %s %s %s", $descriptionText, $authorText, $htmlLicense, $shopText);
-            $fullDescriptionText = sprintf("%s Credit: %s (%s) %s", $descriptionText, $authorText, $htmlLicense);
+            $fullDescriptionText = sprintf("%s Credit: %s (%s)", $descriptionText, $authorText, $htmlLicense);
             $data = [
                 'photo' =>  $full_image_link,
                 'description' =>  $fullDescriptionText,

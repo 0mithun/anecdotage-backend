@@ -52,12 +52,16 @@ class OptimizeThreadImageJob implements ShouldQueue
         $width = Image::make($pathToImage)->width();
 
         if($width>600){
+            // Image::make($pathToImage)
+            //     ->fit(600,360, function ($constraint){
+            //         $constraint->aspectRatio();
+            //     })->save($large = $pathToOutput);
+            // ;
             Image::make($pathToImage)
-                ->fit(600,360, function ($constraint){
-                    $constraint->aspectRatio();
-                })->save($large = $pathToOutput);
-
+                ->fit(600)
+                ->save($large = $pathToOutput)
             ;
+
             Storage::disk('public')->delete($this->image_path);
         }else{
             Storage::disk('public')->copy($this->image_path , $file_path);

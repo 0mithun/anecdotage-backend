@@ -28,6 +28,12 @@ class ThreadController extends Controller
 
         $title = $request->title;
 
+        /*
+        * Old instructions
+        */
+
+        /*
+
         $title = str_replace('*','', $title);
         $data = [
             'title' =>  $title
@@ -51,6 +57,26 @@ class ThreadController extends Controller
             $keyword = $split_title[0];
             dispatch(new WikiImageProcess($keyword, $thread));
         }
+
+        */
+
+        /**
+         * New Instructions
+         */
+
+        $title = str_replace('[','', $title);
+        $title = str_replace(']','', $title);
+        $data = [
+            'title' =>  $title
+        ];
+        $thread->update($data);
+        $thread = $thread->fresh();
+
+
+         if(preg_match("/\[(.*)\]/", $request->title, $matches)){
+            dispatch(new WikiImageProcess($matches[1], $thread));
+        }
+
 
         return response(['success'=>true,'thread'=> $thread]);
     }
