@@ -31,6 +31,7 @@ class ThreadResource extends JsonResource
             'image_path'                =>  $this->image_path,
             'image_path_pixel_color'    =>  $this->image_path_pixel_color,
             'image_description'         =>  $this->image_description,
+            'amazon_product_url'         =>  $this->amazon_product_url,
             'cno'                       =>  $this->cno,
             'age_restriction'           =>  $this->age_restriction,
             'anonymous'                 =>  $this->anonymous,

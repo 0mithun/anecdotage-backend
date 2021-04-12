@@ -361,7 +361,8 @@ class ThreadController extends Controller
     public function imageDescription(Request $request, Thread $thread)
     {
         $data = [
-            'image_description' =>  $request->temp_image_description
+            'image_description' =>  $request->temp_image_description,
+             'amazon_product_url'    =>  $request->amazon_product_url,
         ];
         if($request->temp_image_url == $thread->image_path && $thread->image_path != null){
             $thread->update($data);
@@ -382,9 +383,11 @@ class ThreadController extends Controller
             'temp_image_url'    =>  $request->temp_image_url,
             'temp_image_description'    =>  $request->temp_image_description,
             'image_description'    =>  $request->temp_image_description,
+            'amazon_product_url'    =>  $request->amazon_product_url,
             'is_published'    =>  true
         ];
-        $thread->update($request->only(['temp_image_url','temp_image_description'])  + ['image_description'=> $request->temp_image_description ,'is_published' => true]);
+        // $thread->update($request->only(['temp_image_url','temp_image_description'])  + ['image_description'=> $request->temp_image_description ,'is_published' => true]);
+        $thread->update($data);
 
         // WikiImageProcess::dispatch(request('wiki_info_page_url'), $thread, false);
         dispatch(new DownloadThreadImageJob(request('temp_image_url'), $thread));
