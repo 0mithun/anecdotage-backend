@@ -193,10 +193,11 @@ class DownloadThreadImageJob implements ShouldQueue
             //         $constraint->aspectRatio();
             //     })->save($large = $pathToOutput);
             //                 ;
-            Image::make($pathToImage)
-                ->fit(600)
-                ->save($large = $pathToOutput)
-            ;
+           Image::make($pathToImage)
+           ->resize(600, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })
+            ->save($large = $pathToOutput);;
             Storage::disk('public')->delete($image_path);
         }else{
             Storage::disk('public')->copy($image_path , $file_path);

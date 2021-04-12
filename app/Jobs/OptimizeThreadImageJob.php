@@ -58,9 +58,10 @@ class OptimizeThreadImageJob implements ShouldQueue
             //     })->save($large = $pathToOutput);
             // ;
             Image::make($pathToImage)
-                ->fit(600)
-                ->save($large = $pathToOutput)
-            ;
+           ->resize(600, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })
+            ->save($large = $pathToOutput);;
 
             Storage::disk('public')->delete($this->image_path);
         }else{
