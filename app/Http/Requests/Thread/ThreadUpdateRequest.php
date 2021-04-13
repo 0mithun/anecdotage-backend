@@ -30,7 +30,7 @@ class ThreadUpdateRequest extends FormRequest
         // $thread = Thread::where('slug', $this->route('thread')->slug)->first();
         return [
             // 'title' =>  [Rule::unique('threads')->ignore($thread)],
-            // 'title' =>  ['required'],
+            'title' =>  ['required'],
         ];
     }
 }

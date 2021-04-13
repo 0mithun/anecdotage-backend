@@ -60,7 +60,9 @@ class TagImageProcessing implements ShouldQueue
                 $image_page_url = 'https://en.wikipedia.org' . $href;
             }
         }
-        $this->scrpeImagePageUrl($image_page_url);
+        if(isset($image_page_url)){
+            $this->scrpeImagePageUrl($image_page_url);
+        }
     }
 
     public function scrpeImagePageUrl($image_page_url)

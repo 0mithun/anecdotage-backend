@@ -47,7 +47,9 @@ class ThreadController extends Controller
     {
         $threads = $this->threads->withCriteria([
             new EagerLoad(['emojis', 'channel']),
-        ])->paginate();
+        ])
+        ->orderBy('updated_at', 'desc')
+        ->paginate();
         return  ThreadResource::collection($threads);
     }
 
@@ -161,13 +163,15 @@ class ThreadController extends Controller
 
         if ($request->location != null) {
             $location = $this->getGeocodeing($request->location);
-
             // return $location;
             if ($location['accuracy'] != 'result_not_found') {
                 $data['location'] = new Point($location['lat'], $location['lng']);
                 $data['formatted_address'] = $request->location;
             }
+        }else{
+             $data['location'] = null;
         }
+
         if ($request->has('cno') && $request->cno != null) {
             $cno = json_decode(json_encode(request('cno')));
             if ($cno->famous == false) {
@@ -249,6 +253,7 @@ class ThreadController extends Controller
             $tags = $request->tags;
         }
 
+
         if ($request->has('channel') && $request->channel != null) {
             $channel = json_decode(json_encode(request('channel')));
             $type = gettype($channel);
@@ -272,7 +277,6 @@ class ThreadController extends Controller
             }
         }
 
-
         $tag_ids = [];
         foreach ($tags as $tag) {
             $searchTag = Tag::where('slug', str_slug($tag))->first();
@@ -283,7 +287,7 @@ class ThreadController extends Controller
                 if ($tag != 'null') {
                     $newTag = Tag::create(['name' => $tag, 'slug' => str_slug($tag)]);
                     $tag_ids[] = $newTag->id;
-                    dispatch(new TagImageProcessing($tag));
+                    dispatch(new TagImageProcessing($newTag));
                 }
             }
         }
