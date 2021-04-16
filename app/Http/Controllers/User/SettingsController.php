@@ -31,23 +31,35 @@ class SettingsController extends Controller
         $this->validate($request, [
             'name' => ['required'],
             'date_of_birth' =>  ['date'],
-            'about' => ['required', 'string', 'min:20'],
-            'formatted_address' => ['required'],
+            'about' => [ 'string', 'min:20'],
+            // 'formatted_address' => ['required'],
             // 'location.latitude' => ['required', 'numeric', 'min:-90', 'max:90'],
             // 'location.longitude' => ['required', 'numeric', 'min:-180', 'max:180']
         ]);
 
-        $location = $this->getGeocodeing($request->formatted_address);
-        if ($location['accuracy'] != 'result_not_found') {
-            $data['location'] = new Point($location['lat'], $location['lng']);
+        // $location = $this->getGeocodeing($request->formatted_address);
+        // if ($location['accuracy'] != 'result_not_found') {
+        //     $data['location'] = new Point($location['lat'], $location['lng']);
+        // }
+
+        if ($request->formatted_address != null) {
+            $location = $this->getGeocodeing($request->formatted_address);
+            // return $location;
+            if ($location['accuracy'] != 'result_not_found') {
+                $userLocation = new Point($location['lat'], $location['lng']);
+            }
+        }else{
+            $userLocation = null;
         }
+
+
 
         $user = $this->users->update(auth()->id(), [
             'name' => $request->name,
             'date_of_birth' => $request->date_of_birth,
             'about' => $request->about,
             'formatted_address' => $request->formatted_address,
-            'location' => $location,
+            'location' => $userLocation
         ]);
 
         return new UserResource($user);

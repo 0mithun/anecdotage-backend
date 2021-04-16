@@ -74,12 +74,14 @@ class FilterController extends Controller
         if (auth()->check() && auth()->user()->location != null) {
             $auth_user = auth()->user();
             $lat = (float)  $auth_user->location->getLat();
-            $lng = (float) $auth_user->location->getLat();
+            $lng = (float) $auth_user->location->getLng();
         } else {
             $arr_ip = geoip()->getLocation($_SERVER['REMOTE_ADDR']);
             $lat = (float)  $arr_ip['lat'];
             $lng = (float) $arr_ip['lon'];
         }
+
+
         $threads = $this->threads->withCriteria([
             new EagerLoad(['emojis', 'channel'])
         ])->closest($lat, $lng)->paginate();

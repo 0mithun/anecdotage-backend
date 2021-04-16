@@ -256,6 +256,9 @@ class Thread extends Model
     }
 
     public function getImageDescriptionAttribute($value){
+        if($this->image_path == null || $this->image_path == ''){
+            return null;
+        }
          return trim(html_entity_decode($value));
 
         //image_description
