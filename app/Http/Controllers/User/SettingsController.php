@@ -30,8 +30,8 @@ class SettingsController extends Controller
 
         $this->validate($request, [
             'name' => ['required'],
-            'date_of_birth' =>  ['date'],
-            'about' => [ 'string', 'min:20'],
+            'date_of_birth' =>  ['date','nullable'],
+            // 'about' => [ 'string', 'min:20'],
             // 'formatted_address' => ['required'],
             // 'location.latitude' => ['required', 'numeric', 'min:-90', 'max:90'],
             // 'location.longitude' => ['required', 'numeric', 'min:-180', 'max:180']
