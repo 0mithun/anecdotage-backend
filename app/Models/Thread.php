@@ -242,9 +242,21 @@ class Thread extends Model
         }
     }
 
-    public function getImageDescriptionAttribute($value){
+    public function getFullImageDescriptionAttribute(){
+        $amazon_product_url = $this->amazon_product_url;
+        if (!preg_match("/<a(.*?)>(.*?)<\/a>/i", $amazon_product_url)) {
+            $amazon_product_url =  sprintf('<a class="btn btn-sm btn-secondary" href="%s?linkCode=ur2&tag=anecdotage01-20" >Buy it here</a>', $amazon_product_url);
+        }
 
-         return trim(html_entity_decode($value)." ".$this->amazon_product_url);
+        if (preg_match("/(search?|s?)/i", $amazon_product_url)) {
+            $amazon_product_url =  null;
+        }
+
+        return trim(html_entity_decode($this->image_description)." ".$amazon_product_url);
+    }
+
+    public function getImageDescriptionAttribute($value){
+         return trim(html_entity_decode($value));
 
         //image_description
         $description = '';
@@ -254,8 +266,8 @@ class Thread extends Model
         }
 
         if($this->old_image_description == null || $this->old_image_description == ''){
-            //  return $this->imageDescriptionReplace($value);
-            return 'sama';
+             return $this->imageDescriptionReplace($value);
+            // return 'sama';
         }
 
         $description = $this->imageDescriptionReplace($this->old_image_description);

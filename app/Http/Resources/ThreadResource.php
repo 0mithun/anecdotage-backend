@@ -31,7 +31,8 @@ class ThreadResource extends JsonResource
             'image_path'                =>  $this->image_path,
             'image_path_pixel_color'    =>  $this->image_path_pixel_color,
             'image_description'         =>  $this->image_description,
-            'amazon_product_url'         =>  $this->amazon_product_url,
+            'full_image_description'    =>  $this->full_image_description,
+            'amazon_product_url'        =>  $this->amazon_product_url,
             'cno'                       =>  $this->cno,
             'age_restriction'           =>  $this->age_restriction,
             'anonymous'                 =>  $this->anonymous,
@@ -65,6 +66,15 @@ class ThreadResource extends JsonResource
             // 'tag_names'                =>  $this->tag_names,
             // 'tag_ids'                =>  $this->tag_ids,
             // 'emoji_ids'                =>  $this->emoji_ids,
+
+            //Slide Fields
+            'slide_body'                =>  $this->slide_body,
+            'slide_color_0'             =>  $this->slide_color_0,
+            'slide_color_1'             =>  $this->slide_color_1,
+            'slide_color_2'             =>  $this->slide_color_2,
+            'slide_color_bg'            =>  $this->slide_color_bg,
+            'slide_image_pos'           =>  $this->slide_image_pos,
+
 
         ];
     }
