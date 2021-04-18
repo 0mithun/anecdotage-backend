@@ -104,7 +104,9 @@ class Thread extends Model
      */
     public function setSlugAttribute($value)
     {
-        if (static::whereSlug($slug =  str_slug(strip_tags( $value)))->exists()) {
+        $title = preg_replace("#('.)#",'',$value);
+
+        if (static::whereSlug($slug =  str_slug(strip_tags( $title)))->exists()) {
             $slug = "{$slug}-{$this->id}";
         }
 
@@ -151,6 +153,11 @@ class Thread extends Model
             return '<em><a href="https://www.amazon.com/s?k='.trim($match[1]).'&linkCode=ur2&tag=anecdotage01-20">'.trim($match[1]).'</a></em>';
         }, $body);
 
+
+        $pattern = '@(<iframe.*)?width="(\d+)".*height="(\d+)"@i';
+        $body = preg_replace_callback($pattern, function($matches){
+            return $matches[1].'width="560" height="315"';
+        }, $body);
 
         $this->attributes['body'] = $body;
     }
@@ -243,16 +250,7 @@ class Thread extends Model
     }
 
     public function getFullImageDescriptionAttribute(){
-        $amazon_product_url = $this->amazon_product_url;
-        if (!preg_match("/<a(.*?)>(.*?)<\/a>/i", $amazon_product_url)) {
-            $amazon_product_url =  sprintf('<a class="btn btn-sm btn-secondary" href="%s?linkCode=ur2&tag=anecdotage01-20" >Buy it here</a>', $amazon_product_url);
-        }
-
-        if (preg_match("/(search?|s?)/i", $amazon_product_url)) {
-            $amazon_product_url =  null;
-        }
-
-        return trim(html_entity_decode($this->image_description)." ".$amazon_product_url);
+        return trim(html_entity_decode($this->image_description)." ".$this->amazon_product_url);
     }
 
     public function getImageDescriptionAttribute($value){

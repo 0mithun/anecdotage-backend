@@ -21,17 +21,19 @@ class CreateThreadsTable extends Migration
             $table->string('title', 255);
             $table->text('body');
 
-            $table->text('summary')->nullable();
+            // $table->text('summary')->nullable();
             $table->text('source')->nullable();
             $table->string('main_subject')->nullable();
             $table->string('image_path')->nullable();
             $table->string('image_path_pixel_color', 50)->nullable();
             $table->text('image_description')->nullable();
-            $table->string('temp_image_url')->nullable();
+            $table->text('old_image_description')->nullable();
+            $table->string('amazon_product_url',500)->nullable();
+            $table->string('temp_image_url',1000)->nullable();
             $table->string('temp_image_description')->nullable();
             $table->boolean('image_saved')->default(0);
 
-            $table->string('cno')->nullable();
+            $table->string('cno',1)->nullable();
             $table->integer('age_restriction')->default(0);
             $table->boolean('anonymous')->default(0);
 

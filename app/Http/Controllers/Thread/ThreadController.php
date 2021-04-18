@@ -62,7 +62,7 @@ class ThreadController extends Controller
      */
     public function store(ThreadCreateRequest $request)
     {
-        $data = $request->only(['title', 'body', 'source', 'main_subject', 'age_restriction', 'anonymous', 'famous',]);
+        $data = $request->only(['title','body', 'source', 'main_subject', 'age_restriction', 'anonymous', 'famous',]);
         // $data['slug'] = str_slug(strip_tags($request->title));
 
 
@@ -142,9 +142,11 @@ class ThreadController extends Controller
         $data = $request->only(['body', 'source', 'main_subject', 'age_restriction', 'anonymous',
         'slide_body','slide_image_pos','slide_color_bg','slide_color_0','slide_color_1','slide_color_2']);
         if ($request->has('title') && auth()->user()->is_admin) {
-            $slug = str_slug(strip_tags( $request->title));
+            $title = preg_replace("#('.)#",'',$request->title);
+
+            $slug = str_slug(strip_tags( $title));
             if($slug != $thread->slug){
-                $data['slug'] =$request->title;
+                $data['slug'] = $title;
             }
 
             // $newThread = Thread::whereSlug($slug)->first();
@@ -366,7 +368,7 @@ class ThreadController extends Controller
     {
         $data = [
             'image_description' =>  $request->temp_image_description,
-             'amazon_product_url'    =>  $request->amazon_product_url,
+            'amazon_product_url'    =>  $request->amazon_product_url,
         ];
         if($request->temp_image_url == $thread->image_path && $thread->image_path != null){
             $thread->update($data);
@@ -379,7 +381,7 @@ class ThreadController extends Controller
         // }
 
         if($request->temp_image_url=='' || $request->temp_image_url== null){
-           $thread->update($data);
+           $thread->update($data + ['temp_image_url'=>$request->temp_image_url]);
             return response('Description Update successfully');
         }
 
@@ -413,8 +415,6 @@ class ThreadController extends Controller
 
     public function share(Request $request, Thread $thread)
     {
-        $authUser = auth()->user();
-
         //Send user Notification
         if ($request->has('share_on_facebook') && $request->share_on_facebook == true) {
             $thread->notify(new ThreadPostFacebook);

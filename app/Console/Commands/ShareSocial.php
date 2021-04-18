@@ -5,23 +5,24 @@ namespace App\Console\Commands;
 use App\Models\Thread;
 use Illuminate\Console\Command;
 use App\Notifications\ThreadPostTwitter;
+use App\Notifications\ThreadPostFacebook;
 use NotificationChannels\Twitter\Exceptions\CouldNotSendNotification;
 
-class PostToTwitter extends Command
+class ShareSocial extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'share:twitter';
+    protected $signature = 'share:social';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Share threads to twitter';
+    protected $description = 'Share thread to social networks';
 
     /**
      * Create a new command instance.
@@ -44,6 +45,7 @@ class PostToTwitter extends Command
         $threads->each(function($thread){
             try {
                 $thread ->notify(new ThreadPostTwitter);
+                $thread ->notify(new ThreadPostFacebook);
             } catch (CouldNotSendNotification $th) {
                 //throw $th;
             }

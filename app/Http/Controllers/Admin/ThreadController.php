@@ -70,6 +70,8 @@ class ThreadController extends Controller
             'title' =>  $title
         ];
 
+        $title = preg_replace("#('.)#",'',$title);
+
         $slug = str_slug(strip_tags( $title));
         if($slug != $thread->slug){
             $data['slug'] = $title;

@@ -9,6 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.2",
+        "benjamincrozat/laravel-dropbox-driver": "^3.0",
         "beyondcode/laravel-websockets": "^1.4",
         "cviebrock/eloquent-taggable": "^6.0",
         "elasticquent/elasticquent": "^1.0",
@@ -24,10 +25,12 @@
         "laravel/socialite": "^4.3",
         "laravel/tinker": "^2.0",
         "league/flysystem-aws-s3-v3": "^1.0",
+        "nao-pon/flysystem-google-drive": "~1.1",
         "predis/predis": "^1.1",
         "pusher/pusher-php-server": "~3.0",
         "socialiteproviders/instagram": "^3.0",
         "spatie/geocoder": "^3.10",
+        "spatie/laravel-backup": "^6.16",
         "torann/geoip": "^1.1",
         "tymon/jwt-auth": "^1.0.0-rc.5",
         "weidner/goutte": "^1.5"
