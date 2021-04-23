@@ -104,7 +104,7 @@ class Thread extends Model
      */
     public function setSlugAttribute($value)
     {
-        $title = preg_replace("#('.)#",'',$value);
+        $title = preg_replace("#('.\s)#",'',$value);
 
         if (static::whereSlug($slug =  str_slug(strip_tags( $title)))->exists()) {
             $slug = "{$slug}-{$this->id}";
@@ -214,7 +214,8 @@ class Thread extends Model
             // }
             return asset('storage/' . $this->image_path);
         } else {
-            return 'https://www.maxpixel.net/static/photo/1x/Geometric-Rectangles-Background-Shapes-Pattern-4973341.jpg';
+            // return 'https://www.maxpixel.net/static/photo/1x/Geometric-Rectangles-Background-Shapes-Pattern-4973341.jpg';
+            return 'https://i.imgur.com/QyLqIiB.jpg ';
         }
     }
 
@@ -250,6 +251,12 @@ class Thread extends Model
     }
 
     public function getFullImageDescriptionAttribute(){
+        if($this->image_description == null || $this->image_description ==''){
+            return 'Dani sleeping. Flickr image: sailorwind (modified, <a href="https://creativecommons.org/licenses/by/2.0">CC-BY-2.0</a>)';
+        }
+        //Dani sleeping. Flickr image: sailorwind (modified, CC-BY-2.0)
+
+
         return trim(html_entity_decode($this->image_description)." ".$this->amazon_product_url);
     }
 

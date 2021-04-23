@@ -70,7 +70,7 @@ class ThreadController extends Controller
             'title' =>  $title
         ];
 
-        $title = preg_replace("#('.)#",'',$title);
+        $title = preg_replace("#('.\s)#",'',$title);
 
         $slug = str_slug(strip_tags( $title));
         if($slug != $thread->slug){
@@ -81,7 +81,7 @@ class ThreadController extends Controller
         $thread = $thread->fresh();
 
 
-         if(preg_match("/\[(.*)\]/", $request->title, $matches)){
+        if(preg_match("/\[(.*)\]/", $request->title, $matches)){
             dispatch(new WikiImageProcess($matches[1], $thread));
         }
 

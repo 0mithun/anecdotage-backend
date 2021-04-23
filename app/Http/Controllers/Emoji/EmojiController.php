@@ -97,14 +97,36 @@ class EmojiController extends Controller
     {
         $params = [
             "bool" => [
-                'must' => [
+                'should' => [
                     // 'multi_match' => [
-                    //     'query' => ' ',
-                    //     'fields' => ["title"],
+                    //     'query' => 'a',
+                    //      'fields' => ["title^3", "body^3", 'tag_names'],
                     //     // 'sort'  =>  [
                     //     //     // 'visits'    => 'desc'
                     //     // ]
                     // ],
+                    // 'match' => [
+                    //     'body'=> 'a',
+                    // ],
+                    // 'match' => [
+                    //     'body'=> 'e',
+                    // ],
+                    // 'match' => [
+                    //     'body'=> 'i',
+                    // ],
+                    // 'match' => [
+                    //     'body'=> 'o',
+                    // ],
+                    // 'match' => [
+                    //     'body'=> 'u',
+                    // ],
+                    // 'match' => [
+                    //     'body'=> 'y',
+                    // ],
+                    // 'match' => [
+                    //     'body'=> '.',
+                    // ],
+
                     'exists'    =>  [
                          'field' => ["body"],
                     ]

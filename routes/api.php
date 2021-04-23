@@ -109,6 +109,8 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('threads/{thread}/thumbnail', 'Thread\ThreadController@uploadThreadImages');
     Route::put('threads/{thread}/imageDescription', 'Thread\ThreadController@imageDescription');
 
+    Route::post('threads/{thread}/duplicateImage', 'Thread\ThreadController@duplicateImage');
+
     Route::put('threads/{thread}/skipThumbnailEdit', 'Thread\ThreadController@skipThumbnailEdit');
     Route::post('threads/{thread}/share', 'Thread\ThreadController@share');
 

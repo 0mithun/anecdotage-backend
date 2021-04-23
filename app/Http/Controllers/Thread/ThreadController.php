@@ -8,13 +8,17 @@ use App\Models\Thread;
 use App\Models\Channel;
 use Illuminate\Http\Request;
 use Spatie\Geocoder\Geocoder;
+use App\Jobs\WikiImageProcess;
+use App\Jobs\TagImageProcessing;
 use App\Models\Traits\UploadAble;
 use Illuminate\Http\UploadedFile;
 use App\Http\Controllers\Controller;
 use App\Jobs\DownloadThreadImageJob;
+use App\Jobs\OptimizeThreadImageJob;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Resources\ThreadResource;
 use App\Repositories\Contracts\IThread;
+use Illuminate\Support\Facades\Storage;
 use App\Notifications\DownloadYourImage;
 use App\Notifications\ThreadPostTwitter;
 use App\Notifications\ThreadPostFacebook;
@@ -22,9 +26,6 @@ use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\Thread\ThreadCreateRequest;
 use App\Http\Requests\Thread\ThreadUpdateRequest;
-use App\Jobs\OptimizeThreadImageJob;
-use App\Jobs\TagImageProcessing;
-use App\Jobs\WikiImageProcess;
 use App\Repositories\Eloquent\Criteria\EagerLoad;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 
@@ -142,7 +143,7 @@ class ThreadController extends Controller
         $data = $request->only(['body', 'source', 'main_subject', 'age_restriction', 'anonymous',
         'slide_body','slide_image_pos','slide_color_bg','slide_color_0','slide_color_1','slide_color_2']);
         if ($request->has('title') && auth()->user()->is_admin) {
-            $title = preg_replace("#('.)#",'',$request->title);
+            $title = preg_replace("#('.\s)#",'',$request->title);
 
             $slug = str_slug(strip_tags( $title));
             if($slug != $thread->slug){
@@ -171,7 +172,8 @@ class ThreadController extends Controller
                 $data['formatted_address'] = $request->location;
             }
         }else{
-             $data['location'] = null;
+            $data['location'] = null;
+            $data['formatted_address'] = null;
         }
 
         if ($request->has('cno') && $request->cno != null) {
@@ -281,15 +283,17 @@ class ThreadController extends Controller
 
         $tag_ids = [];
         foreach ($tags as $tag) {
-            $searchTag = Tag::where('slug', str_slug($tag))->first();
+            if(strtolower($tag) != strtolower('Other')){
+                $searchTag = Tag::where('slug', str_slug($tag))->first();
 
-            if ($searchTag) {
-                $tag_ids[] = $searchTag->id;
-            } else {
-                if ($tag != 'null') {
-                    $newTag = Tag::create(['name' => $tag, 'slug' => str_slug($tag)]);
-                    $tag_ids[] = $newTag->id;
-                    dispatch(new TagImageProcessing($newTag));
+                if ($searchTag) {
+                    $tag_ids[] = $searchTag->id;
+                } else {
+                    if ($tag != 'null') {
+                        $newTag = Tag::create(['name' => $tag, 'slug' => str_slug($tag)]);
+                        $tag_ids[] = $newTag->id;
+                        dispatch(new TagImageProcessing($newTag));
+                    }
                 }
             }
         }
@@ -400,6 +404,38 @@ class ThreadController extends Controller
         auth()->user()->notify(new DownloadYourImage($thread));
 
         return response('Description Update successfully');
+    }
+
+    public function duplicateImage(Request $request, Thread $thread){
+
+         $old_thread = Thread::where('slug', $request->old_thread)->first();
+         if($old_thread){
+             $data = [
+                'image_path_pixel_color'    =>  $old_thread->image_path_pixel_color,
+                'image_description'         =>  $old_thread->image_description,
+                'amazon_product_url'        =>  $old_thread->amazon_product_url,
+             ];
+
+            if (preg_match("/http/i", $old_thread->image_path)) {
+                 $data['image_path'] =  $old_thread->image_path;
+            }else{
+                $splitName = explode('.', $old_thread->image_path);
+                $extension = strtolower(array_pop($splitName));
+
+                $fileName =  join('',$splitName).$thread->id.$extension;
+
+                Storage::disk('public')->copy($old_thread->image_path, $fileName );
+
+                $data['image_path'] =   $fileName;
+            }
+
+            $thread = $this->threads->update($thread->id, $data);
+            //image_path
+            //image_path_pixel_color
+            //image_description
+            //amazon_product_url
+        }
+        return response(new ThreadResource($thread), Response::HTTP_ACCEPTED);
     }
 
     public function skipThumbnailEdit(Request $request, Thread $thread)

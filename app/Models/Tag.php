@@ -55,12 +55,21 @@ class Tag extends Model
 
     public function getDescriptionAttribute($value)
     {
-        //<a class="btn btn-xs btn-primary" href="http://www.amazon.com/gp/search?ie=UTF8&camp=1789&creative=9325&index=aps&keywords=12th century&linkCode=ur2&tag=anecdotage01-20">Shop for 12th century</a>
+        // $splitDescription = explode('<a class="btn btn-xs btn-primary" href="http://www.amazon.com',$value);
+        // $shopText = $splitDescription[0];
+        // $shopText =  $shopText . '<a class="btn btn-sm btn-secondary" href="http://www.amazon.com/gp/search?ie=UTF8&camp=1789&creative=9325&index=aps&keywords=' . $this->name . '&linkCode=ur2&tag=anecdotage01-20">Buy it here</a>';
+        // return $shopText;
 
         $splitDescription = explode('<a class="btn btn-xs btn-primary" href="http://www.amazon.com',$value);
-        $shopText = $splitDescription[0];
-        $shopText =  $shopText . '<a class="btn btn-sm btn-secondary" href="http://www.amazon.com/gp/search?ie=UTF8&camp=1789&creative=9325&index=aps&keywords=' . $this->name . '&linkCode=ur2&tag=anecdotage01-20">Buy it here</a>';
-        return $shopText;
+        $description = $splitDescription[0];
+
+
+
+        $description = preg_replace('@<a\s?class="btn(.*)>(.*)</a>@','', $description);
+        $shopText = '<a class="btn cart-btn" style="font-size:12px" href="http://www.amazon.com/gp/search?ie=UTF8&camp=1789&creative=9325&index=aps&keywords=' . $this->name . '&linkCode=ur2&tag=anecdotage01-20"><i class="fas fa-shopping-cart"></i></a>';
+
+        $description =  sprintf("%s %s",$shopText, $description );
+        return $description;
     }
 
     public function getPhotoUrlAttribute()
