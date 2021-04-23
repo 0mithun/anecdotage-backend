@@ -105,31 +105,31 @@ class EmojiController extends Controller
                     //     //     // 'visits'    => 'desc'
                     //     // ]
                     // ],
-                    // 'match' => [
-                    //     'body'=> 'a',
-                    // ],
-                    // 'match' => [
-                    //     'body'=> 'e',
-                    // ],
-                    // 'match' => [
-                    //     'body'=> 'i',
-                    // ],
-                    // 'match' => [
-                    //     'body'=> 'o',
-                    // ],
-                    // 'match' => [
-                    //     'body'=> 'u',
-                    // ],
-                    // 'match' => [
-                    //     'body'=> 'y',
-                    // ],
-                    // 'match' => [
-                    //     'body'=> '.',
-                    // ],
+                    'match' => [
+                        'body'=> 'a',
+                    ],
+                    'match' => [
+                        'body'=> 'e',
+                    ],
+                    'match' => [
+                        'body'=> 'i',
+                    ],
+                    'match' => [
+                        'body'=> 'o',
+                    ],
+                    'match' => [
+                        'body'=> 'u',
+                    ],
+                    'match' => [
+                        'body'=> 'y',
+                    ],
+                    'match' => [
+                        'body'=> '.',
+                    ],
 
-                    'exists'    =>  [
-                         'field' => ["body"],
-                    ]
+                    // 'exists'    =>  [
+                    //      'field' => ["body"],
+                    // ]
                 ],
 
                 'filter' =>   $this->filter
