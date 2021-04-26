@@ -104,7 +104,7 @@ class Thread extends Model
      */
     public function setSlugAttribute($value)
     {
-        $title = preg_replace("#('.\s)#",'',$value);
+        $title = preg_replace("#('.\s)#",' ',$value);
 
         if (static::whereSlug($slug =  str_slug(strip_tags( $title)))->exists()) {
             $slug = "{$slug}-{$this->id}";
@@ -251,9 +251,15 @@ class Thread extends Model
     }
 
     public function getFullImageDescriptionAttribute(){
-        if($this->image_description == null || $this->image_description ==''){
-            return 'Dani sleeping. Flickr image: sailorwind (modified, <a href="https://creativecommons.org/licenses/by/2.0">CC-BY-2.0</a>)';
+
+        if ($this->image_path == null || $this->image_path == '') {
+            if($this->image_description == null || $this->image_description ==''){
+                return 'Dani sleeping. Flickr image: sailorwind (modified, <a href="https://creativecommons.org/licenses/by/2.0">CC-BY-2.0</a>)';
+            }
         }
+
+
+
         //Dani sleeping. Flickr image: sailorwind (modified, CC-BY-2.0)
 
 
