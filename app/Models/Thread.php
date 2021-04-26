@@ -258,12 +258,12 @@ class Thread extends Model
             }
         }
 
+        $amazon_product_url = $this->amazon_product_url;
+         if (!preg_match("/<a(.*?)>(.*?)<\/a>/i", $amazon_product_url)) {
+            $amazon_product_url = sprintf('<a href="%s/%s">Buy it here</a>', $amazon_product_url,'linkCode=ur2&tag=anecdotage01-20');
+        }
 
-
-        //Dani sleeping. Flickr image: sailorwind (modified, CC-BY-2.0)
-
-
-        return trim(html_entity_decode($this->image_description)." ".$this->amazon_product_url);
+        return trim(html_entity_decode($this->image_description)." ".$amazon_product_url);
     }
 
     public function getImageDescriptionAttribute($value){
