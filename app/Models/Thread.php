@@ -123,6 +123,12 @@ class Thread extends Model
     {   $pattern =  '<p>&nbsp;</p>';
         $body = str_replace($pattern, '', $body);
         $body =  html_entity_decode($body);
+
+        $pattern = '@<p>(.*)" frameborder=(.*)></iframe>@i';
+        // $body = preg_replace_callback($pattern, function($matches){
+        //     return sprintf('<iframe width="560" height="315" src="https://www.youtube.com/embed/%s" frameborder="0"></iframe>', $matches[1]);
+        // }, $body);
+
         return $body;
     }
     /**
@@ -142,6 +148,12 @@ class Thread extends Model
         // }, $body);
 
 
+
+    $body =  html_entity_decode($body);
+
+    // $body =
+
+
         $pattern = '@<i>\s*?<a(.*?)>(.*?)<\/a>\s*?<\/i>@i';
         $body = preg_replace_callback($pattern, function($match){
             return '<em><a href="https://www.amazon.com/s?k='.trim($match[2]).'&linkCode=ur2&tag=anecdotage01-20">'.trim($match[2]).'</a></em>';
@@ -154,10 +166,16 @@ class Thread extends Model
         }, $body);
 
 
+
+
         $pattern = '@(<iframe.*)?width="(\d+)".*height="(\d+)"@i';
         $body = preg_replace_callback($pattern, function($matches){
             return $matches[1].'width="560" height="315"';
         }, $body);
+
+
+
+
 
         $this->attributes['body'] = $body;
     }
@@ -236,6 +254,15 @@ class Thread extends Model
         return $this->threadImagePath();
     }
 
+    public function getImagePathPixelColorAttribute($value)
+    {
+         if ($this->image_path != null && $this->image_path != '') {
+             return $value;
+        } else {
+            return '112,28,19,1';
+        }
+    }
+
     public function getTempThreadImagePathAttribute(){
         return $this->tempThreadImagePath();
     }
@@ -283,7 +310,6 @@ class Thread extends Model
 
         if($this->old_image_description == null || $this->old_image_description == ''){
              return $this->imageDescriptionReplace($value);
-            // return 'sama';
         }
 
         $description = $this->imageDescriptionReplace($this->old_image_description);
