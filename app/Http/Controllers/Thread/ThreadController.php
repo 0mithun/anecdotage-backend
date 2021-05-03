@@ -63,7 +63,8 @@ class ThreadController extends Controller
      */
     public function store(ThreadCreateRequest $request)
     {
-        $data = $request->only(['title','body', 'source', 'main_subject', 'age_restriction', 'anonymous', 'famous',]);
+        $data = $request->only(['title','body', 'source', 'main_subject', 'age_restriction', 'anonymous', 'famous',
+        'slide_body','slide_image_pos','slide_color_bg','slide_color_0','slide_color_1','slide_color_2']);
         // $data['slug'] = str_slug(strip_tags($request->title));
 
 
@@ -278,6 +279,7 @@ class ThreadController extends Controller
         if ($request->has('main_subject') && $request->main_subject != null) {
             if (!in_array(str_slug($request->main_subject), $tags)) {
                 $tags[] = str_slug($request->main_subject);
+                $tags[] = ($request->main_subject);
             }
         }
 

@@ -76,7 +76,8 @@ class FilterController extends Controller
             $lat = (float)  $auth_user->location->getLat();
             $lng = (float) $auth_user->location->getLng();
         } else {
-            $arr_ip = geoip()->getLocation($_SERVER['REMOTE_ADDR']);
+            // $arr_ip = geoip()->getLocation($_SERVER['REMOTE_ADDR']);
+            $arr_ip = geoip()->getLocation(file_get_contents("http://ipecho.net/plain"));
             $lat = (float)  $arr_ip['lat'];
             $lng = (float) $arr_ip['lon'];
         }

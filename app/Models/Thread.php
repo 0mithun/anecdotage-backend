@@ -233,7 +233,9 @@ class Thread extends Model
             return asset('storage/' . $this->image_path);
         } else {
             // return 'https://www.maxpixel.net/static/photo/1x/Geometric-Rectangles-Background-Shapes-Pattern-4973341.jpg';
-            return 'https://i.imgur.com/QyLqIiB.jpg ';
+            // return 'https://i.imgur.com/QyLqIiB.jpg ';
+
+            return asset('default-thread.jpg');
         }
     }
 
