@@ -128,6 +128,13 @@ abstract class BaseRepository implements IBase, ICriteria
         return $this->model->toSql();
     }
 
+    public function findWhereInSameOrder($column, array $data)
+    {
+        return $this->model->whereIn($column, $data)
+            ->orderByRaw("field(id," . implode(',', $data) . ")")
+            ;
+            return $this;
+    }
 
 
     public function findWhereInSameOrderPaginate($column, array $data, $perPage = 10)
@@ -137,8 +144,10 @@ abstract class BaseRepository implements IBase, ICriteria
         return $this->model->whereIn($column, $data)
             // ->reorder('id','desc')
             ->orderByRaw("field(id," . implode(',', $data) . ")")
-            ->paginate($perPage);
+            ->paginate($perPage)
+            ;
     }
+
 
     public function select(array $column = ['*'])
     {

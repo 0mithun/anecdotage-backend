@@ -33,6 +33,7 @@ class ThreadController extends Controller
 
         $results = $this->search($request);
 
+
         $pagination = $this->buildPaginate($results);
 
         $threadIds =  $results->pluck('id')->toArray();
@@ -44,6 +45,11 @@ class ThreadController extends Controller
         $threads = $this->threads->withCriteria([
             new EagerLoad(['emojis', 'channel']),
         ])->findWhereIn('id', $threadIds);
+
+        $threads = $this->threads->withCriteria([
+            new EagerLoad(['emojis', 'channel']),
+        ])->findWhereInSameOrder('id', $threadIds)->get();
+
 
         return response(['tags' => TagResource::collection($tags)->response()->getData(true), 'threads' => ['data' => ThreadResource::collection($threads), 'meta' => $pagination]]);
 
@@ -64,8 +70,11 @@ class ThreadController extends Controller
             "bool" => [
                 'must' => [
                     'multi_match' => [
+                        "type"=> "cross_fields",
+                        "minimum_should_match"=> "100%",
                         'query' => $query,
-                        'fields' => ["title^3", "body^3", 'tag_names'],
+                        'fields' => ["title^4", "body^3", 'tag_names'],
+                        //  "analyzer"=> "keyword",
                         // 'sort'  =>  [
                         //     // 'visits'    => 'desc'
                         // ]

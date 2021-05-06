@@ -20,6 +20,7 @@ interface IBase
 
     public function toSql();
 
+    public function findWhereInSameOrder($column, array $data);
     public function findWhereInSameOrderPaginate($column, array $data, $perPage = 10);
 
     public function select(array $column = ['*']);
