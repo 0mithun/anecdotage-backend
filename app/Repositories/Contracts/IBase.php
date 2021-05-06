@@ -6,6 +6,9 @@ interface IBase
 {
     public function all();
     public function find($id);
+    public function where($column, $condition, $value=null);
+    public function whereNotNull($column);
+
     public function findWhere($column, $value);
     public function findWhereArray(array $criteria);
     public function findWhereIn($column, array $data);
@@ -24,4 +27,6 @@ interface IBase
     public function findWhereInSameOrderPaginate($column, array $data, $perPage = 10);
 
     public function select(array $column = ['*']);
+    public function get();
+    public function limit($chunk);
 }

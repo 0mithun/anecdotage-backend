@@ -19,6 +19,7 @@ abstract class BaseRepository implements IBase, ICriteria
         $this->model = $this->getModelClass();
     }
 
+
     public function all()
     {
         return $this->model->get();
@@ -30,6 +31,17 @@ abstract class BaseRepository implements IBase, ICriteria
         return $result;
     }
 
+    public function where($column, $condition, $value = null)
+    {
+        if($value == null){
+            return $this->model->where($column, $condition);
+        }
+        return $this->model->where($column, $condition, $value);
+    }
+
+    public function whereNotNull($column){
+        return $this->model->whereNotNull($column)->where($column, '!=','');
+    }
     public function findWhere($column, $value)
     {
         return $this->model->where($column, $value)->get();
@@ -151,7 +163,17 @@ abstract class BaseRepository implements IBase, ICriteria
 
     public function select(array $column = ['*'])
     {
-        $this->model->select($column);
-        return $this;
+       return $this->model->select($column);
     }
+
+    public function get(){
+        $this->model->get();
+    }
+
+    public function limit($chunk){
+        return $this->model->limit($chunk);
+
+    }
+
+
 }
