@@ -106,7 +106,7 @@ class Thread extends Model
     public function setSlugAttribute($value)
     {
         // $title = preg_replace("#('.\s)#",' ',$value);
-        $title = preg_replace("#('",'',$value);
+        $title = preg_replace("#(')#",'',$value);
 
         if (static::whereSlug($slug =  str_slug(strip_tags( $title)))->exists()) {
             $slug = "{$slug}-{$this->id}";

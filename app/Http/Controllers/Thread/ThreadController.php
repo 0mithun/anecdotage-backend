@@ -280,7 +280,7 @@ class ThreadController extends Controller
 
         if ($request->has('main_subject') && $request->main_subject != null) {
             if (!in_array(str_slug($request->main_subject), $tags)) {
-                $tags[] = str_slug($request->main_subject);
+                // $tags[] = str_slug($request->main_subject);
                 $tags[] = ($request->main_subject);
             }
         }
