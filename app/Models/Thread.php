@@ -47,7 +47,7 @@ class Thread extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'channel_id', 'slug', 'title', 'body', 'summary', 'source', 'main_subject', 'image_path', 'image_path_pixel_color', 'image_description', 'temp_image_url', 'temp_image_description', 'amazon_product_url', 'image_saved', 'cno', 'age_restriction', 'anonymous', 'formatted_address', 'location', 'is_published', 'visits', 'favorite_count', 'like_count', 'dislike_count', 'slide_body', 'slide_image_pos', 'slide_color_bg', 'slide_color_0', 'slide_color_1', 'slide_color_2'
+        'user_id', 'channel_id', 'slug', 'title', 'body', 'summary', 'source', 'main_subject', 'image_path', 'image_path_pixel_color', 'image_description', 'temp_image_url', 'temp_image_description', 'amazon_product_url', 'image_saved', 'cno', 'age_restriction', 'anonymous', 'formatted_address', 'location', 'is_published', 'visits', 'favorite_count', 'like_count', 'dislike_count', 'slide_body', 'slide_image_pos','slide_image_path', 'slide_color_bg', 'slide_color_0', 'slide_color_1', 'slide_color_2'
 
     ];
 
@@ -84,7 +84,8 @@ class Thread extends Model
 
         static::created(function ($thread) {
             $thread->addToIndex();
-            $thread->update(['slug' => str_slug(strip_tags( $thread->title))]);
+            $title = preg_replace("#(')#",'',$thread->title);
+            $thread->update(['slug' => str_slug(strip_tags( $title))]);
 
         });
 
@@ -104,7 +105,8 @@ class Thread extends Model
      */
     public function setSlugAttribute($value)
     {
-        $title = preg_replace("#('.\s)#",' ',$value);
+        // $title = preg_replace("#('.\s)#",' ',$value);
+        $title = preg_replace("#('",'',$value);
 
         if (static::whereSlug($slug =  str_slug(strip_tags( $title)))->exists()) {
             $slug = "{$slug}-{$this->id}";
@@ -149,10 +151,7 @@ class Thread extends Model
 
 
 
-    $body =  html_entity_decode($body);
-
-    // $body =
-
+        $body =  html_entity_decode($body);
 
         $pattern = '@<i>\s*?<a(.*?)>(.*?)<\/a>\s*?<\/i>@i';
         $body = preg_replace_callback($pattern, function($match){
@@ -166,16 +165,10 @@ class Thread extends Model
         }, $body);
 
 
-
-
         $pattern = '@(<iframe.*)?width="(\d+)".*height="(\d+)"@i';
         $body = preg_replace_callback($pattern, function($matches){
             return $matches[1].'width="560" height="315"';
         }, $body);
-
-
-
-
 
         $this->attributes['body'] = $body;
     }
@@ -220,6 +213,26 @@ class Thread extends Model
 
         return $body;
     }
+
+    public function getThreadSlideImagePathAttribute()
+    {
+        if ($this->slide_image_path == null || $this->slide_image_path == '') {
+            return '';
+        }
+        return asset('storage/' . $this->slide_image_path);
+    }
+
+    public function getSlideBodyAttribute($value)
+    {
+         $body =  html_entity_decode($value);
+         $pattern = '/<1>(.*?)<\/1>/i';
+        $body = preg_replace_callback($pattern, function($match){
+           return sprintf('<strong style="color:#%s">%s</strong>',$this->slide_color_1 , $match[1] );
+        }, $body);
+
+         return $body;
+    }
+
 
     public function threadImagePath()
     {

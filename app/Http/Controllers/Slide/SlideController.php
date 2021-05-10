@@ -40,17 +40,18 @@ class SlideController extends Controller
             "slide_color_2",
             "slide_color_bg",
             "slide_image_pos",
+            'slide_image_path',
             "created_at",
             "updated_at",
         ])
         ->orderBy('updated_at', 'desc')
         // ->limit(10)
         // ->get()
-        ->paginate(10)
+        ->paginate((int) request('per_page', 10))
         // ->toSql()
         ;
 
-        return response()->json(['query'=> $threads]) ;
+        // return response()->json(['query'=> $threads]) ;
         return  SlideResource::collection($threads);
     }
 
