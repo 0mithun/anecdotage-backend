@@ -84,10 +84,11 @@ class ThreadController extends Controller
      */
     public function store(ThreadCreateRequest $request)
     {
-        $data = $request->only(['title','body', 'source', 'main_subject', 'age_restriction', 'anonymous', 'famous',
+        $data = $request->only(['body', 'source', 'main_subject', 'age_restriction', 'anonymous', 'famous',
         'slide_body','slide_image_pos','slide_color_bg','slide_color_0','slide_color_1','slide_color_2']);
         // $data['slug'] = str_slug(strip_tags($request->title));
 
+        $data['title'] =  $this->generateTitle($request);
         $data['cno'] =  $this->generateCNO($request);
         $data['formatted_address'] =  $request->location;
         $data['location'] =  $this->generateLocation($request);
@@ -129,7 +130,7 @@ class ThreadController extends Controller
     public function update(ThreadUpdateRequest $request, Thread $thread)
     {
 
-        $data = $request->only(['title','body', 'source', 'main_subject', 'age_restriction', 'anonymous',
+        $data = $request->only(['body', 'source', 'main_subject', 'age_restriction', 'anonymous',
         'slide_body','slide_image_pos','slide_color_bg','slide_color_0','slide_color_1','slide_color_2']);
 
         if ($request->has('title') && auth()->user()->is_admin) {
@@ -148,6 +149,7 @@ class ThreadController extends Controller
 
         // $data['title'] = $this->generateTitle($request);
         $data['cno'] =  $this->generateCNO($request);
+        $data['title'] =  $this->generateTitle($request);
         $data['formatted_address'] =  $request->location;
         $data['location'] =  $this->generateLocation($request);
         $data['channel_id'] =  $this->generateChannel($request);
@@ -181,6 +183,14 @@ class ThreadController extends Controller
 
 
 
+    /**
+     * Generate CNO from request
+     * @return String
+     */
+
+     public function generateTitle(Request $request){
+        return  filter_var($request->title_case, FILTER_VALIDATE_BOOLEAN) ?  title_case($request->title): $request->title;
+     }
     /**
      * Generate CNO from request
      * @return String

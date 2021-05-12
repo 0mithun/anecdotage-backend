@@ -125,16 +125,7 @@ class Thread extends Model
     {
         $this->attributes['anonymous'] = filter_var($value, FILTER_VALIDATE_BOOLEAN) ? 1: 0;
     }
-     /**
-     * Set the proper Title attribute.
-     *
-     * @param string $value
-     */
-    public function setTitleAttribute($value)
-    {
-        $this->attributes['title'] = filter_var($this->title_case, FILTER_VALIDATE_BOOLEAN) ?  title_case($value): $value;
 
-    }
 
     /**
      * Access the body attribute.
