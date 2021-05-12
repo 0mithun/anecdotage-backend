@@ -23,6 +23,7 @@ use App\Notifications\DownloadYourImage;
 use App\Notifications\ThreadPostTwitter;
 use App\Notifications\ThreadPostFacebook;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
+use App\Http\Resources\SimpleThreadResource;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\Thread\ThreadCreateRequest;
 use App\Http\Requests\Thread\ThreadUpdateRequest;
@@ -49,9 +50,29 @@ class ThreadController extends Controller
         $threads = $this->threads->withCriteria([
             new EagerLoad(['emojis', 'channel']),
         ])
+        ->select([
+            "id",
+            "user_id",
+            "channel_id",
+            "title",
+            "slug",
+            "body",
+            "image_path",
+            "image_path_pixel_color",
+            "anonymous",
+            "location",
+            "formatted_address",
+            "favorite_count",
+            "visits",
+            "like_count",
+            "dislike_count",
+            "created_at",
+            "updated_at",
+        ])
         ->orderBy('updated_at', 'desc')
-        ->paginate();
-        return  ThreadResource::collection($threads);
+        ->paginate((int) request('per_page', 10));
+        // return  ThreadResource::collection($threads);
+        return  SimpleThreadResource::collection($threads);
     }
 
 
@@ -138,7 +159,7 @@ class ThreadController extends Controller
 
         // $this->user->notify(new ThreadWasUpdated($this->thread, $reply));
 
-        if (($request->has('scrape_image') && $request->scrape_image == true) && ($request->has('main_subject') && $request->main_subject != null)) {
+        if (($request->has('scrape_image') && filter_var($request->scrape_image, FILTER_VALIDATE_BOOLEAN) == true) && ($request->has('main_subject') && $request->main_subject != null)) {
             dispatch(new WikiImageProcess($request->main_subject, $thread));
         }
 
