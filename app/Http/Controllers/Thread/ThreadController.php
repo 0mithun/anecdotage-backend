@@ -189,7 +189,7 @@ class ThreadController extends Controller
      */
 
      public function generateTitle(Request $request){
-        return  filter_var($request->title_case, FILTER_VALIDATE_BOOLEAN) ?  title_case($request->title): $request->title;
+        return  filter_var($request->title_case, FILTER_VALIDATE_BOOLEAN) == true ?  title_case($request->title): $request->title;
      }
     /**
      * Generate CNO from request
