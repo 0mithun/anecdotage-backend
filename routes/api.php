@@ -105,7 +105,10 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 
     //Threads
-    Route::resource('threads', 'Thread\ThreadController')->except(['create', 'edit', 'index', 'show']);
+    Route::resource('threads', 'Thread\ThreadController')->except(['create', 'edit', 'index', 'show','update']);
+    Route::post('threads/{thread}', 'Thread\ThreadController@update');
+
+
     Route::post('threads/{thread}/thumbnail', 'Thread\ThreadController@uploadThreadImages');
     Route::put('threads/{thread}/imageDescription', 'Thread\ThreadController@imageDescription');
 

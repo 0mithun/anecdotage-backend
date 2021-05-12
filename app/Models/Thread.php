@@ -57,9 +57,9 @@ class Thread extends Model
      * @var array
      */
     protected $casts = [
-        'image_saved'   => 'bool',
-        'anonymous'   => 'bool',
-        'is_published'   => 'bool',
+        'image_saved'   => 'boolean',
+        'anonymous'   => 'boolean',
+        'is_published'   => 'boolean',
     ];
 
     /**
@@ -80,6 +80,7 @@ class Thread extends Model
             $thread->views->each->delete();
 
             Storage::disk('public')->delete($thread->image_path);
+            Storage::disk('public')->delete($thread->slide_image_path);
         });
 
         static::created(function ($thread) {
@@ -113,6 +114,26 @@ class Thread extends Model
         }
 
         $this->attributes['slug'] = $slug;
+    }
+
+     /**
+     * Set the proper annomous attribute.
+     *
+     * @param string $value
+     */
+    public function setAnonymousAttribute($value)
+    {
+        $this->attributes['anonymous'] = filter_var($value, FILTER_VALIDATE_BOOLEAN) ? 1: 0;
+    }
+     /**
+     * Set the proper Title attribute.
+     *
+     * @param string $value
+     */
+    public function setTitleAttribute($value)
+    {
+        $this->attributes['title'] = filter_var($this->title_case, FILTER_VALIDATE_BOOLEAN) ?  title_case($value): $value;
+
     }
 
     /**

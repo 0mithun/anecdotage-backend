@@ -67,48 +67,16 @@ class ThreadController extends Controller
         'slide_body','slide_image_pos','slide_color_bg','slide_color_0','slide_color_1','slide_color_2']);
         // $data['slug'] = str_slug(strip_tags($request->title));
 
-
-        if ($request->location != null) {
-            $location = $this->getGeocodeing($request->location);
-            if ($location['accuracy'] != 'result_not_found') {
-                $data['location'] = new Point($location['lat'], $location['lng']);
-                $data['formatted_address'] = $request->location;
-            }
-        }
-
-        if ($request->has('cno') && $request->cno != null) {
-            $cno = json_decode(json_encode(request('cno')));
-            if ($cno->famous == false) {
-                $data['cno'] = 'O';
-            } else if ($cno->famous == true && $cno->celebrity == true) {
-                $data['cno'] = 'C';
-            } else {
-                $data['cno'] = 'N';
-            }
-        }
-
-        $channel = '';
-        if ($request->has('channel') && $request->channel != null) {
-            $channel = json_decode(json_encode(request('channel')));
-
-            $type = gettype($channel);
-            if ($type == 'string') {
-                $findChannel = Channel::where('name', $channel)->first();
-                if ($findChannel) {
-                    $data['channel_id'] = $findChannel->id;
-                }
-            } else {
-                $data['channel_id'] = $channel->id;
-            }
-        } else {
-            $data['channel_id'] = 2;
-        }
-
+        $data['cno'] =  $this->generateCNO($request);
+        $data['formatted_address'] =  $request->location;
+        $data['location'] =  $this->generateLocation($request);
+        $data['channel_id'] =  $this->generateChannel($request);
 
 
         $thread = $this->threads->create($data + ['user_id' => auth()->id()]);
 
         $this->attachTags($request, $thread);
+        $this->uploadSlideImages($request, $thread);
 
         return response(new ThreadResource($thread), Response::HTTP_CREATED);
     }
@@ -123,8 +91,6 @@ class ThreadController extends Controller
     {
         $thread->views()->create([]);
         $thread->update(['visits' => $thread->visits  + 1]);
-
-
 
         $thread = $this->threads->withCriteria([
             new EagerLoad(['tags', 'creator', 'emojis', 'channel'])
@@ -141,75 +107,34 @@ class ThreadController extends Controller
      */
     public function update(ThreadUpdateRequest $request, Thread $thread)
     {
-        $data = $request->only(['body', 'source', 'main_subject', 'age_restriction', 'anonymous',
+
+        $data = $request->only(['title','body', 'source', 'main_subject', 'age_restriction', 'anonymous',
         'slide_body','slide_image_pos','slide_color_bg','slide_color_0','slide_color_1','slide_color_2']);
+
         if ($request->has('title') && auth()->user()->is_admin) {
             $title = $request->title;
-            // $title = preg_replace("#('.\s)#",' ',$title);
             $title = preg_replace("#(')#",'',$title);
 
             $slug = str_slug(strip_tags( $title));
             if($slug != $thread->slug){
                 $data['slug'] = $title;
             }
-
-            // $newThread = Thread::whereSlug($slug)->first();
-            // if ($newThread && $newThread->id == $thread->id) {
-            //     $data['slug'] = $slug = "{$slug}-{$thread->id}";
-            // }
-
-
         }
 
-        if($request->title_case == true){
-            $data['title']  =  title_case($request->title);
-        }else{
-            $data['title']  =  $request->title;
-        }
 
-        if ($request->location != null) {
-            $location = $this->getGeocodeing($request->location);
-            // return $location;
-            if ($location['accuracy'] != 'result_not_found') {
-                $data['location'] = new Point($location['lat'], $location['lng']);
-                $data['formatted_address'] = $request->location;
-            }
-        }else{
-            $data['location'] = null;
-            $data['formatted_address'] = null;
-        }
 
-        if ($request->has('cno') && $request->cno != null) {
-            $cno = json_decode(json_encode(request('cno')));
-            if ($cno->famous == false) {
-                $data['cno'] = 'O';
-            } else if ($cno->famous == true && $cno->celebrity == true) {
-                $data['cno'] = 'C';
-            } else {
-                $data['cno'] = 'N';
-            }
-        }
 
-        $channel = '';
-        if ($request->has('channel') && $request->channel != null) {
-            $channel = json_decode(json_encode(request('channel')));
 
-            $type = gettype($channel);
-            if ($type == 'string') {
-                $findChannel = Channel::where('name', $channel)->first();
-                if ($findChannel) {
-                    $data['channel_id'] = $findChannel->id;
-                }
-            } else {
-                $data['channel_id'] = $channel->id;
-            }
-        } else {
-            $data['channel_id'] = 2;
-        }
-
+        // $data['title'] = $this->generateTitle($request);
+        $data['cno'] =  $this->generateCNO($request);
+        $data['formatted_address'] =  $request->location;
+        $data['location'] =  $this->generateLocation($request);
+        $data['channel_id'] =  $this->generateChannel($request);
 
         $thread = $this->threads->update($thread->id, $data);
         $this->attachTags($request, $thread);
+
+        $this->uploadSlideImages($request, $thread);
 
         // $this->user->notify(new ThreadWasUpdated($this->thread, $reply));
 
@@ -229,10 +154,78 @@ class ThreadController extends Controller
     public function destroy(Thread $thread)
     {
         Gate::authorize('edit-thread', $thread);
-
         $this->threads->delete($thread->id);
         return response(null, Response::HTTP_NO_CONTENT);
     }
+
+
+
+    /**
+     * Generate CNO from request
+     * @return String
+     */
+
+     public function generateCNO(Request $request){
+        $data = 'O';
+        if ($request->has('cno') && $request->cno != null) {
+            $cno = json_decode(json_encode(request('cno')));
+            if (filter_var($cno->famous, FILTER_VALIDATE_BOOLEAN) == false) {
+                $data= 'O';
+            } else if (filter_var($cno->famous, FILTER_VALIDATE_BOOLEAN) == true && filter_var($cno->celebrity, FILTER_VALIDATE_BOOLEAN) == true) {
+                $data= 'C';
+            } else {
+                $data= 'N';
+            }
+        }
+
+        return $data;
+     }
+
+
+
+
+
+    /**
+     * Generate Channel ID from request
+     */
+
+     public function generateChannel(Request $request){
+        if ($request->has('channel') && $request->channel != null) {
+            $channel = json_decode(json_encode(request('channel')));
+
+            $type = gettype($channel);
+            if ($type == 'string') {
+                $findChannel = Channel::where('name', $channel)->first();
+                if ($findChannel) {
+                    return $findChannel->id;
+                }
+            } else {
+                return $channel->id;
+            }
+        }
+
+        return 2;
+     }
+
+
+    /**
+     * Generate Location from request
+     */
+
+     public function generateLocation(Request $request){
+        if ($request->location != null) {
+            $location = $this->getGeocodeing($request->location);
+            if ($location['accuracy'] != 'result_not_found') {
+               return new Point($location['lat'], $location['lng']);
+
+            }
+            return null;
+        }
+
+        return null;
+     }
+
+
 
     /**
      * Get lat, lng with thread location
@@ -324,12 +317,30 @@ class ThreadController extends Controller
             $thread->is_published = true;
             $thread->save();
 
-
             dispatch(new OptimizeThreadImageJob($image_path, $thread));
             return $thread;
         }
 
         return response('Thumbnail upload successfully');
+    }
+
+
+    /**
+     * Uplod Slide Images
+     */
+
+    public function uploadSlideImages(Request $request, Thread $thread)
+    {
+        if ($request->has('slide_image_path') && ($request->file('slide_image_path') instanceof UploadedFile)) {
+            if ($thread->slide_image_path != null) {
+                $this->deleteOne($thread->slide_image_path);
+            }
+            $image_path = $this->uploadOne($request->file('slide_image_path'), 'uploads/slides', 'public', $thread->id . uniqid());
+
+            $thread->slide_image_path =  $image_path;
+            $thread->save();
+        }
+
     }
 
 
