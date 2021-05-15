@@ -228,10 +228,15 @@ class Thread extends Model
 
     public function getThreadSlideImagePathAttribute()
     {
-        if ($this->slide_image_path == null || $this->slide_image_path == '') {
+        // if ($this->slide_image_path == null || $this->slide_image_path == '') {
+        //     return '';
+        // }
+        // return asset('storage/' . $this->slide_image_path);
+
+        if ($this->image_path == null || $this->image_path == '') {
             return '';
         }
-        return asset('storage/' . $this->slide_image_path);
+        return asset('storage/' . $this->image_path);
     }
 
     public function getSlideBodyAttribute($value)
@@ -266,7 +271,10 @@ class Thread extends Model
 
     public function tempThreadImagePath(){
          if ($this->image_path != '' || $this->image_path != null) {
-            if (preg_match("/http/i", $this->image_path)) {
+            if($this->temp_image_url != null){
+                return $this->temp_image_url;
+            }
+            else if (preg_match("/http/i", $this->image_path)) {
                 return $this->image_path;
             }
 
@@ -281,14 +289,6 @@ class Thread extends Model
         return $this->threadImagePath();
     }
 
-    public function getImagePathPixelColorAttribute($value)
-    {
-         if ($this->image_path != null && $this->image_path != '') {
-             return $value;
-        } else {
-            return '112,28,19,1';
-        }
-    }
 
     public function getTempThreadImagePathAttribute(){
         return $this->tempThreadImagePath();
@@ -304,6 +304,16 @@ class Thread extends Model
         }
     }
 
+    public function getImagePathPixelColorAttribute($value)
+    {
+         if ($this->image_path != null && $this->image_path != '') {
+             return $value;
+        } else {
+            return '112,28,19,1';
+        }
+    }
+
+
     public function getFullImageDescriptionAttribute(){
 
         if ($this->image_path == null || $this->image_path == '') {
@@ -312,10 +322,17 @@ class Thread extends Model
             }
         }
 
+        $imageUrl = asset('buy-now-btn.jpg');
         $amazon_product_url = $this->amazon_product_url;
         if($amazon_product_url != null){
-            if (!preg_match("/<a(.*?)>(.*?)<\/a>/i", $amazon_product_url)) {
-               $amazon_product_url = sprintf('<a href="%s/%s">Buy it here</a>', $amazon_product_url,'linkCode=ur2&tag=anecdotage01-20');
+            if (!preg_match("/<a(.*?)>(.*?)<\/a>/i", $amazon_product_url, $matches)) {
+            //    $amazon_product_url = sprintf('<a href="%s/%s">Buy it here</a>', $amazon_product_url,'linkCode=ur2&tag=anecdotage01-20');
+
+               $amazon_product_url = sprintf('<a href="%s/%s"><img src="%s" class="buy-btn" style="height: 22px;display: unset;" /></a>', $amazon_product_url,'linkCode=ur2&tag=anecdotage01-20', $imageUrl);
+           }else{
+                preg_match('/href=["\']?([^"\'>]+)["\']?/', $amazon_product_url, $matches);
+
+                $amazon_product_url = sprintf('<a href="%s/%s"><img src="%s" class="buy-btn" style="height: 22px;display: unset;" /></a>', $matches[1],'linkCode=ur2&tag=anecdotage01-20', $imageUrl);
            }
         }
 

@@ -98,7 +98,10 @@ class ThreadController extends Controller
         $thread = $this->threads->create($data + ['user_id' => auth()->id()]);
 
         $this->attachTags($request, $thread);
-        $this->uploadSlideImages($request, $thread);
+
+
+        //Currently unused
+        // $this->uploadSlideImages($request, $thread);
 
         return response(new ThreadResource($thread), Response::HTTP_CREATED);
     }
@@ -157,7 +160,15 @@ class ThreadController extends Controller
         $thread = $this->threads->update($thread->id, $data);
         $this->attachTags($request, $thread);
 
-        $this->uploadSlideImages($request, $thread);
+
+
+        //Currently unused
+        // $this->uploadSlideImages($request, $thread);
+
+
+        $this->handleSlideImagePosition($request, $thread);
+
+
 
         // $this->user->notify(new ThreadWasUpdated($this->thread, $reply));
 
@@ -346,6 +357,8 @@ class ThreadController extends Controller
             $thread->image_path =  $image_path;
             $thread->image_path_pixel_color = $this->getImageColorAttribute($image_path);
             $thread->is_published = true;
+            $thread->temp_image_url = null;
+            $thread->temp_image_description = null;
             $thread->save();
 
             dispatch(new OptimizeThreadImageJob($image_path, $thread));
@@ -372,6 +385,23 @@ class ThreadController extends Controller
             $thread->save();
         }
 
+    }
+    /**
+     * handle slide_image_position
+     */
+
+    public function handleSlideImagePosition(Request $request, Thread $thread)
+    {
+        if ($request->has('slide_image_pos') && $request->slide_image_pos != null) {
+            if (preg_match("/http/i", $thread->image_path)) {
+                // return $this->image_path;
+                $thread->update([
+                    'temp_image_url'    => $thread->image_path
+                ]);
+
+                dispatch(new DownloadThreadImageJob($thread->image_path, $thread));
+            }
+        }
     }
 
 

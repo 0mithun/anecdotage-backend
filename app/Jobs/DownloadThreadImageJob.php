@@ -59,15 +59,13 @@ class DownloadThreadImageJob implements ShouldQueue
 
             $this->saveInfo($data);
 
-            if($old_image_path != ''){
-                 Storage::disk('public')->delete($old_image_path);
+            if($old_image_path == '' || $old_image_path == null){
+            }else{
+                Storage::disk('public')->delete($old_image_path);
             }
 
             $user = User::where('id', $this->thread->user_id)->first();
             $user->notify(new ImageDownloadComplete($this->thread));
-
-
-
        }else{
            //send notification to user
             $user = User::where('id', $this->thread->user_id)->first();
