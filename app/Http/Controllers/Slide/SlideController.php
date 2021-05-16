@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Slide;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\SlideCategoryResource;
 use App\Http\Resources\SlideResource;
+use App\Models\SlideCategory;
 use App\Repositories\Contracts\IThread;
 
 class SlideController extends Controller
@@ -53,6 +55,12 @@ class SlideController extends Controller
 
         // return response()->json(['query'=> $threads]) ;
         return  SlideResource::collection($threads);
+    }
+
+    public function categories(){
+        $categories = SlideCategory::all();
+
+        return  SlideCategoryResource::collection($categories);
     }
 
 

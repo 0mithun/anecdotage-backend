@@ -265,7 +265,7 @@ class Thread extends Model
             // return 'https://www.maxpixel.net/static/photo/1x/Geometric-Rectangles-Background-Shapes-Pattern-4973341.jpg';
             // return 'https://i.imgur.com/QyLqIiB.jpg ';
 
-            return asset('default-thread.jpg');
+            return asset('images/default-thread.jpg');
         }
     }
 
@@ -322,7 +322,7 @@ class Thread extends Model
             }
         }
 
-        $imageUrl = asset('buy-now-btn.jpg');
+        $imageUrl = asset('images/buy-now-btn.jpg');
         $amazon_product_url = $this->amazon_product_url;
         if($amazon_product_url != null){
             if (!preg_match("/<a(.*?)>(.*?)<\/a>/i", $amazon_product_url, $matches)) {
