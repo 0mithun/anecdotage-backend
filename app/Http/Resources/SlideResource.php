@@ -32,6 +32,7 @@ class SlideResource extends JsonResource
 
             //Slide Fields
             'slide_body'                =>  $this->slide_body,
+            'slide_body_length'         =>  $this->slide_body_length,
             'slide_color_0'             =>  $this->slide_color_0,
             'slide_color_1'             =>  $this->slide_color_1,
             'slide_color_2'             =>  $this->slide_color_2,

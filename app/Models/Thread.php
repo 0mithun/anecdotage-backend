@@ -236,6 +236,10 @@ class Thread extends Model
         if ($this->image_path == null || $this->image_path == '') {
             return '';
         }
+        if (preg_match("/http/i", $this->image_path)) {
+            return $this->image_path;
+        }
+
         return asset('storage/' . $this->image_path);
     }
 
@@ -248,6 +252,10 @@ class Thread extends Model
         }, $body);
 
          return $body;
+    }
+
+    public function getSlideBodyLengthAttribute(){
+        return strlen(trim(strip_tags($this->slide_body)));
     }
 
 

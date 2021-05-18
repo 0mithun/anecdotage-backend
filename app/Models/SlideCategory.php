@@ -16,8 +16,9 @@ class SlideCategory extends Model
 
 
 
-    public function getRouteKey()
+    public function getRouteKeyName()
     {
         return 'search_term';
     }
+
 }
