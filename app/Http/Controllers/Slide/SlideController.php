@@ -53,7 +53,8 @@ class SlideController extends Controller
         ->orderBy('updated_at', 'desc')
         // ->limit(10)
         // ->get()
-        ->paginate((int) request('per_page', 10))
+        ->paginate(1)
+        // ->paginate((int) request('per_page', 10))
         // ->toSql()
         ;
 
