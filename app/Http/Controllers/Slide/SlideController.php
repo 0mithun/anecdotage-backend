@@ -21,6 +21,7 @@ class SlideController extends Controller
 
 
     public function index(){
+
         $threads = $this->threads->withCriteria([
 
         ])
@@ -28,7 +29,7 @@ class SlideController extends Controller
         // ->where('slide_image_pos', '!=', "")
         ->whereNotNull('slide_image_pos')
 
-        ->where('slide_image_pos','b')
+        // ->where('slide_image_pos','b')
 
         ->select([
             "id",
@@ -53,9 +54,11 @@ class SlideController extends Controller
         ->orderBy('updated_at', 'desc')
         // ->limit(10)
         // ->get()
-        ->paginate(1)
+        // ->paginate(1)
         // ->paginate((int) request('per_page', 10))
+        ->paginate(10)
         // ->toSql()
+        // ->get()
         ;
 
         // return response()->json(['query'=> $threads]) ;
@@ -97,6 +100,7 @@ class SlideController extends Controller
             // ->limit(10)
             // ->get()
             ->paginate((int) request('per_page', 10))
+            // ->get()
             // ->toSql()
             ;
         return  SlideResource::collection($threads);

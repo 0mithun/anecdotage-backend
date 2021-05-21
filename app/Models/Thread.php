@@ -248,7 +248,7 @@ class Thread extends Model
          $body =  html_entity_decode($value);
          $pattern = '/<1>(.*?)<\/1>/i';
         $body = preg_replace_callback($pattern, function($match){
-           return sprintf('<strong style="color:#%s">%s</strong>',$this->slide_color_1 , $match[1] );
+           return sprintf('<span style="color:#%s">%s</span>',$this->slide_color_1 , $match[1] );
         }, $body);
 
          return $body;
