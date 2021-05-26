@@ -18,6 +18,7 @@ Route::get('/settings', 'Admin\SlideSettingController@index');
  Route::group(['prefix' => 'admin', 'middleware' => ['auth:api','admin'], 'namespace' => 'Admin'], function () {
      Route::get('/slides/single/{thread}', 'SlideController@getSingleSlide');
     Route::put('/slide/{thread}', 'SlideController@update');
+    Route::post('/slide/{thread}', 'SlideController@takeScreenshot');
     //Admin Settings
     Route::put('settings', 'SlideSettingController@update');
     Route::post('settings/logo', 'SlideSettingController@updateLogo');

@@ -9,6 +9,8 @@
     "license": "MIT",
     "require": {
         "php": "^7.2",
+        "anam/phantomjs-linux-x86-binary": "^2.1",
+        "anam/phantommagick": "^2.0",
         "benjamincrozat/laravel-dropbox-driver": "^3.0",
         "beyondcode/laravel-websockets": "^1.4",
         "cviebrock/eloquent-taggable": "^6.0",

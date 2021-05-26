@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SlideCategoryResource;
 use App\Http\Resources\SlideResource;
+use App\Jobs\TakeSlideScreenshot;
 use App\Models\SlideCategory;
 use App\Models\Tag;
 use App\Models\Thread;
@@ -31,6 +32,11 @@ class SlideController extends Controller
         $thread = $this->threads->update($thread->id, $data);
 
         return  response(['success'=> true, Response::HTTP_ACCEPTED]);
+    }
+
+    public function takeScreenshot(Request $request, Thread $thread){
+        dispatch(new TakeSlideScreenshot($thread));
+        return  new SlideResource($thread);
     }
 
 }
