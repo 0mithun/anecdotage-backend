@@ -47,7 +47,7 @@ class Thread extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'channel_id', 'slug', 'title', 'body', 'summary', 'source', 'main_subject', 'image_path', 'image_path_pixel_color', 'image_description', 'temp_image_url', 'temp_image_description', 'amazon_product_url', 'image_saved', 'cno', 'age_restriction', 'anonymous', 'formatted_address', 'location', 'is_published', 'visits', 'favorite_count', 'like_count', 'dislike_count', 'slide_body', 'slide_image_pos','slide_image_path', 'slide_color_bg', 'slide_color_0', 'slide_color_1', 'slide_color_2'
+        'user_id', 'channel_id', 'slug', 'title', 'body', 'summary', 'source', 'main_subject', 'image_path', 'image_path_pixel_color', 'image_description', 'temp_image_url', 'temp_image_description', 'amazon_product_url', 'image_saved', 'cno', 'age_restriction', 'anonymous', 'formatted_address', 'location', 'is_published', 'visits', 'favorite_count', 'like_count', 'dislike_count', 'slide_body', 'slide_image_pos', 'slide_color_bg', 'slide_color_0', 'slide_color_1', 'slide_color_2'
 
     ];
 
@@ -80,7 +80,6 @@ class Thread extends Model
             $thread->views->each->delete();
 
             Storage::disk('public')->delete($thread->image_path);
-            Storage::disk('public')->delete($thread->slide_image_path);
         });
 
         static::created(function ($thread) {
