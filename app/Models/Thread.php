@@ -258,6 +258,14 @@ class Thread extends Model
         return strlen(trim(strip_tags($this->slide_body)));
     }
 
+    public function getSlideScreenshotPathAttribute(){
+        if ($this->slide_screenshot == null || $this->slide_screenshot == '') {
+            return '';
+        }
+
+        return asset('storage/' . $this->slide_screenshot);
+    }
+
 
     public function threadImagePath()
     {
