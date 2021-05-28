@@ -242,9 +242,9 @@ class Thread extends Model
         return asset('storage/' . $this->image_path);
     }
 
-    public function getSlideBodyAttribute($value)
+    public function getStyleSlideBodyAttribute()
     {
-         $body =  html_entity_decode($value);
+         $body =  html_entity_decode($this->slide_body);
          $pattern = '/<1>(.*?)<\/1>/i';
         $body = preg_replace_callback($pattern, function($match){
            return sprintf('<span style="color:#%s">%s</span>',$this->slide_color_1 , $match[1] );
@@ -252,6 +252,34 @@ class Thread extends Model
 
          return $body;
     }
+
+    public function getSlideBodyAttribute($value)
+    {
+         $body =  html_entity_decode($value);
+        //  $pattern = '/<1>(.*?)<\/1>/i';
+         $pattern = '#<strong(.*?)>(.*?)</strong>#i';
+         // <strong style="color:#">240 days</strong>
+        $body = preg_replace_callback($pattern, function($match){
+           return sprintf('%s', $match[2] );
+        }, $body);
+
+         return $body;
+    }
+
+
+    public function setSlideBodyAttribute($value)
+    {
+        ///<a(.*?)>(.*?)<\/a>/i
+        $body =  html_entity_decode($value);
+        $pattern = '#<span(.*?)>(.*?)</span>#i';
+        $body = preg_replace_callback($pattern, function($match){
+           return sprintf('<1>%s</1>', $match[2] );
+        }, $body);
+
+        $this->attributes['slide_body'] = $body;
+    }
+
+
 
     public function getSlideBodyLengthAttribute(){
         return strlen(trim(strip_tags($this->slide_body)));
