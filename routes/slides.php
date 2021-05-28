@@ -17,8 +17,8 @@ Route::get('/settings', 'Admin\SlideSettingController@index');
  //User ban
  Route::group(['prefix' => 'admin', 'middleware' => ['auth:api','admin'], 'namespace' => 'Admin'], function () {
      Route::get('/slides/single/{thread}', 'SlideController@getSingleSlide');
-    Route::put('/slide/{thread}', 'SlideController@update');
-    Route::post('/slide/{thread}', 'SlideController@takeScreenshot');
+    Route::post('/slide/{thread}', 'SlideController@update');
+    Route::post('/slide/{thread}/screenshot', 'SlideController@takeScreenshot');
     //Admin Settings
     Route::put('settings', 'SlideSettingController@update');
     Route::post('settings/logo', 'SlideSettingController@updateLogo');
