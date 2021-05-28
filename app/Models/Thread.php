@@ -282,7 +282,14 @@ class Thread extends Model
 
 
     public function getSlideBodyLengthAttribute(){
-        return strlen(trim(strip_tags($this->slide_body)));
+        $body =  html_entity_decode($this->slide_body);
+        $pattern = '#<span(.*?)>(.*?)</span>#i';
+        $body = preg_replace_callback($pattern, function($match){
+           return sprintf('%s', $match[2] );
+        }, $body);
+
+
+        return strlen(trim(strip_tags($body)));
     }
 
     public function getSlideScreenshotPathAttribute(){
