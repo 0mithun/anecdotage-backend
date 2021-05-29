@@ -296,6 +296,9 @@ class Thread extends Model
 
         return strlen(trim(strip_tags($body)));
     }
+    public function getSlideImagePosAttribute($value){
+        return strtolower($value);
+    }
 
     public function getSlideScreenshotPathAttribute(){
         if ($this->slide_screenshot == null || $this->slide_screenshot == '') {
