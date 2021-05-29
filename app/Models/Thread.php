@@ -247,7 +247,7 @@ class Thread extends Model
          $body =  html_entity_decode($this->slide_body);
          $pattern = '/<1>(.*?)<\/1>/i';
         $body = preg_replace_callback($pattern, function($match){
-           return sprintf('<span style="color:#%s">%s</span>',$this->slide_color_1 , $match[1] );
+           return sprintf('<span style="color:#%s;">%s</span>',$this->slide_color_1 , $match[1] );
         }, $body);
 
          return $body;
@@ -258,6 +258,11 @@ class Thread extends Model
          $body =  html_entity_decode($value);
         //  $pattern = '/<1>(.*?)<\/1>/i';
          $pattern = '#<strong(.*?)>(.*?)</strong>#i';
+         // <strong style="color:#">240 days</strong>
+        $body = preg_replace_callback($pattern, function($match){
+           return sprintf('%s', $match[2] );
+        }, $body);
+         $pattern = '#<span(.*?)>(.*?)</span>#i';
          // <strong style="color:#">240 days</strong>
         $body = preg_replace_callback($pattern, function($match){
            return sprintf('%s', $match[2] );
