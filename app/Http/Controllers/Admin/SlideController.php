@@ -37,7 +37,7 @@ class SlideController extends Controller
         $data = $request->only(['slide_body','slide_image_pos','slide_color_bg','slide_color_0','slide_color_1','slide_color_2',]);
 
         if($request->has('ready') && filter_var($request->ready, FILTER_VALIDATE_BOOLEAN) == true){
-            $data['ready'] = 1;
+            $data['slide_ready'] = 1;
         }
         $thread = $this->threads->update($thread->id, $data);
 

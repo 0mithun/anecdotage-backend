@@ -49,7 +49,7 @@ class SlideController extends Controller
             "slide_color_2",
             "slide_color_bg",
             "slide_image_pos",
-            "ready",
+            "slide_ready",
             "created_at",
             "updated_at",
         ])
@@ -89,7 +89,7 @@ class SlideController extends Controller
                 "slide_color_2",
                 "slide_color_bg",
                 "slide_image_pos",
-                "ready",
+                "slide_ready",
                 "created_at",
                 "updated_at",
             ])
@@ -128,7 +128,7 @@ class SlideController extends Controller
                 "slide_color_2",
                 "slide_color_bg",
                 "slide_image_pos",
-                "ready",
+                "slide_ready",
                 "created_at",
                 "updated_at",
             ])

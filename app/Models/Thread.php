@@ -51,7 +51,7 @@ class Thread extends Model
         'image_path', 'image_path_pixel_color', 'image_description', 'temp_image_url', 'temp_image_description',
          'amazon_product_url', 'image_saved', 'cno', 'age_restriction', 'anonymous', 'formatted_address', 'location', 'is_published',
           'visits', 'favorite_count', 'like_count', 'dislike_count',
-          'slide_body', 'slide_image_pos', 'slide_color_bg', 'slide_color_0', 'slide_color_1', 'slide_color_2', 'ready'
+          'slide_body', 'slide_image_pos', 'slide_color_bg', 'slide_color_0', 'slide_color_1', 'slide_color_2', 'slide_ready'
 
     ];
 
