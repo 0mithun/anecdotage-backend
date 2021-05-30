@@ -34,8 +34,13 @@ class SlideController extends Controller
 
     public function update(Request $request, Thread $thread){
 
-        $data = $request->only(['slide_body','slide_image_pos','slide_color_bg','slide_color_0','slide_color_1','slide_color_2']);
+        $data = $request->only(['slide_body','slide_image_pos','slide_color_bg','slide_color_0','slide_color_1','slide_color_2',]);
+
+        if($request->has('ready') && filter_var($request->ready, FILTER_VALIDATE_BOOLEAN) == true){
+            $data['ready'] = 1;
+        }
         $thread = $this->threads->update($thread->id, $data);
+
 
 
         if ($request->has('image_path') && ($request->file('image_path') instanceof UploadedFile)) {

@@ -32,15 +32,15 @@ class SlideResource extends JsonResource
 
             //Slide Fields
             'slide_body'                =>  $this->slide_body,
-            'style_slide_body'                =>  $this->style_slide_body,
+            'style_slide_body'          =>  $this->style_slide_body,
             'slide_body_length'         =>  $this->slide_body_length,
             'slide_color_0'             =>  $this->slide_color_0,
             'slide_color_1'             =>  $this->slide_color_1,
             'slide_color_2'             =>  $this->slide_color_2,
             'slide_color_bg'            =>  $this->slide_color_bg,
             'slide_image_pos'           =>  $this->slide_image_pos,
-            'thread_slide_image_path'      =>  $this->thread_slide_image_path
-
+            'thread_slide_image_path'   =>  $this->thread_slide_image_path,
+            'ready'                     =>  $this->ready,
 
         ];
     }
