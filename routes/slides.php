@@ -24,4 +24,8 @@ Route::get('/settings', 'Admin\SlideSettingController@index');
     Route::post('settings/logo', 'SlideSettingController@updateLogo');
     Route::post('settings/favicon', 'SlideSettingController@updateFavicon');
 
+
+    Route::post('/categories', 'SlideController@addCategory');
+    Route::put('/categories/{id}', 'SlideController@updateCategory');
+
 });

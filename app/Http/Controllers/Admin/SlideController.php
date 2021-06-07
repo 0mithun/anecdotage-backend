@@ -108,4 +108,41 @@ class SlideController extends Controller
         }
         return '';
     }
+
+    public function addCategory(Request $request){
+        $this->validate($request, [
+            'search_term'       =>  ['required'],
+            'display_text'       =>  ['required'],
+        ]);
+
+
+        $category = SlideCategory::create([
+            'search_term'       =>  str_slug($request->search_term),
+            'display_text'      =>  $request->display_text,
+        ]);
+
+        return response(['success' => true, 'category' => $category], Response::HTTP_CREATED);
+    }
+    public function updateCategory(Request $request, $id){
+        $this->validate($request, [
+            'search_term'       =>  ['required'],
+            'display_text'       =>  ['required'],
+        ]);
+
+
+        $category = SlideCategory::find($id);
+
+        if(!$category){
+            return response(['success' => false], Response::HTTP_NOT_FOUND);
+        }
+
+        $category->update([
+            'search_term'       =>  str_slug($request->search_term),
+            'display_text'      =>  $request->display_text,
+        ]);
+
+
+
+        return response(['success' => true, 'category' => $category], Response::HTTP_ACCEPTED);
+    }
 }
