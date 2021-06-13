@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Slide;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Http\Resources\SlideCategoryResource;
-use App\Http\Resources\SlideResource;
-use App\Models\SlideCategory;
 use App\Models\Tag;
 use App\Models\Thread;
+use Illuminate\Http\Request;
+use App\Models\SlideCategory;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\SlideResource;
 use App\Repositories\Contracts\IThread;
+use App\Http\Resources\SlideCategoryResource;
 use Symfony\Component\HttpFoundation\Response;
 
 class SlideController extends Controller
@@ -99,6 +100,33 @@ class SlideController extends Controller
             return  SlideResource::collection($threads);
     }
 
+
+    public function report($id, Request $request){
+        $request->validate([
+            'note'  =>      ['required'],
+            'source'  =>      ['required'],
+            'email'  =>      ['email','required'],
+        ]);
+
+        $thread = $this->threads->find($id);
+
+        if(!$thread){
+            return response(['success' => false], Response::HTTP_NOT_FOUND);
+        }
+
+
+        DB::table('slide_reprorts')->insert([
+            'note'  => $request->note,
+            'source'  => $request->source,
+            'email'  => $request->email,
+            'created_at'    => now(),
+            'updated_at'    => now(),
+        ]);
+
+        return response(['success' => true], Response::HTTP_ACCEPTED);
+
+
+    }
 
 
     public function categories(){

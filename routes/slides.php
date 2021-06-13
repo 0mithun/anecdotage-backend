@@ -4,6 +4,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/all', 'Slide\SlideController@index');
 Route::get('/slide/{slide}', 'Slide\SlideController@show');
+
+
+Route::post('/slide/{slide}/report', 'Slide\SlideController@report');
+
 Route::get('/categories', 'Slide\SlideController@categories');
 
 
@@ -19,6 +23,8 @@ Route::get('/settings', 'Admin\SlideSettingController@index');
      Route::get('/slides/single/{thread}', 'SlideController@getSingleSlide');
     Route::post('/slide/{thread}', 'SlideController@update');
     Route::post('/slide/{thread}/screenshot', 'SlideController@takeScreenshot');
+
+
     //Admin Settings
     Route::put('settings', 'SlideSettingController@update');
     Route::post('settings/logo', 'SlideSettingController@updateLogo');
