@@ -387,15 +387,17 @@ class Thread extends Model
 
         $imageUrl = asset('images/buy-now-btn.jpg');
         $amazon_product_url = $this->amazon_product_url;
+
+        // return $this->amazon_product_url;;
         if($amazon_product_url != null){
             if (!preg_match("/<a(.*?)>(.*?)<\/a>/i", $amazon_product_url, $matches)) {
             //    $amazon_product_url = sprintf('<a href="%s/%s">Buy it here</a>', $amazon_product_url,'linkCode=ur2&tag=anecdotage01-20');
 
-               $amazon_product_url = sprintf('<a href="%s/%s"><img src="%s" class="buy-btn" style="height: 22px;display: unset;" /></a>', $amazon_product_url,'linkCode=ur2&tag=anecdotage01-20', $imageUrl);
+               $amazon_product_url = sprintf('<a href="%s/%s" target="_blank"  style="vertical-align: sub;"><img src="%s" class="buy-btn" style="height: 14px;display: unset;" /></a>', $amazon_product_url,'linkCode=ur2&tag=anecdotage01-20', $imageUrl);
            }else{
                 preg_match('/href=["\']?([^"\'>]+)["\']?/', $amazon_product_url, $matches);
 
-                $amazon_product_url = sprintf('<a href="%s/%s"><img src="%s" class="buy-btn" style="height: 22px;display: unset;" /></a>', $matches[1],'linkCode=ur2&tag=anecdotage01-20', $imageUrl);
+                $amazon_product_url = sprintf('<a href="%s/%s" target="_blank" style="vertical-align: sub;"><img src="%s" class="buy-btn" style="height: 14px;display: unset;" /></a>', $matches[1],'linkCode=ur2&tag=anecdotage01-20', $imageUrl);
            }
         }
 
