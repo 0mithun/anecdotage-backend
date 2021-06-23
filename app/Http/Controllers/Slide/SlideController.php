@@ -100,7 +100,7 @@ class SlideController extends Controller
 
 
     public function categories(){
-        $categories = SlideCategory::all();
+        $categories = SlideCategory::orderBy('display_text','ASC')->get();
 
         return  SlideCategoryResource::collection($categories);
     }
