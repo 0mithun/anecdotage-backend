@@ -17,6 +17,28 @@ class SlideController extends Controller
 {
     protected $threads;
 
+    protected $selectedFields = [
+        "id",
+        "user_id" ,
+        "channel_id",
+        "title",
+        "slug",
+        "image_path",
+        "image_path_pixel_color" ,
+        "image_description",
+        "amazon_product_url",
+        "age_restriction",
+        "slide_body",
+        "slide_color_0",
+        "slide_color_1",
+        "slide_color_2",
+        "slide_color_bg",
+        "slide_image_pos",
+        "slide_ready",
+        "created_at",
+        "updated_at",
+    ];
+
     public function __construct(IThread $threads)
     {
         $this->threads = $threads;
@@ -24,37 +46,7 @@ class SlideController extends Controller
 
 
     public function index(){
-
-        $threads = $this->threads->withCriteria([
-
-        ])
-        // ->where('id','<',4)
-        // ->where('slide_image_pos', '!=', "")
-        ->whereNotNull('slide_image_pos')
-
-        // ->where('slide_image_pos','b')
-
-        ->select([
-            "id",
-            "user_id" ,
-            "channel_id",
-            "title",
-            "slug",
-            "image_path",
-            "image_path_pixel_color" ,
-            "image_description",
-            "amazon_product_url",
-            "age_restriction",
-            "slide_body",
-            "slide_color_0",
-            "slide_color_1",
-            "slide_color_2",
-            "slide_color_bg",
-            "slide_image_pos",
-            "slide_ready",
-            "created_at",
-            "updated_at",
-        ])
+        $threads = $this->buildQuery()
         ->orderBy('updated_at', 'desc')
         // ->limit(10)
         // ->get()
@@ -70,32 +62,8 @@ class SlideController extends Controller
     }
 
     public function show($id){
-        $threads = $this->threads->withCriteria([
-
-            ])
+        $threads = $this->buildQuery()
             ->where('id',$id)
-            ->whereNotNull('slide_image_pos')
-            ->select([
-                "id",
-                "user_id" ,
-                "channel_id",
-                "title",
-                "slug",
-                "image_path",
-                "image_path_pixel_color" ,
-                "image_description",
-                "amazon_product_url",
-                "age_restriction",
-                "slide_body",
-                "slide_color_0",
-                "slide_color_1",
-                "slide_color_2",
-                "slide_color_bg",
-                "slide_image_pos",
-                "slide_ready",
-                "created_at",
-                "updated_at",
-            ])
             ->orderBy('updated_at', 'desc')
             ->paginate(10);
 
@@ -140,36 +108,31 @@ class SlideController extends Controller
     public function getByCategory(Tag $tag){
 
         $threads = $tag->threads()
-            ->where('slide_image_pos', '!=', "")
+        ->where('slide_image_pos', '!=', "")
             ->whereNotNull('slide_image_pos')
-            ->select([
-                "id",
-                "user_id" ,
-                "channel_id",
-                "title",
-                "slug",
-                "image_path",
-                "image_path_pixel_color" ,
-                "image_description",
-                "amazon_product_url",
-                "age_restriction",
-                "slide_body",
-                "slide_color_0",
-                "slide_color_1",
-                "slide_color_2",
-                "slide_color_bg",
-                "slide_image_pos",
-                "slide_ready",
-                "created_at",
-                "updated_at",
-            ])
+            ->where(function($q){
+                if(!auth()->check() || !auth()->user()->is_admin){
+                    $q->where('slide_ready',true);
+                }
+            })
+            ->select($this->selectedFields)
             ->orderBy('updated_at', 'desc')
-            // ->limit(10)
-            // ->get()
             ->paginate((int) request('per_page', 10))
-            // ->get()
-            // ->toSql()
             ;
         return  SlideResource::collection($threads);
+    }
+
+
+    public function buildQuery(){
+        $query = Thread::query();
+        $query->whereNotNull('slide_image_pos');
+
+        if(!auth()->check() || !auth()->user()->is_admin){
+            $query->where('slide_ready',true);
+        }
+        $query->select($this->selectedFields);
+
+        return $query;
+
     }
 }
