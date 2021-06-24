@@ -25,6 +25,7 @@ class SettingResource extends JsonResource
             'footer_copyright_text'=>  $this->footer_copyright_text,
             'seo_meta_title'=>  $this->seo_meta_title,
             'seo_meta_description'=>  $this->seo_meta_description,
+            'seo_meta_keyword'=>  $this->seo_meta_keyword,
             'social_facebook'=>  $this->social_facebook,
             'social_twitter' =>  $this->social_twitter,
             'social_instagram'=>  $this->social_instagram,

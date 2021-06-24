@@ -16,6 +16,7 @@ class Setting extends Model
         'footer_copyright_text',
         'seo_meta_title',
         'seo_meta_description',
+        'seo_meta_keyword',
         'social_facebook',
         'social_twitter',
         'social_instagram',

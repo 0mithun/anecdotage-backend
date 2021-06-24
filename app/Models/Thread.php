@@ -230,6 +230,30 @@ class Thread extends Model
         return $body;
     }
 
+    public function getMetaDescriptionAttribute(){
+        $limit = 30;
+        $body = strip_tags($this->body);
+        $body = preg_replace('/\s+/', ' ', $this->body);
+
+        $splitBody = explode(" ", $body);
+        if(count($splitBody)>$limit){
+            $splitBody = array_slice($splitBody,0, $limit);
+
+            $body =  implode(" ", $splitBody);
+        }
+        $body = $body.'...';
+        $body =  strip_tags($body);
+        $body = str_replace('"','',$body);
+
+        return $body;
+
+    }
+
+    public function getMetaKeywordAttribute(){
+        $names = $this->tags->pluck('name')->all();
+        return  implode(',',$names);
+    }
+
     public function getThreadSlideImagePathAttribute()
     {
         // if ($this->slide_image_path == null || $this->slide_image_path == '') {

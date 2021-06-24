@@ -76,6 +76,12 @@ class ThreadResource extends JsonResource
             'slide_image_pos'           =>  $this->slide_image_pos,
 
 
+
+            'seo_meta_description'           =>  $this->meta_description,
+            'seo_meta_keyword'           =>  $this->meta_keyword,
+
+
+
         ];
     }
 }
