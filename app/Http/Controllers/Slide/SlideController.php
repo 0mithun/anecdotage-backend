@@ -126,6 +126,7 @@ class SlideController extends Controller
     public function buildQuery(){
         $query = Thread::query();
         $query->whereNotNull('slide_image_pos');
+        $query->where('slide_image_pos','!=','');
 
         if(!auth()->check() || !auth()->user()->is_admin){
             $query->where('slide_ready',true);
