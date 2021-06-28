@@ -111,7 +111,13 @@ class SlideController extends Controller
         ->where('slide_image_pos', '!=', "")
             ->whereNotNull('slide_image_pos')
             ->where(function($q){
-                if(!auth()->check() || !auth()->user()->is_admin){
+                // if(!auth()->check() || !auth()->user()->is_admin){
+                //     $q->where('slide_ready',true);
+                // }
+                if(auth()->check() && auth()->user()->is_admin){
+                    $q->where('slide_ready',false);
+                }
+                else{
                     $q->where('slide_ready',true);
                 }
             })
@@ -128,9 +134,17 @@ class SlideController extends Controller
         $query->whereNotNull('slide_image_pos');
         $query->where('slide_image_pos','!=','');
 
-        if(!auth()->check() || !auth()->user()->is_admin){
+        // if(!auth()->check() || !auth()->user()->is_admin){
+        //     $query->where('slide_ready',true);
+        // }
+
+        if(auth()->check() && auth()->user()->is_admin){
+            $query->where('slide_ready',false);
+        }else{
             $query->where('slide_ready',true);
         }
+
+
         $query->select($this->selectedFields);
 
         return $query;
