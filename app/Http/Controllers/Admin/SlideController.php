@@ -63,6 +63,7 @@ class SlideController extends Controller
     }
 
     public function takeScreenshot(Request $request, Thread $thread){
+
         dispatch(new TakeSlideScreenshot($thread));
         return  new SlideResource($thread);
     }

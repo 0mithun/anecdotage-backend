@@ -48,9 +48,13 @@ class TakeSlideScreenshot implements ShouldQueue
 
         $conv->imageOptions($options);
         $path  = sprintf("screenshots/%s_%s.jpg",$this->thread->id, uniqid());
-        $pathToImage = storage_path('app/public/'.$path);
+        // $pathToImage = storage_path('app/public/'.$path);
+        $pathToImage = public_path($path);
 
-        $conv->source(env('CLIENT_BASE_URL').'/i-'.$this->thread->id)
+        $source =  env('SLIIDE_APP_URL').'/i-'.$this->thread->id;
+        $conv->source($source)
+
+
         // $conv->source('http://localhost:3000/i-120011')
             ->toJpg()
             ->save($pathToImage);
@@ -76,7 +80,7 @@ class TakeSlideScreenshot implements ShouldQueue
         $img->save($pathToImage);
 
 
-        Storage::disk('public')->delete($this->thread->slide_screenshot);
+        Storage::disk('screenshots')->delete($this->thread->slide_screenshot);
 
         $this->thread->slide_screenshot  = $path;
         $this->thread->save();
