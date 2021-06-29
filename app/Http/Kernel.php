@@ -3,7 +3,6 @@
 namespace App\Http;
 
 use App\Http\Middleware\AdminMiddleware;
-use App\Http\Middleware\Cors;
 use App\Http\Middleware\SocialMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -68,7 +67,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'admin'     => AdminMiddleware::class,
         'social'    =>  SocialMiddleware::class,
-        'customcors'=> Cors::class
     ];
 
     /**
