@@ -41,12 +41,13 @@ return [
     /*
      * Sets the Access-Control-Allow-Headers response header. `[*]` allows all headers.
      */
-    'allowed_headers' => ['*'],
+    'allowed_headers' => ['*'.'Authorization'],
+
 
     /*
      * Sets the Access-Control-Expose-Headers response header.
      */
-    'exposed_headers' => false,
+    'exposed_headers' => ['*'],
 
     /*
      * Sets the Access-Control-Max-Age response header.
