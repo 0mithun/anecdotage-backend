@@ -21,7 +21,8 @@ return [
      * You can enable CORS for 1 or multiple paths.
      * Example: ['api/*']
      */
-    'paths' => ['api/*','/'],
+    // 'paths' => ['api/*','/'],
+    'paths' => ['*'],
 
     /*
     * Matches the request method. `[*]` allows all methods.
@@ -31,7 +32,7 @@ return [
     /*
      * Matches the request origin. `[*]` allows all origins.
      */
-    'allowed_origins' => ['*','*.anecdotage.com'],
+    'allowed_origins' => ['*','stories.anecdotage.com'],
 
     /*
      * Matches the request origin with, similar to `Request::is()`
