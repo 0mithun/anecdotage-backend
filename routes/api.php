@@ -80,7 +80,7 @@ Route::get('search', 'Search\ThreadController@index');
 Route::post('contact', 'Frontend\ContactController@contact');
 
 // Route group for authenticated users only
-Route::group(['middleware' => ['auth:api']], function () {
+Route::group(['middleware' => ['auth:api',]], function () {
     Route::get('me', 'User\MeController@getMe');
     Route::post('logout', 'Auth\LoginController@logout');
     Route::put('settings/profile', 'User\SettingsController@updateProfile');
