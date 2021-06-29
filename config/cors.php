@@ -26,7 +26,7 @@ return [
     /*
     * Matches the request method. `[*]` allows all methods.
     */
-    'allowed_methods' => ['*','GET','HEAD','OPTIONS','POST','PUT','PATCH','DELETE'],
+    'allowed_methods' => ['*'],
 
     /*
      * Matches the request origin. `[*]` allows all origins.
@@ -41,9 +41,7 @@ return [
     /*
      * Sets the Access-Control-Allow-Headers response header. `[*]` allows all headers.
      */
-    'allowed_headers' => ['*','Authorization'],
-    // 'allowed_headers' => ['*','Access-Control-Allow-Headers','Origin','Accept',' X-Requested-With','Content-Type','Access-Control-Request-Method','Access-Control-Request-Headers'],
-    //"Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"
+    'allowed_headers' => ['*'],
 
     /*
      * Sets the Access-Control-Expose-Headers response header.
@@ -58,5 +56,5 @@ return [
     /*
      * Sets the Access-Control-Allow-Credentials header.
      */
-    'supports_credentials' => false,
+    'supports_credentials' => true,
 ];
