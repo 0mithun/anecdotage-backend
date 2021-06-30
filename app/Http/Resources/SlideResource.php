@@ -41,6 +41,8 @@ class SlideResource extends JsonResource
             'slide_image_pos'           =>  $this->slide_image_pos,
             'thread_slide_image_path'   =>  $this->thread_slide_image_path,
             'ready'                     =>  $this->slide_ready,
+            'seo_meta_description'      =>  $this->meta_description,
+            'seo_meta_keyword'          =>  $this->meta_keyword,
 
         ];
     }

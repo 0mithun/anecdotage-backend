@@ -21,6 +21,7 @@ class SlideSettingSeeder extends Seeder
             'footer_copyright_text'=>  'Copyright &copy; anecdotage.com',
             'seo_meta_title'=>  '',
             'seo_meta_description'=>  '',
+            'seo_meta_keyword'=>  'funny,anecdotes,stories,jokes,facts,trivia,celebrities,famous,people,',
             'social_facebook'=>  '',
             'social_twitter' =>  '',
             'social_instagram'=>  '',
