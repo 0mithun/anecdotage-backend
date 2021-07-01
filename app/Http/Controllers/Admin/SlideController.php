@@ -59,6 +59,11 @@ class SlideController extends Controller
             dispatch(new OptimizeThreadImageJob($image_path, $thread));
         }
 
+        if($request->has('ready') && filter_var($request->ready, FILTER_VALIDATE_BOOLEAN) == true){
+           $this->takeScreenshot($request, $thread);
+        }
+
+
         return  response(['success'=> true,], Response::HTTP_ACCEPTED);
     }
 

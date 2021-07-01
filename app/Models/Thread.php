@@ -337,6 +337,32 @@ class Thread extends Model
         return asset('storage/' . $this->slide_screenshot);
     }
 
+    public function get_brightness($hex) {
+        // returns brightness value from 0 to 255
+        // strip off any leading #
+        $hex = str_replace('#', '', $hex);
+        $c_r = hexdec(substr($hex, 0, 2));
+        $c_g = hexdec(substr($hex, 2, 2));
+        $c_b = hexdec(substr($hex, 4, 2));
+
+        return (($c_r * 299) + ($c_g * 587) + ($c_b * 114)) / 1000;
+    }
+
+    public function getSlideLogoColorAttribute(){
+        // 'slide_color_bg', 'slide_color_0', 'slide_color_1'
+        $color1  = $this->get_brightness($this->slide_color_bg);
+        $color2  = $this->get_brightness($this->slide_color_0);
+        $color3  = $this->get_brightness($this->slide_color_1);
+
+        if($color1>= $color2 && $color1 >= $color3){
+            return $this->slide_color_bg;
+        }else if($color2 >= $color1 && $color2 >= $color3){
+            return $this->slide_color_0;
+        }else{
+            return $this->slide_color_1;
+        }
+    }
+
 
     public function threadImagePath()
     {

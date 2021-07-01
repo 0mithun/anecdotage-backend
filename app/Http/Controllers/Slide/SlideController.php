@@ -64,7 +64,8 @@ class SlideController extends Controller
 
     public function show($id){
         $threads = $this->buildQuery()
-            ->where('id',$id)
+            // ->where('id',$id)
+            ->where('slug',$id)
             ->orderBy('updated_at', 'desc')
             ->paginate(10);
 

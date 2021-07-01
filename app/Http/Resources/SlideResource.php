@@ -39,6 +39,7 @@ class SlideResource extends JsonResource
             'slide_color_2'             =>  $this->slide_color_2,
             'slide_color_bg'            =>  $this->slide_color_bg,
             'slide_image_pos'           =>  $this->slide_image_pos,
+            'slide_logo_color'           =>  $this->slide_logo_color,
             'thread_slide_image_path'   =>  $this->thread_slide_image_path,
             'ready'                     =>  $this->slide_ready,
             'seo_meta_description'      =>  $this->meta_description,
