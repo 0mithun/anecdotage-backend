@@ -60,7 +60,10 @@ class WikiImageProcess implements ShouldQueue
                 $image_page_url = 'https://en.wikipedia.org' . $href;
             }
         }
-        $this->scrpeImagePageUrl($image_page_url);
+
+        if(isset($image_page_url)){
+            $this->scrpeImagePageUrl($image_page_url);
+        }
     }
 
 
@@ -70,6 +73,7 @@ class WikiImageProcess implements ShouldQueue
         $licenseText = '';
         $htmlLicense = '';
         $descriptionText = '';
+        $authorText = '';
 
         $image_page = $client->request('GET', $image_page_url);
 	 if($image_page->filter('.mw-filepage-resolutioninfo a')->count() > 0){
