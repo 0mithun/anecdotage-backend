@@ -61,31 +61,31 @@ class TakeSlideScreenshot implements ShouldQueue
             ->toJpg()
             ->save($pathToImage);
 
-        // // create empty canvas
-        // $imgColor = Image::canvas(100, 50);
-        // // $imgColor->fill('#181818');
-        // $imgColor->fill('#000000');
+        // create empty canvas
+        $imgColor = Image::canvas(100, 50);
+        // $imgColor->fill('#181818');
+        $imgColor->fill('#000000');
 
-        // $img = Image::make($pathToImage);
-        // $img->crop(1720, 780,50,0);
-        // $img->insert($imgColor, 'top-right', 0, 0);
+        $img = Image::make($pathToImage);
+        $img->crop(1720, 780,50,0);
+        $img->insert($imgColor, 'top-right', 0, 0);
 
-        // // $img->crop(1770, 750,0,70);
+        // $img->crop(1770, 750,0,70);
 
-        // // // use callback to define details
-        // // $img->text('anecdotage.com', 1400, 675, function($font) {
-        // //     $font->file(public_path('fonts/roboto/Roboto-Regular.ttf'));
-        // //     $font->size(50);
-        // //     $font->color(array(255, 255, 255, 0.5));
-        // //     $font->align('center');
-        // //     $font->valign('top');
-        // // });
-        // $img->save($pathToImage);
+        // // use callback to define details
+        // $img->text('anecdotage.com', 1400, 675, function($font) {
+        //     $font->file(public_path('fonts/roboto/Roboto-Regular.ttf'));
+        //     $font->size(50);
+        //     $font->color(array(255, 255, 255, 0.5));
+        //     $font->align('center');
+        //     $font->valign('top');
+        // });
+        $img->save($pathToImage);
 
 
-        // Storage::disk('screenshots')->delete($this->thread->slide_screenshot);
+        Storage::disk('screenshots')->delete($this->thread->slide_screenshot);
 
-        // $this->thread->slide_screenshot  = $path;
-        // $this->thread->save();
+        $this->thread->slide_screenshot  = $path;
+        $this->thread->save();
     }
 }
