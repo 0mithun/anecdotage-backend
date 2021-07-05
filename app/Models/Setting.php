@@ -41,7 +41,7 @@ class Setting extends Model
         if ($this->site_favicon != '') {
             return asset('storage/'.$this->site_favicon);
         } else {
-            return asset('images/logo.png');
+            return asset('images/favicon.png');
         }
     }
 }

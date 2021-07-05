@@ -334,7 +334,7 @@ class Thread extends Model
             return '';
         }
 
-        return asset('storage/' . $this->slide_screenshot);
+        return asset($this->slide_screenshot);
     }
 
     public function get_brightness($hex) {

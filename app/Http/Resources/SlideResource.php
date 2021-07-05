@@ -40,7 +40,15 @@ class SlideResource extends JsonResource
             'slide_color_bg'            =>  $this->slide_color_bg,
             'slide_image_pos'           =>  $this->slide_image_pos,
             'slide_logo_color'           =>  $this->slide_logo_color,
+
+            //currently unused
             'thread_slide_image_path'   =>  $this->thread_slide_image_path,
+
+
+
+
+
+            'slide_screenshot_path'   =>  $this->slide_screenshot_path,
             'ready'                     =>  $this->slide_ready,
             'seo_meta_description'      =>  $this->meta_description,
             'seo_meta_keyword'          =>  $this->meta_keyword,

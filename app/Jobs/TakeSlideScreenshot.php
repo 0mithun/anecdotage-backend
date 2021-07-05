@@ -51,7 +51,9 @@ class TakeSlideScreenshot implements ShouldQueue
         // $pathToImage = storage_path('app/public/'.$path);
         $pathToImage = public_path($path);
 
-        $source =  env('SLIIDE_APP_URL').'/i-'.$this->thread->id;
+        // $source =  env('SLIIDE_APP_URL').'/i-'.$this->thread->id;
+        $source =   rtrim(env('SLIIDE_APP_URL'),'/').'/'.$this->thread->slug;
+        // dump($source);
         $conv->source($source)
 
 
@@ -61,7 +63,8 @@ class TakeSlideScreenshot implements ShouldQueue
 
         // create empty canvas
         $imgColor = Image::canvas(100, 50);
-        $imgColor->fill('#181818');
+        // $imgColor->fill('#181818');
+        $imgColor->fill('#000000');
 
         $img = Image::make($pathToImage);
         $img->crop(1720, 780,50,0);
