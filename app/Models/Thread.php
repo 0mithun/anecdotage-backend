@@ -217,7 +217,7 @@ class Thread extends Model
     {
         $limit = 120;
         $body = strip_tags($this->body);
-        $body = preg_replace('/\s+/', ' ', $this->body);
+        $body = preg_replace('/\s+/', ' ', $body);
 
         $splitBody = explode(" ", $body);
         if(count($splitBody)>$limit){
@@ -230,10 +230,14 @@ class Thread extends Model
         return $body;
     }
 
+    public function getMetaKeywordAttribute(){
+        $names = $this->tags->pluck('name')->all();
+        return  implode(',',$names);
+    }
     public function getMetaDescriptionAttribute(){
         $limit = 30;
         $body = strip_tags($this->body);
-        $body = preg_replace('/\s+/', ' ', $this->body);
+        $body = preg_replace('/\s+/', ' ', $body);
 
         $splitBody = explode(" ", $body);
         if(count($splitBody)>$limit){
@@ -242,17 +246,38 @@ class Thread extends Model
             $body =  implode(" ", $splitBody);
         }
         $body = $body.'...';
-        $body =  strip_tags($body);
         $body = str_replace('"','',$body);
 
         return $body;
 
     }
 
-    public function getMetaKeywordAttribute(){
-        $names = $this->tags->pluck('name')->all();
-        return  implode(',',$names);
+    public function getSlideMetaDescriptionAttribute(){
+        $limit = 30;
+        $body = strip_tags($this->slide_body);
+        $body = preg_replace('/\s+/', ' ', $body);
+
+        $pattern = '#<1>(.*?)</1>#i';
+        $body = preg_replace_callback($pattern, function($match){
+           return sprintf('%s', $match[1] );
+        }, $body);
+
+
+
+
+        $splitBody = explode(" ", $body);
+        if(count($splitBody)>$limit){
+            $splitBody = array_slice($splitBody,0, $limit);
+
+            $body =  implode(" ", $splitBody);
+        }
+        $body = $body.'...';
+        $body = str_replace('"','',$body);
+
+        return $body;
     }
+
+
 
     public function getThreadSlideImagePathAttribute()
     {
@@ -282,6 +307,20 @@ class Thread extends Model
          return $body;
     }
 
+
+
+    public function setSlideBodyAttribute($value)
+    {
+        ///<a(.*?)>(.*?)<\/a>/i
+        $body =  html_entity_decode($value);
+        $pattern = '#<span(.*?)>(.*?)</span>#i';
+        $body = preg_replace_callback($pattern, function($match){
+           return sprintf('<1>%s</1>', $match[2] );
+        }, $body);
+
+        $this->attributes['slide_body'] = $body;
+    }
+
     public function getSlideBodyAttribute($value)
     {
          $body =  html_entity_decode($value);
@@ -298,19 +337,6 @@ class Thread extends Model
         }, $body);
 
          return $body;
-    }
-
-
-    public function setSlideBodyAttribute($value)
-    {
-        ///<a(.*?)>(.*?)<\/a>/i
-        $body =  html_entity_decode($value);
-        $pattern = '#<span(.*?)>(.*?)</span>#i';
-        $body = preg_replace_callback($pattern, function($match){
-           return sprintf('<1>%s</1>', $match[2] );
-        }, $body);
-
-        $this->attributes['slide_body'] = $body;
     }
 
 

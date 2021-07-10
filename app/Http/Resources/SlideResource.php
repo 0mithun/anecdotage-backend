@@ -20,7 +20,6 @@ class SlideResource extends JsonResource
             'channel_id'                =>  $this->channel_id,
             'title'                     =>  $this->title,
             'slug'                      =>  $this->slug,
-            'excerpt'                   =>  $this->excerpt,
             'thread_image_path'         =>  $this->thread_image_path,
             'image_path'                =>  $this->image_path,
             'image_path_pixel_color'    =>  $this->image_path_pixel_color,
@@ -30,7 +29,7 @@ class SlideResource extends JsonResource
             'age_restriction'           =>  $this->age_restriction,
 
 
-            //Slide Fields
+            // //Slide Fields
             'slide_body'                =>  $this->slide_body,
             'style_slide_body'          =>  $this->style_slide_body,
             'slide_body_length'         =>  $this->slide_body_length,
@@ -50,7 +49,7 @@ class SlideResource extends JsonResource
 
             'slide_screenshot_path'   =>  $this->slide_screenshot_path,
             'ready'                     =>  $this->slide_ready,
-            'seo_meta_description'      =>  $this->meta_description,
+            'seo_meta_description'      =>  $this->slide_meta_description,
             'seo_meta_keyword'          =>  $this->meta_keyword,
 
         ];

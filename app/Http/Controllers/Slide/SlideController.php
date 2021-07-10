@@ -22,7 +22,6 @@ class SlideController extends Controller
         "user_id" ,
         "channel_id",
         "title",
-        "body",
         "slug",
         "image_path",
         "image_path_pixel_color" ,
