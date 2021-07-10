@@ -238,6 +238,9 @@ Route::group(['middleware' => ['auth:api',]], function () {
             //Modify Tag
             Route::post('tag/rename-tag', 'ModifyTagController@rename');
             Route::post('tag/delete-tag', 'ModifyTagController@delete');
+            Route::post('tag/remove-body-tag', 'ModifyTagController@removeBodyTag');
+            Route::post('tag/remove-tag-tag', 'ModifyTagController@removeTagTag');
+            Route::post('tag/change-channel', 'ModifyTagController@changeChannel');
 
             //Add Emoji
             Route::post('threads/add-emoji', 'AddEmojiController@add');
