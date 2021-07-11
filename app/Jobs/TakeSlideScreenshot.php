@@ -35,7 +35,6 @@ class TakeSlideScreenshot implements ShouldQueue
      */
     public function handle()
     {
-        $slideSetting = SlideSetting::first();
         $options = [
             'width' => 1920,
             // 'height'=> 900,
@@ -62,12 +61,13 @@ class TakeSlideScreenshot implements ShouldQueue
             ->save($pathToImage);
 
         // create empty canvas
-        $imgColor = Image::canvas(100, 50);
+        $imgColor = Image::canvas(350, 72);
         // $imgColor->fill('#181818');
         $imgColor->fill('#000000');
 
         $img = Image::make($pathToImage);
-        $img->crop(1720, 780,50,0);
+        // $img->crop(1720, 780,50,0);
+        $img->crop(1820, 780,50,0);
         $img->insert($imgColor, 'top-right', 0, 0);
 
         // $img->crop(1770, 750,0,70);

@@ -482,6 +482,12 @@ class ThreadController extends Controller
         return response('Description Update successfully');
     }
 
+
+
+    /**
+     * Duplicate image
+     */
+
     public function duplicateImage(Request $request, Thread $thread){
 
          $old_thread = Thread::where('slug', $request->old_thread)->first();
@@ -521,8 +527,10 @@ class ThreadController extends Controller
         return response('Thread Update successfully');
     }
 
+
+
     /**
-     * Share Thread
+     * Share Thread to social media
      */
 
     public function share(Request $request, Thread $thread)

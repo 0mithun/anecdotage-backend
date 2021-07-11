@@ -67,11 +67,43 @@ class SlideController extends Controller
         return  response(['success'=> true,], Response::HTTP_ACCEPTED);
     }
 
+    /**
+     * Create screenshot from slide url
+     */
+
     public function takeScreenshot(Request $request, Thread $thread){
 
         dispatch(new TakeSlideScreenshot($thread));
         return  new SlideResource($thread);
     }
+
+
+    /**
+     * Create screenshot from slide url
+     */
+
+    public function createBatchScreenshot(Request $request){
+
+        if($request->type ==2){
+            //create all ready slide
+            $slides = Thread::where('slide_ready',1)->get(['id','slug','slide_screenshot']);
+        }else{
+            //only new ready slide
+            $slides = Thread::where('slide_ready',1)
+            ->whereNull('slide_screenshot')
+            ->get(['id','slug','slide_screenshot'])
+            ;
+        }
+
+
+        foreach ($slides as $thread ) {
+            dispatch(new TakeSlideScreenshot($thread));
+        }
+
+        return  response(['success'=> true,], Response::HTTP_ACCEPTED);
+    }
+
+
 
 
 

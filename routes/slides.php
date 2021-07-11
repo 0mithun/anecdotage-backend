@@ -23,6 +23,7 @@ Route::get('/settings', 'Admin\SlideSettingController@index');
      Route::get('/slides/single/{thread}', 'SlideController@getSingleSlide');
     Route::post('/slide/{thread}', 'SlideController@update');
     Route::post('/slide/{thread}/screenshot', 'SlideController@takeScreenshot');
+    Route::post('/slides/batch-screenshot', 'SlideController@createBatchScreenshot');
 
 
     //Admin Settings
