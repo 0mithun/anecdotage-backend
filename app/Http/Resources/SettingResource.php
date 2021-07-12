@@ -30,6 +30,7 @@ class SettingResource extends JsonResource
             'social_twitter' =>  $this->social_twitter,
             'social_instagram'=>  $this->social_instagram,
             'social_linkedin'=>  $this->social_linkedin,
+            'social_patreon'=>  $this->social_patreon,
             'google_analytics'=>  $this->google_analytics,
             'facebook_pixels'=>  $this->facebook_pixels,
             'faq'       => $this->faq,

@@ -21,6 +21,7 @@ class Setting extends Model
         'social_twitter',
         'social_instagram',
         'social_linkedin',
+        'social_patreon',
         'google_analytics',
         'facebook_pixels',
         'faq',
