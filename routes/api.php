@@ -38,6 +38,7 @@ Route::post('threads/{thread}/report', 'Thread\ReportController@report');
 
 //Tags
 Route::get('tags/{tag}', 'Tag\TagController@show');
+Route::get('tags', 'Tag\TagController@index');
 
 //Channel
 Route::get('channel/search', 'Channel\ChannelController@search');
