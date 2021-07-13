@@ -117,7 +117,7 @@ class SlideController extends Controller
                 //     $q->where('slide_ready',true);
                 // }
                 if(auth()->check() && auth()->user()->is_admin){
-                    $q->where('slide_ready',false);
+                    // $q->where('slide_ready',false);
                 }
                 else{
                     $q->where('slide_ready',true);
@@ -141,7 +141,7 @@ class SlideController extends Controller
         // }
 
         if(auth()->check() && auth()->user()->is_admin){
-            $query->where('slide_ready',false);
+            // $query->where('slide_ready',false);
         }else{
             $query->where('slide_ready',true);
         }

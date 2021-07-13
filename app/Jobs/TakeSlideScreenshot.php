@@ -61,7 +61,7 @@ class TakeSlideScreenshot implements ShouldQueue
             ->save($pathToImage);
 
         // create empty canvas
-        $imgColor = Image::canvas(350, 72);
+        $imgColor = Image::canvas(550, 72);
         // $imgColor->fill('#181818');
         $imgColor->fill('#000000');
 
