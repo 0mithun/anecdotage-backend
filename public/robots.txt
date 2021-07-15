@@ -1,6 +1,12 @@
 
 
+User-agent: PetalBot
+Disallow: /
+
 User-agent: MJ12bot
+Disallow: /
+
+User-agent: Bytespider
 Disallow: /
 
 User-agent: *
