@@ -48,7 +48,7 @@ class SlideController extends Controller
 
     public function index(){
         $threads = $this->buildQuery()
-        ->orderBy('updated_at', 'desc')
+        ->orderBy('id', 'desc')
         // ->limit(10)
         // ->get()
         // ->paginate(1)
@@ -66,7 +66,7 @@ class SlideController extends Controller
         $threads = $this->buildQuery()
             // ->where('id',$id)
             ->where('slug',$id)
-            ->orderBy('updated_at', 'desc')
+            ->orderBy('id', 'desc')
             ->paginate(10);
 
             return  SlideResource::collection($threads);
@@ -124,7 +124,7 @@ class SlideController extends Controller
                 }
             })
             ->select($this->selectedFields)
-            ->orderBy('updated_at', 'desc')
+            ->orderBy('id', 'desc')
             ->paginate((int) request('per_page', 10))
             ;
         return  SlideResource::collection($threads);
