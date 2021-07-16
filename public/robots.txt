@@ -12,3 +12,4 @@ Disallow: /
 User-agent: *
 Disallow: /admin
 Disallow: /profile
+Disallow: /api
