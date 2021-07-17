@@ -82,6 +82,7 @@ class ThreadController extends Controller
         $thread = $thread->fresh();
 
 
+
         if(preg_match("/\[(.*)\]/", $request->title, $matches)){
             dispatch(new WikiImageProcess($matches[1], $thread));
         }
