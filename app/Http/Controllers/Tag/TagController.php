@@ -28,11 +28,6 @@ class TagController extends Controller
         $this->threads = $threads;
     }
 
-    public function index(){
-        $tags = Tag::all(['slug'])->pluck('slug');
-
-        return response($tags, Response::HTTP_OK);
-    }
 
     /**
      * Display the specified resource.

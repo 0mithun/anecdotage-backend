@@ -38,7 +38,20 @@ Route::post('threads/{thread}/report', 'Thread\ReportController@report');
 
 //Tags
 Route::get('tags/{tag}', 'Tag\TagController@show');
-Route::get('tags', 'Tag\TagController@index');
+
+
+/**
+ * For sitemap
+ */
+Route::get('sitemap/tags', 'Sitemap\SitemapController@tags');
+Route::get('sitemap/threads', 'Sitemap\SitemapController@threads');
+
+
+
+
+/**
+ * End sitemap
+ */
 
 //Channel
 Route::get('channel/search', 'Channel\ChannelController@search');
