@@ -28,42 +28,6 @@ class ThreadController extends Controller
 
         $title = $request->title;
 
-        /*
-        * Old instructions
-        */
-
-        /*
-
-        $title = str_replace('*','', $title);
-        $data = [
-            'title' =>  $title
-        ];
-
-        if ($request->has('title') && auth()->user()->is_admin) {
-            $slug = str_slug(strip_tags( $title));
-            if($slug != $thread->slug){
-                $data['slug'] = $title;
-            }
-        }
-
-        // $thread->update(['title'=> $title, 'slug'=>$title]);
-        // $thread->update(['title'=> $title]);
-        $thread->update($data);
-        $thread = $thread->fresh();
-
-        $split_title = preg_split("@(\*)@", $request->title);
-        // $split_title = preg_split("@('|:|-|\*)@", $request->title);
-        if (count($split_title) > 0 && $split_title[0] != '') {
-            $keyword = $split_title[0];
-            dispatch(new WikiImageProcess($keyword, $thread));
-        }
-
-        */
-
-        /**
-         * New Instructions
-         */
-
         $title = str_replace('[','', $title);
         $title = str_replace(']','', $title);
         $data = [
@@ -81,12 +45,9 @@ class ThreadController extends Controller
         $thread->update($data);
         $thread = $thread->fresh();
 
-
-
         if(preg_match("/\[(.*)\]/", $request->title, $matches)){
             dispatch(new WikiImageProcess($matches[1], $thread));
         }
-
 
         return response(['success'=>true,'thread'=> $thread]);
     }

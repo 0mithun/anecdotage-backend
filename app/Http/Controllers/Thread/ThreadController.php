@@ -489,8 +489,8 @@ class ThreadController extends Controller
      */
 
     public function duplicateImage(Request $request, Thread $thread){
-
          $old_thread = Thread::where('slug', $request->old_thread)->first();
+
          if($old_thread){
              $data = [
                 'image_path_pixel_color'    =>  $old_thread->image_path_pixel_color,
@@ -512,10 +512,6 @@ class ThreadController extends Controller
             }
 
             $thread = $this->threads->update($thread->id, $data);
-            //image_path
-            //image_path_pixel_color
-            //image_description
-            //amazon_product_url
         }
         return response(new ThreadResource($thread), Response::HTTP_ACCEPTED);
     }
