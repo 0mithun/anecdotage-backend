@@ -37,6 +37,13 @@ class TagImageProcessing implements ShouldQueue
         }
     }
 
+
+
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
     public function scrapeWithKeyword()
     {
         $keyword = $this->tag->name;
@@ -65,6 +72,13 @@ class TagImageProcessing implements ShouldQueue
         }
     }
 
+
+    /**
+     * Undocumented function
+     *
+     * @param String $image_page_url
+     * @return void
+     */
     public function scrpeImagePageUrl($image_page_url)
     {
         $client = new Client();
@@ -193,13 +207,24 @@ class TagImageProcessing implements ShouldQueue
         }
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param Array $data
+     * @return void
+     */
     public function saveInfo($data)
     {
         $this->tag->update($data);
     }
 
 
-     //[Scraped description]. Author: [scraped author] ([scraped license type])
+    /**
+     * Undocumented function
+     *
+     * @param [type] $image_page
+     * @return void
+     */
     public function checkLicense($image_page){
         dump('inside check license');
         $text =    $image_page->text();

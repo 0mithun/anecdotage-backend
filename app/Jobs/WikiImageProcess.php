@@ -6,6 +6,7 @@ use Goutte\Client;
 use App\Models\Thread;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -39,6 +40,13 @@ class WikiImageProcess implements ShouldQueue
         $this->scrapeWithKeyword($this->keyword);
     }
 
+
+    /**
+     * Undocumented function
+     *
+     * @param String $keyword
+     * @return void
+     */
     public function scrapeWithKeyword($keyword){
 
         $keyword = ucwords($keyword);
@@ -67,6 +75,12 @@ class WikiImageProcess implements ShouldQueue
     }
 
 
+    /**
+     * Undocumented function
+     *
+     * @param String $image_page_url
+     * @return void
+     */
     public function scrpeImagePageUrl($image_page_url)
     {
         $client = new Client();
@@ -173,7 +187,7 @@ class WikiImageProcess implements ShouldQueue
 
                 // $authorText = $newAuthor->first()->text();
                 if($authorText != null || $authorText !=''){
-                    $authorText = "Credit: ".$authorText;
+                    $authorText = "Credit: Wikipedia user ".$authorText;
                 }
             }
 
@@ -182,8 +196,18 @@ class WikiImageProcess implements ShouldQueue
                 $htmlLicense = "($htmlLicense)";
             }
 
-            $fullDescriptionText = sprintf('%s Credit: %s %s', $descriptionText, $authorText, $htmlLicense);
-            $pixelColor = $this->getImageColorAttribute($full_image_link);
+            $fullDescriptionText = sprintf('%s %s %s', $descriptionText, $authorText, $htmlLicense);
+
+
+            $extension = $this->getFileExtensionFromURl( $full_image_link );
+            $fileName =  $this->thread->id .'_'. uniqid();
+            $fullFileName = $fileName . '.' . $extension;
+            $image_path = 'download/temp/' . $fullFileName;
+            $this->file_download_curl($image_path, $full_image_link);
+            $pixelColor = $this->getImageColorAttribute(asset('storage/' . $image_path));
+            Storage::disk('public')->delete($image_path);
+
+
             $data = [
                 'image_path' => $full_image_link,
                 'image_path_pixel_color' => $pixelColor ?? '',
@@ -195,6 +219,13 @@ class WikiImageProcess implements ShouldQueue
         }
     }
 
+
+    /**
+     * Undocumented function
+     *
+     * @param String $image_path
+     * @return void
+     */
     public function getImageColorAttribute($image_path)
     {
         if ($image_path != '') {
@@ -225,12 +256,72 @@ class WikiImageProcess implements ShouldQueue
         return false;
     }
 
+
+
+     /**
+     * @param string $url
+     * @return string
+     */
+    function getFileExtensionFromURl(string $url ) {
+        $file = new \finfo( FILEINFO_MIME );
+        $type = strstr( $file->buffer( file_get_contents( $url ) ), ';', true ); //Returns something similar to  image/jpg
+
+        $extension = explode( '/', $type )[1];
+
+        return $extension;
+    }
+
+
+    /**
+     * @param string $fullPath
+     * @param string $full_image_link
+     * @return mixed
+     */
+
+    public function file_download_curl(string $fullPath, string $full_image_link)
+    {
+        $parts = explode('/', storage_path('app/public/'.$fullPath));
+        array_pop($parts);
+        $dir = implode('/', $parts);
+
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        $fp = fopen(storage_path('app/public/'.$fullPath), 'wb');
+        $ch = curl_init($full_image_link);
+        curl_setopt($ch, CURLOPT_FILE, $fp);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_exec($ch);
+        $error = curl_error($ch);
+        curl_close($ch);
+        fclose($fp);
+    }
+
+
+
+
+
+    /**
+     * Undocumented function
+     *
+     * @param Array $data
+     * @return void
+     */
     public function saveInfo($data)
     {
         $this->thread->update($data);
     }
 
-      //[Scraped description]. Author: [scraped author] ([scraped license type])
+
+
+    /**
+     * Undocumented function
+     *
+     * @param [type] $image_page
+     * @return void
+     */
     public function checkLicense($image_page){
         dump('inside check license');
         $text =    $image_page->text();

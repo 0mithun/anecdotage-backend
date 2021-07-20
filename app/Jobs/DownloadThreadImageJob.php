@@ -170,6 +170,12 @@ class DownloadThreadImageJob implements ShouldQueue
     }
 
 
+    /**
+     * Undocumented function
+     *
+     * @param String $image_path
+     * @return void
+     */
     public function optimizeImage($image_path){
         $pathToImage = storage_path(sprintf('app/public/%s',$image_path));
         $file_path = sprintf('public/%s',$image_path);

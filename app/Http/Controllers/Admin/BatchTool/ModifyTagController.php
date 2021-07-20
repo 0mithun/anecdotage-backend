@@ -36,6 +36,7 @@ class ModifyTagController extends Controller
             $old_tag->threads()->chunk(100, function($threads) use($old_tag, $newTag){
                 foreach($threads as $thread){
                     $thread->tags()->detach($old_tag->id);
+                    $thread->tags()->detach($newTag->id);
                     $thread->tags()->attach($newTag->id);
                 }
             });
