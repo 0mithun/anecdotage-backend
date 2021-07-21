@@ -116,31 +116,12 @@ class ThreadController extends Controller
      * @param  \App\Models\Thread  $thread
      * @return \Illuminate\Http\Response
      */
-    public function show($slug)
+    public function show(Thread $thread)
     {
         $thread = $this->threads->withCriteria([
             new EagerLoad(['tags', 'creator', 'emojis', 'channel'])
         ])
-        ->select([
-            "id",
-            "user_id",
-            "channel_id",
-            "title",
-            "slug",
-            "body",
-            "image_path",
-            "image_path_pixel_color",
-            "anonymous",
-            "location",
-            "formatted_address",
-            "favorite_count",
-            "visits",
-            "like_count",
-            "dislike_count",
-            "created_at",
-            "updated_at",
-        ])
-        ->findBySlug($slug)
+        ->find($thread->id)
         ;
 
         $thread->views()->create([]);
