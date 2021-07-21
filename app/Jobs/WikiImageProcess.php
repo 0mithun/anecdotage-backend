@@ -199,7 +199,8 @@ class WikiImageProcess implements ShouldQueue
             $fullDescriptionText = sprintf('%s %s %s', $descriptionText, $authorText, $htmlLicense);
 
 
-            $extension = $this->getFileExtensionFromURl( $full_image_link );
+            // $extension = $this->getFileExtensionFromURl( $full_image_link );
+            $extension = 'jpg';
             $fileName =  $this->thread->id .'_'. uniqid();
             $fullFileName = $fileName . '.' . $extension;
             $image_path = 'download/temp/' . $fullFileName;
@@ -293,6 +294,12 @@ class WikiImageProcess implements ShouldQueue
         curl_setopt($ch, CURLOPT_FILE, $fp);
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0');
+
+
+
         curl_exec($ch);
         $error = curl_error($ch);
         curl_close($ch);
