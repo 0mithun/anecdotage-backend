@@ -163,7 +163,8 @@ abstract class BaseRepository implements IBase, ICriteria
 
     public function select(array $column = ['*'])
     {
-       return $this->model->select($column);
+        $this->model->select($column);
+        return $this;
     }
 
     public function get(){

@@ -103,6 +103,10 @@ class ThreadController extends Controller
         //Currently unused
         // $this->uploadSlideImages($request, $thread);
 
+        if (($request->has('scrape_image') && filter_var($request->scrape_image, FILTER_VALIDATE_BOOLEAN) == true) && ($request->has('main_subject') && $request->main_subject != null)) {
+            dispatch(new WikiImageProcess($request->main_subject, $thread));
+        }
+
         return response(new ThreadResource($thread), Response::HTTP_CREATED);
     }
 
@@ -112,14 +116,36 @@ class ThreadController extends Controller
      * @param  \App\Models\Thread  $thread
      * @return \Illuminate\Http\Response
      */
-    public function show(Thread $thread)
+    public function show($slug)
     {
+        $thread = $this->threads->withCriteria([
+            new EagerLoad(['tags', 'creator', 'emojis', 'channel'])
+        ])
+        ->select([
+            "id",
+            "user_id",
+            "channel_id",
+            "title",
+            "slug",
+            "body",
+            "image_path",
+            "image_path_pixel_color",
+            "anonymous",
+            "location",
+            "formatted_address",
+            "favorite_count",
+            "visits",
+            "like_count",
+            "dislike_count",
+            "created_at",
+            "updated_at",
+        ])
+        ->findBySlug($slug)
+        ;
+
         $thread->views()->create([]);
         $thread->update(['visits' => $thread->visits  + 1]);
 
-        $thread = $this->threads->withCriteria([
-            new EagerLoad(['tags', 'creator', 'emojis', 'channel'])
-        ])->find($thread->id);
         return new ThreadResource($thread);
     }
 
@@ -132,6 +158,7 @@ class ThreadController extends Controller
      */
     public function update(ThreadUpdateRequest $request, Thread $thread)
     {
+
 
         $data = $request->only(['body', 'source', 'main_subject', 'age_restriction', 'anonymous',
         'slide_body','slide_image_pos','slide_color_bg','slide_color_0','slide_color_1','slide_color_2']);
@@ -444,6 +471,14 @@ class ThreadController extends Controller
         return '';
     }
 
+
+    /**
+     * Undocumented function
+     *
+     * @param Request $request
+     * @param Thread $thread
+     * @return void
+     */
     public function imageDescription(Request $request, Thread $thread)
     {
         $data = [
@@ -516,8 +551,26 @@ class ThreadController extends Controller
         return response(new ThreadResource($thread), Response::HTTP_ACCEPTED);
     }
 
-    public function skipThumbnailEdit(Request $request, Thread $thread)
+
+    /**
+     * Undocumented function
+     *
+     * @param Request $request
+     * @param Thread $thread
+     * @return void
+     */
+    public function skipThumbnailEdit(Request $request, $slug)
     {
+        $thread = $this->threads->withCriteria([
+            new EagerLoad([])
+        ])
+        ->select([
+            "id",
+            "is_published",
+        ])
+        ->findBySlug($slug)
+        ;
+
         $thread->update(['is_published' => true]);
 
         return response('Thread Update successfully');

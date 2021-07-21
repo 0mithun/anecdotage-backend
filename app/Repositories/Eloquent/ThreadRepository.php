@@ -61,4 +61,10 @@ class ThreadRepository extends BaseRepository implements IThread
             return $this;
         }
     }
+
+
+    public function findBySlug(String $slug)
+    {
+        return $this->model->where('slug', $slug)->firstOrFail();
+    }
 }

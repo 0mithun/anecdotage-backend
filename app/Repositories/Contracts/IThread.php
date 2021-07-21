@@ -13,4 +13,6 @@ interface IThread
     public function searchLocation(Request $request);
 
     public function closest($lat, $lng);
+
+    public function findBySlug(String $slug);
 }
